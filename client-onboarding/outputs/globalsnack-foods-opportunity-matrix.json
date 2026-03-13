@@ -1,0 +1,585 @@
+{
+  "meta": {
+    "generated_at": "2026-03-13T14:05:11.223880",
+    "scorer_version": "Epic-8-v1",
+    "client": "GlobalSnack Foods",
+    "industry": "Consumer Goods",
+    "functions_in_scope": [
+      1,
+      3,
+      4,
+      6,
+      9
+    ],
+    "systems": {
+      "erp": [
+        "SAP S/4HANA"
+      ],
+      "crm": [
+        "Salesforce"
+      ],
+      "mes": [
+        "SAP ME/MII"
+      ],
+      "supply_chain_planning": [
+        "SAP IBP"
+      ],
+      "data_maturity": "BI/Analytics platform"
+    },
+    "pain_points": [
+      "poor_forecast_accuracy",
+      "slow_procurement",
+      "quality_compliance_burden"
+    ]
+  },
+  "scoring_config": {
+    "industry_match_points": 3,
+    "function_match_points": 2,
+    "pain_point_match_points": "1 per pain point (max 4)",
+    "system_match_points": 1,
+    "composite_formula": "base \u00d7 (agent_opportunity_score / 5) \u00d7 10"
+  },
+  "opportunity_matrix": [
+    {
+      "process_id": 27,
+      "apqc_code": "4.1.1.1",
+      "process_name": "Aggregate statistical baseline forecast",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 3,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 5.0,
+        "composite_score": 90.0
+      },
+      "composite_score": 90.0
+    },
+    {
+      "process_id": 45,
+      "apqc_code": "4.3.3.1",
+      "process_name": "Conduct in-process quality checks",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 3,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 5.0,
+        "composite_score": 90.0
+      },
+      "composite_score": 90.0
+    },
+    {
+      "process_id": 28,
+      "apqc_code": "4.1.1.2",
+      "process_name": "Incorporate market intelligence and promotions",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 3,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 81.0
+      },
+      "composite_score": 81.0
+    },
+    {
+      "process_id": 31,
+      "apqc_code": "4.1.3",
+      "process_name": "Manage inventory levels and replenishment",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 81.0
+      },
+      "composite_score": 81.0
+    },
+    {
+      "process_id": 37,
+      "apqc_code": "4.2.2.2",
+      "process_name": "Track and expedite purchase orders",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 3,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 81.0
+      },
+      "composite_score": 81.0
+    },
+    {
+      "process_id": 47,
+      "apqc_code": "4.3.4",
+      "process_name": "Manage OEE and equipment downtime",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 81.0
+      },
+      "composite_score": 81.0
+    },
+    {
+      "process_id": 48,
+      "apqc_code": "4.3.5",
+      "process_name": "Manage batch records and traceability",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 81.0
+      },
+      "composite_score": 81.0
+    },
+    {
+      "process_id": 29,
+      "apqc_code": "4.1.1.3",
+      "process_name": "Conduct consensus demand review (S&OP)",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 3,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 4.0,
+        "composite_score": 72.0
+      },
+      "composite_score": 72.0
+    },
+    {
+      "process_id": 36,
+      "apqc_code": "4.2.2.1",
+      "process_name": "Create and send purchase orders",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 3,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 4.0,
+        "composite_score": 72.0
+      },
+      "composite_score": 72.0
+    },
+    {
+      "process_id": 46,
+      "apqc_code": "4.3.3.2",
+      "process_name": "Manage non-conformance and corrective actions",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 3,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 4.0,
+        "composite_score": 72.0
+      },
+      "composite_score": 72.0
+    },
+    {
+      "process_id": 38,
+      "apqc_code": "4.2.2.3",
+      "process_name": "Receive and match goods receipt to PO",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 3,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 3.5,
+        "composite_score": 63.0
+      },
+      "composite_score": 63.0
+    },
+    {
+      "process_id": 19,
+      "apqc_code": "3.3.2",
+      "process_name": "Conduct sales forecasting",
+      "function_id": 3,
+      "function_name": "Market and Sell Products and Services",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 1,
+        "system_match": 1,
+        "base_score": 7,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 63.0
+      },
+      "composite_score": 63.0
+    },
+    {
+      "process_id": 20,
+      "apqc_code": "3.3.3",
+      "process_name": "Manage trade spend and promotion execution",
+      "function_id": 3,
+      "function_name": "Market and Sell Products and Services",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 1,
+        "system_match": 1,
+        "base_score": 7,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 63.0
+      },
+      "composite_score": 63.0
+    },
+    {
+      "process_id": 64,
+      "apqc_code": "9.1.3",
+      "process_name": "Perform variance analysis and reporting",
+      "function_id": 9,
+      "function_name": "Manage Financial Resources",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 1,
+        "system_match": 1,
+        "base_score": 7,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 63.0
+      },
+      "composite_score": 63.0
+    },
+    {
+      "process_id": 70,
+      "apqc_code": "9.3.2",
+      "process_name": "Analyze product and customer profitability",
+      "function_id": 9,
+      "function_name": "Manage Financial Resources",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 1,
+        "system_match": 1,
+        "base_score": 7,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 63.0
+      },
+      "composite_score": 63.0
+    },
+    {
+      "process_id": 107,
+      "apqc_code": "4.6.1",
+      "process_name": "GMP compliance and batch record review",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 0,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 5.0,
+        "composite_score": 60.0
+      },
+      "composite_score": 60.0
+    },
+    {
+      "process_id": 110,
+      "apqc_code": "4.6.2",
+      "process_name": "Quality control testing \u2014 in-process and release",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 0,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 5.0,
+        "composite_score": 60.0
+      },
+      "composite_score": 60.0
+    },
+    {
+      "process_id": 114,
+      "apqc_code": "4.6.3",
+      "process_name": "Deviation and CAPA management",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 0,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 5.0,
+        "composite_score": 60.0
+      },
+      "composite_score": 60.0
+    },
+    {
+      "process_id": 125,
+      "apqc_code": "4.7.2",
+      "process_name": "Cold chain management",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 0,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 5.0,
+        "composite_score": 60.0
+      },
+      "composite_score": 60.0
+    },
+    {
+      "process_id": 118,
+      "apqc_code": "4.6.4",
+      "process_name": "Stability testing and shelf life management",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 0,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 54.0
+      },
+      "composite_score": 54.0
+    },
+    {
+      "process_id": 122,
+      "apqc_code": "4.7.1",
+      "process_name": "Serialization and track & trace",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 0,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 4.5,
+        "composite_score": 54.0
+      },
+      "composite_score": 54.0
+    },
+    {
+      "process_id": 39,
+      "apqc_code": "4.2.3",
+      "process_name": "Manage supplier performance and risk",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 0,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 4.0,
+        "composite_score": 48.0
+      },
+      "composite_score": 48.0
+    },
+    {
+      "process_id": 103,
+      "apqc_code": "4.5.3",
+      "process_name": "Technology transfer (R&D to manufacturing)",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 0,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 4.0,
+        "composite_score": 48.0
+      },
+      "composite_score": 48.0
+    },
+    {
+      "process_id": 57,
+      "apqc_code": "6.1.3",
+      "process_name": "Manage product recalls and safety alerts",
+      "function_id": 6,
+      "function_name": "Manage Customer Service",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 0,
+        "system_match": 1,
+        "base_score": 6,
+        "agent_opportunity_score": 4.0,
+        "composite_score": 48.0
+      },
+      "composite_score": 48.0
+    },
+    {
+      "process_id": 26,
+      "apqc_code": "4.1.1",
+      "process_name": "Develop demand forecast",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 2.5,
+        "composite_score": 45.0
+      },
+      "composite_score": 45.0
+    },
+    {
+      "process_id": 30,
+      "apqc_code": "4.1.2",
+      "process_name": "Develop supply plan and production schedule",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 2.5,
+        "composite_score": 45.0
+      },
+      "composite_score": 45.0
+    },
+    {
+      "process_id": 32,
+      "apqc_code": "4.1.4",
+      "process_name": "Run Sales & Operations Planning (S&OP) process",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 2.5,
+        "composite_score": 45.0
+      },
+      "composite_score": 45.0
+    },
+    {
+      "process_id": 35,
+      "apqc_code": "4.2.2",
+      "process_name": "Manage purchase orders",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 2.5,
+        "composite_score": 45.0
+      },
+      "composite_score": 45.0
+    },
+    {
+      "process_id": 42,
+      "apqc_code": "4.3.1",
+      "process_name": "Schedule and manage production work orders",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 2.5,
+        "composite_score": 45.0
+      },
+      "composite_score": 45.0
+    },
+    {
+      "process_id": 44,
+      "apqc_code": "4.3.3",
+      "process_name": "Manage quality control and testing",
+      "function_id": 4,
+      "function_name": "Deliver Physical Products",
+      "level": 2,
+      "score_breakdown": {
+        "industry_match": 3,
+        "function_match": 2,
+        "pain_point_match": 3,
+        "system_match": 1,
+        "base_score": 9,
+        "agent_opportunity_score": 2.5,
+        "composite_score": 45.0
+      },
+      "composite_score": 45.0
+    }
+  ],
+  "total_processes_scored": 127
+}

@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Onboarding Questionnaire — Business Agents Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --cyan: #06b6d4;
+      --cyan-hover: #22d3ee;
+      --success: #10b981;
+      --radius-card: 12px;
+      --radius-input: 8px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .site-header .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+    .site-header .badge {
+      font-size: 0.7rem;
+      background: rgba(99,102,241,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+
+    /* ── Layout ── */
+    .page-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 6rem;
+    }
+
+    .page-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+    }
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── Sticky Progress Bar ── */
+    .progress-bar-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      padding: 1rem 0 0.75rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .progress-steps {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .step-indicator.active {
+      background: rgba(99,102,241,0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .step-indicator.done {
+      background: rgba(16,185,129,0.1);
+      border-color: var(--success);
+      color: var(--success);
+    }
+    .step-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .step-indicator.active .step-num { background: var(--accent); color: #fff; }
+    .step-indicator.done .step-num { background: var(--success); color: #fff; }
+
+    .progress-fill-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 0.6rem;
+      overflow: hidden;
+    }
+    .progress-fill-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      border-radius: 2px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* ── Section Cards ── */
+    .form-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    .section-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    /* ── Form Controls ── */
+    .field-group {
+      margin-bottom: 1.4rem;
+    }
+    .field-group:last-child { margin-bottom: 0; }
+
+    label.field-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+    label.field-label .required { color: #f87171; margin-left: 3px; }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      background: rgba(15,17,23,0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 0.6rem 0.9rem;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394a3b8' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+    select option { background: #1e293b; }
+
+    /* ── Grid ── */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* ── Checkboxes / Radios ── */
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.6rem;
+    }
+    .check-grid.single-col { grid-template-columns: 1fr; }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+    .check-item:hover { border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.05); }
+    .check-item input[type="checkbox"],
+    .check-item input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      margin-top: 2px;
+    }
+    .check-item.checked {
+      border-color: var(--accent);
+      background: rgba(99,102,241,0.08);
+    }
+    .check-text { display: flex; flex-direction: column; gap: 2px; }
+    .check-label { font-size: 0.88rem; font-weight: 500; color: var(--text); }
+    .check-desc { font-size: 0.77rem; color: var(--muted); line-height: 1.4; }
+
+    /* Radio row */
+    .radio-row { display: flex; flex-direction: column; gap: 0.5rem; }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.6rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+    .radio-item:hover { border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.05); }
+    .radio-item.checked { border-color: var(--accent); background: rgba(99,102,241,0.08); }
+    .radio-item input[type="radio"] {
+      width: 16px; height: 16px; min-width: 16px;
+      accent-color: var(--accent); cursor: pointer;
+    }
+    .radio-label { font-size: 0.88rem; font-weight: 500; }
+
+    /* ── Other text field ── */
+    .other-text-field {
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .other-text-field.visible { display: block; }
+
+    /* ── Export Section ── */
+    .export-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+    .export-section h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .export-section p { color: var(--muted); font-size: 0.88rem; margin-bottom: 1.25rem; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-secondary {
+      background: rgba(6,182,212,0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(6,182,212,0.3);
+    }
+    .btn-secondary:hover { background: rgba(6,182,212,0.25); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    /* ── JSON Preview ── */
+    details.json-preview {
+      margin-top: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      overflow: hidden;
+    }
+    details.json-preview summary {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      background: rgba(30,41,59,0.5);
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    details.json-preview summary::-webkit-details-marker { display: none; }
+    details.json-preview summary::before {
+      content: '▶';
+      font-size: 0.65rem;
+      transition: transform 0.2s;
+    }
+    details.json-preview[open] summary::before { transform: rotate(90deg); }
+    details.json-preview[open] summary { color: var(--cyan); }
+    #json-output {
+      background: #0a0d14;
+      color: #7dd3fc;
+      font-family: 'Menlo', 'Consolas', monospace;
+      font-size: 0.8rem;
+      padding: 1.25rem;
+      overflow-x: auto;
+      white-space: pre;
+      max-height: 400px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--success);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .progress-steps { flex-wrap: wrap; }
+      .page-container { padding: 1.25rem 1rem 5rem; }
+      .form-section { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">Business Agents Platform</div>
+  <div class="badge">Epic 8 · Client Onboarding</div>
+</header>
+
+<div class="page-container">
+  <h1 class="page-title">Client Onboarding Questionnaire</h1>
+  <p class="page-subtitle">Complete all five sections to generate a client profile. Export to JSON when finished.</p>
+
+  <!-- Sticky Progress -->
+  <div class="progress-bar-wrapper">
+    <div class="progress-steps">
+      <div class="step-indicator active" onclick="scrollToSection(1)" id="step-1">
+        <span class="step-num">1</span> Company Profile
+      </div>
+      <div class="step-indicator" onclick="scrollToSection(2)" id="step-2">
+        <span class="step-num">2</span> Business Functions
+      </div>
+      <div class="step-indicator" onclick="scrollToSection(3)" id="step-3">
+        <span class="step-num">3</span> Current Systems
+      </div>
+      <div class="step-indicator" onclick="scrollToSection(4)" id="step-4">
+        <span class="step-num">4</span> Pain Points
+      </div>
+      <div class="step-indicator" onclick="scrollToSection(5)" id="step-5">
+        <span class="step-num">5</span> Engagement Goals
+      </div>
+    </div>
+    <div class="progress-fill-bar">
+      <div class="progress-fill-bar-inner" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <form id="onboarding-form" novalidate>
+
+    <!-- ── Section 1: Company Profile ── -->
+    <div class="form-section" id="section-1">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <div>
+          <div class="section-title">Company Profile</div>
+          <div class="section-desc">Basic organisational information about the client engagement</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="company-name">Company Name <span class="required">*</span></label>
+        <input type="text" id="company-name" name="company_name" placeholder="e.g. Acme Corporation" />
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label" for="industry">Industry <span class="required">*</span></label>
+          <select id="industry" name="industry">
+            <option value="">Select industry…</option>
+            <option value="Consumer Goods">Consumer Goods</option>
+            <option value="Pharmaceutical">Pharmaceutical</option>
+            <option value="Financial Services">Financial Services</option>
+            <option value="Manufacturing">Manufacturing</option>
+            <option value="Retail">Retail</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="company-size">Company Size (Employees)</label>
+          <select id="company-size" name="company_size">
+            <option value="">Select size…</option>
+            <option value="<500">&lt;500</option>
+            <option value="500-2000">500–2,000</option>
+            <option value="2000-10000">2,000–10,000</option>
+            <option value=">10000">&gt;10,000</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="annual-revenue">Annual Revenue</label>
+        <select id="annual-revenue" name="annual_revenue">
+          <option value="">Select range…</option>
+          <option value="<$100M">&lt;$100M</option>
+          <option value="$100M-$500M">$100M–$500M</option>
+          <option value="$500M-$2B">$500M–$2B</option>
+          <option value=">$2B">&gt;$2B</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ── Section 2: Business Functions ── -->
+    <div class="form-section" id="section-2">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <div>
+          <div class="section-title">Business Functions in Scope</div>
+          <div class="section-desc">Select all APQC functions relevant to this engagement</div>
+        </div>
+      </div>
+
+      <div class="check-grid single-col" id="functions-grid">
+        <!-- Functions are rendered by JS to keep HTML DRY -->
+      </div>
+    </div>
+
+    <!-- ── Section 3: Current Systems ── -->
+    <div class="form-section" id="section-3">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <div>
+          <div class="section-title">Current Systems Landscape</div>
+          <div class="section-desc">Which enterprise systems does the client currently operate?</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">ERP System</label>
+        <div class="check-grid" id="erp-grid"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">CRM</label>
+        <div class="check-grid" id="crm-grid"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Manufacturing Execution System (MES)</label>
+        <div class="check-grid" id="mes-grid"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Supply Chain Planning</label>
+        <div class="check-grid" id="scp-grid"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Data Maturity Level</label>
+        <div class="radio-row" id="data-maturity-grid"></div>
+      </div>
+    </div>
+
+    <!-- ── Section 4: Pain Points ── -->
+    <div class="form-section" id="section-4">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <div>
+          <div class="section-title">Current Pain Points</div>
+          <div class="section-desc">Select all challenges the client is experiencing today</div>
+        </div>
+      </div>
+
+      <div class="check-grid single-col" id="pain-points-grid"></div>
+
+      <div class="field-group" style="margin-top:1rem;">
+        <label class="field-label" for="pain-other-text">Other pain point (describe)</label>
+        <input type="text" id="pain-other-text" name="pain_other_text" placeholder="Describe additional pain points…" />
+      </div>
+    </div>
+
+    <!-- ── Section 5: Engagement Goals ── -->
+    <div class="form-section" id="section-5">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <div>
+          <div class="section-title">Engagement Goals</div>
+          <div class="section-desc">What does the client want to achieve from this engagement?</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Primary Goal</label>
+        <div class="radio-row" id="primary-goal-grid"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Timeline Expectations</label>
+        <div class="radio-row" id="timeline-grid"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="success-metric">Success Metric</label>
+        <input type="text" id="success-metric" name="success_metric" placeholder="What would make this engagement a success?" />
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:0.4rem;">Be specific — e.g. "Reduce demand forecast error from 22% to under 12% in 6 months"</p>
+      </div>
+    </div>
+
+  </form><!-- /form -->
+
+  <!-- ── Export Section ── -->
+  <div class="export-section">
+    <h2>Export Client Profile</h2>
+    <p>Serialises all form inputs to a JSON file. The output can be passed directly into <code>score_client.py</code> to generate an opportunity matrix.</p>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="exportJSON()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export to JSON
+      </button>
+      <button class="btn btn-secondary" onclick="previewJSON()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Preview JSON
+      </button>
+      <button class="btn btn-ghost" onclick="resetForm()">Reset Form</button>
+    </div>
+
+    <details class="json-preview" id="json-preview-details">
+      <summary>JSON Preview</summary>
+      <pre id="json-output">Click "Preview JSON" to generate a preview.</pre>
+    </details>
+  </div>
+</div><!-- /page-container -->
+
+<div id="toast"></div>
+
+<script>
+// ── Data Definitions ─────────────────────────────────────────────────────────
+
+const APQC_FUNCTIONS = [
+  { id: 1, name: "Develop Vision and Strategy",
+    desc: "Enterprise strategy, portfolio planning, performance management, and business development" },
+  { id: 2, name: "Develop and Manage Products and Services",
+    desc: "R&D, product design, lifecycle management, regulatory compliance review, and commercialisation" },
+  { id: 3, name: "Market and Sell Products and Services",
+    desc: "Market analysis, brand strategy, trade promotions, sales forecasting, pricing, and order management" },
+  { id: 4, name: "Deliver Physical Products",
+    desc: "Supply chain planning (S&OP), procurement, manufacturing, quality control, and logistics/distribution" },
+  { id: 5, name: "Deliver Services",
+    desc: "Service design and delivery, field service management, and professional services operations" },
+  { id: 6, name: "Manage Customer Service",
+    desc: "Order fulfilment, customer inquiries, complaints, returns/warranty, and satisfaction measurement" },
+  { id: 7, name: "Develop and Manage Human Capital",
+    desc: "Workforce planning, talent acquisition, learning & development, performance management, and payroll" },
+  { id: 8, name: "Manage Information Technology",
+    desc: "IT strategy, enterprise architecture, application management, security, and data governance" },
+  { id: 9, name: "Manage Financial Resources",
+    desc: "Financial planning, accounting, treasury, AP/AR, variance analysis, and profitability reporting" },
+  { id: 10, name: "Acquire, Construct, and Manage Assets",
+    desc: "Capital planning, asset acquisition, maintenance, real estate, and environmental management" },
+  { id: 11, name: "Manage Enterprise Risk, Compliance, and Resiliency",
+    desc: "Risk identification, internal controls, regulatory compliance, audit, and business continuity" },
+  { id: 12, name: "Manage External Relationships",
+    desc: "Government/regulatory relations, investor relations, public affairs, and supplier partnerships" },
+];
+
+const ERP_SYSTEMS = ["SAP S/4HANA", "Oracle ERP Cloud", "Microsoft Dynamics", "Other"];
+const CRM_SYSTEMS = ["Salesforce", "SAP CRM", "Microsoft Dynamics CRM", "Other"];
+const MES_SYSTEMS = ["SAP ME/MII", "Siemens Opcenter", "Rockwell FactoryTalk", "None"];
+const SCP_SYSTEMS = ["SAP IBP", "Kinaxis", "o9 Solutions", "Other", "None"];
+
+const DATA_MATURITY = [
+  { value: "Ad-hoc spreadsheets",       label: "Ad-hoc spreadsheets",        desc: "Primarily Excel-driven, little automation" },
+  { value: "Basic ERP reporting",        label: "Basic ERP reporting",         desc: "Standard ERP reports, minimal BI tooling" },
+  { value: "BI/Analytics platform",      label: "BI/Analytics platform",       desc: "Power BI, Tableau, or similar dashboards in use" },
+  { value: "Advanced analytics/ML",      label: "Advanced analytics / ML",     desc: "Predictive models, data science capabilities" },
+];
+
+const PAIN_POINTS = [
+  { value: "manual_data_reconciliation",  label: "Manual data reconciliation across systems" },
+  { value: "slow_procurement",            label: "Slow procurement/approval cycles" },
+  { value: "poor_forecast_accuracy",      label: "Poor forecast accuracy" },
+  { value: "quality_compliance_burden",   label: "Quality/compliance documentation burden" },
+  { value: "limited_production_visibility", label: "Limited visibility into production performance" },
+  { value: "talent_gap_analytics",        label: "Talent gap for analytics/data work" },
+  { value: "slow_customer_response",      label: "Slow customer response times" },
+  { value: "regulatory_reporting_burden", label: "Regulatory reporting burden" },
+  { value: "other",                        label: "Other (describe below)" },
+];
+
+const PRIMARY_GOALS = [
+  "Cost reduction",
+  "Productivity gains",
+  "Risk reduction",
+  "Competitive differentiation",
+  "All of the above",
+];
+
+const TIMELINES = [
+  "Pilot in <90 days",
+  "Full deployment in 6 months",
+  "Multi-year transformation",
+  "Exploring/no timeline",
+];
+
+// ── Render Helpers ────────────────────────────────────────────────────────────
+
+function makeCheckbox(name, value, label, desc) {
+  const id = `cb-${name}-${value.replace(/\W+/g, '_')}`;
+  return `
+    <label class="check-item" for="${id}" onclick="toggleCheck(this)">
+      <input type="checkbox" id="${id}" name="${name}" value="${value}" onchange="updateProgress()" />
+      <span class="check-text">
+        <span class="check-label">${label}</span>
+        ${desc ? `<span class="check-desc">${desc}</span>` : ''}
+      </span>
+    </label>`;
+}
+
+function makeRadio(name, value, label, desc) {
+  const id = `rb-${name}-${value.replace(/\W+/g, '_')}`;
+  return `
+    <label class="radio-item" for="${id}" onclick="">
+      <input type="radio" id="${id}" name="${name}" value="${value}" onchange="updateRadioStyle(this); updateProgress();" />
+      <span class="check-text">
+        <span class="radio-label">${label}</span>
+        ${desc ? `<span class="check-desc">${desc}</span>` : ''}
+      </span>
+    </label>`;
+}
+
+function toggleCheck(label) {
+  const cb = label.querySelector('input[type=checkbox]');
+  // The click event fires before the checkbox changes, so we read the upcoming state
+  setTimeout(() => {
+    label.classList.toggle('checked', cb.checked);
+    updateProgress();
+  }, 0);
+}
+
+function updateRadioStyle(input) {
+  const siblings = document.querySelectorAll(`input[name="${input.name}"]`);
+  siblings.forEach(s => s.closest('.radio-item')?.classList.remove('checked'));
+  input.closest('.radio-item')?.classList.add('checked');
+}
+
+// ── Initialise ────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Functions
+  const funcGrid = document.getElementById('functions-grid');
+  funcGrid.innerHTML = APQC_FUNCTIONS.map(f =>
+    makeCheckbox('functions', String(f.id), `${f.id}. ${f.name}`, f.desc)
+  ).join('');
+
+  // ERP
+  document.getElementById('erp-grid').innerHTML =
+    ERP_SYSTEMS.map(s => makeCheckbox('erp', s, s, '')).join('');
+
+  // CRM
+  document.getElementById('crm-grid').innerHTML =
+    CRM_SYSTEMS.map(s => makeCheckbox('crm', s, s, '')).join('');
+
+  // MES
+  document.getElementById('mes-grid').innerHTML =
+    MES_SYSTEMS.map(s => makeCheckbox('mes', s, s, '')).join('');
+
+  // SCP
+  document.getElementById('scp-grid').innerHTML =
+    SCP_SYSTEMS.map(s => makeCheckbox('scp', s, s, '')).join('');
+
+  // Data Maturity
+  document.getElementById('data-maturity-grid').innerHTML =
+    DATA_MATURITY.map(d => makeRadio('data_maturity', d.value, d.label, d.desc)).join('');
+
+  // Pain Points
+  document.getElementById('pain-points-grid').innerHTML =
+    PAIN_POINTS.map(p => makeCheckbox('pain_points', p.value, p.label, '')).join('');
+
+  // Primary Goal
+  document.getElementById('primary-goal-grid').innerHTML =
+    PRIMARY_GOALS.map(g => makeRadio('primary_goal', g, g, '')).join('');
+
+  // Timeline
+  document.getElementById('timeline-grid').innerHTML =
+    TIMELINES.map(t => makeRadio('timeline', t, t, '')).join('');
+
+  // Attach progress tracking to text inputs
+  document.querySelectorAll('input[type=text], select').forEach(el => {
+    el.addEventListener('input', updateProgress);
+    el.addEventListener('change', updateProgress);
+  });
+
+  updateProgress();
+  setupScrollSpy();
+});
+
+// ── Progress ──────────────────────────────────────────────────────────────────
+
+function updateProgress() {
+  const sections = [
+    isSectionDone(1), isSectionDone(2), isSectionDone(3),
+    isSectionDone(4), isSectionDone(5),
+  ];
+  const done = sections.filter(Boolean).length;
+  document.getElementById('progress-fill').style.width = `${(done / 5) * 100}%`;
+
+  sections.forEach((d, i) => {
+    const el = document.getElementById(`step-${i + 1}`);
+    if (d) {
+      el.classList.add('done');
+      el.classList.remove('active');
+    }
+  });
+}
+
+function isSectionDone(n) {
+  if (n === 1) {
+    const co = document.getElementById('company-name').value.trim();
+    const ind = document.getElementById('industry').value;
+    return co.length > 0 && ind.length > 0;
+  }
+  if (n === 2) {
+    return document.querySelectorAll('input[name=functions]:checked').length > 0;
+  }
+  if (n === 3) {
+    return document.querySelector('input[name=data_maturity]:checked') !== null;
+  }
+  if (n === 4) {
+    return document.querySelectorAll('input[name=pain_points]:checked').length > 0;
+  }
+  if (n === 5) {
+    const pg = document.querySelector('input[name=primary_goal]:checked');
+    const tl = document.querySelector('input[name=timeline]:checked');
+    return pg !== null && tl !== null;
+  }
+  return false;
+}
+
+// ── Scroll Spy ────────────────────────────────────────────────────────────────
+
+function setupScrollSpy() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const n = entry.target.id.split('-')[1];
+        document.querySelectorAll('.step-indicator').forEach(el => el.classList.remove('active'));
+        const si = document.getElementById(`step-${n}`);
+        if (si && !si.classList.contains('done')) si.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  [1,2,3,4,5].forEach(n => {
+    const el = document.getElementById(`section-${n}`);
+    if (el) observer.observe(el);
+  });
+}
+
+function scrollToSection(n) {
+  const el = document.getElementById(`section-${n}`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Serialise Form ────────────────────────────────────────────────────────────
+
+function collectFormData() {
+  const get = id => document.getElementById(id)?.value?.trim() || '';
+  const checked = name => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(el => el.value);
+  const radio = name => document.querySelector(`input[name="${name}"]:checked`)?.value || '';
+
+  const companyName = get('company-name');
+  const today = new Date().toISOString().split('T')[0];
+
+  return {
+    meta: {
+      schema_version: "1.0",
+      created_at: new Date().toISOString(),
+      questionnaire_version: "Epic-8-v1",
+    },
+    company: {
+      name: companyName,
+      industry: get('industry'),
+      size: document.getElementById('company-size').value,
+      annual_revenue: document.getElementById('annual-revenue').value,
+    },
+    functions_in_scope: checked('functions').map(Number),
+    systems: {
+      erp: checked('erp'),
+      crm: checked('crm'),
+      mes: checked('mes'),
+      supply_chain_planning: checked('scp'),
+      data_maturity: radio('data_maturity'),
+    },
+    pain_points: {
+      selected: checked('pain_points'),
+      other_description: get('pain-other-text'),
+    },
+    engagement_goals: {
+      primary_goal: radio('primary_goal'),
+      timeline: radio('timeline'),
+      success_metric: get('success-metric'),
+    },
+  };
+}
+
+function exportJSON() {
+  const data = collectFormData();
+  const companySlug = (data.company.name || 'client').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const today = new Date().toISOString().split('T')[0];
+  const filename = `client-profile-${companySlug}-${today}.json`;
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // Update preview
+  document.getElementById('json-output').textContent = JSON.stringify(data, null, 2);
+  document.getElementById('json-preview-details').open = true;
+
+  showToast(`Exported: ${filename}`);
+}
+
+function previewJSON() {
+  const data = collectFormData();
+  document.getElementById('json-output').textContent = JSON.stringify(data, null, 2);
+  document.getElementById('json-preview-details').open = true;
+}
+
+function resetForm() {
+  if (!confirm('Reset all form fields? This cannot be undone.')) return;
+  document.getElementById('onboarding-form').reset();
+  document.querySelectorAll('.check-item.checked').forEach(el => el.classList.remove('checked'));
+  document.querySelectorAll('.radio-item.checked').forEach(el => el.classList.remove('checked'));
+  document.getElementById('json-output').textContent = 'Click "Preview JSON" to generate a preview.';
+  document.getElementById('json-preview-details').open = false;
+  updateProgress();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>

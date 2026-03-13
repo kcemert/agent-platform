@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Onboarding Checklist — Business Agents Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --cyan: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --radius-card: 12px;
+      --radius-input: 8px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Print overrides ── */
+    @media print {
+      body { background: #fff; color: #111; }
+      .no-print { display: none !important; }
+      .site-header { background: #f1f5f9; border-bottom: 1px solid #ccc; }
+      .phase-card { border: 1px solid #ccc; background: #fff; break-inside: avoid; }
+      .check-row.done .check-label-text { text-decoration: line-through; color: #888; }
+      .progress-wrapper { display: none; }
+      .page-container { padding: 1rem; max-width: 100%; }
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .header-left { display: flex; align-items: center; gap: 1rem; }
+    .logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+    .badge {
+      font-size: 0.7rem;
+      background: rgba(99,102,241,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+    .header-actions { display: flex; gap: 0.5rem; }
+
+    /* ── Layout ── */
+    .page-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    /* ── Document header ── */
+    .doc-header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .doc-title-block { flex: 1; min-width: 200px; }
+    .doc-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .doc-subtitle { color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
+    .company-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      min-width: 240px;
+    }
+    .company-field-group label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    #company-name-input {
+      background: rgba(15,17,23,0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 0.55rem 0.9rem;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+    #company-name-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+
+    /* ── Progress bar ── */
+    .progress-wrapper {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+    }
+    .progress-label { font-size: 0.85rem; font-weight: 600; }
+    .progress-pct {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-track {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .phase-progress-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .phase-pill {
+      font-size: 0.72rem;
+      padding: 2px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .phase-pill.in-progress { border-color: var(--warning); color: var(--warning); background: rgba(245,158,11,0.08); }
+    .phase-pill.complete    { border-color: var(--success); color: var(--success); background: rgba(16,185,129,0.08); }
+
+    /* ── Phase cards ── */
+    .phase-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
+    .phase-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .phase-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .phase-icon.p1 { background: rgba(99,102,241,0.15); color: var(--accent); }
+    .phase-icon.p2 { background: rgba(6,182,212,0.15);  color: var(--cyan); }
+    .phase-icon.p3 { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .phase-icon.p4 { background: rgba(16,185,129,0.15); color: var(--success); }
+
+    .phase-title-block { flex: 1; }
+    .phase-title { font-size: 1rem; font-weight: 600; }
+    .phase-subtitle { font-size: 0.8rem; color: var(--muted); margin-top: 1px; }
+    .phase-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* ── Checklist rows ── */
+    .check-list { padding: 0.5rem 0; }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      padding: 0.75rem 1.5rem;
+      border-bottom: 1px solid rgba(30,41,59,0.6);
+      cursor: pointer;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .check-row:last-child { border-bottom: none; }
+    .check-row:hover { background: rgba(99,102,241,0.04); }
+    .check-row.done { background: rgba(16,185,129,0.03); }
+
+    .custom-checkbox {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      border-radius: 5px;
+      border: 2px solid var(--border);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+    .check-row.done .custom-checkbox {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    .checkmark {
+      display: none;
+      width: 11px;
+      height: 11px;
+    }
+    .check-row.done .checkmark { display: block; }
+
+    .check-label-text {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text);
+      transition: all 0.2s;
+      line-height: 1.5;
+    }
+    .check-row.done .check-label-text {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-cyan { background: rgba(6,182,212,0.15); color: var(--cyan); border: 1px solid rgba(6,182,212,0.3); }
+    .btn-cyan:hover { background: rgba(6,182,212,0.25); }
+
+    @media (max-width: 600px) {
+      .doc-header { flex-direction: column; align-items: flex-start; }
+      .page-container { padding: 1.25rem 1rem 4rem; }
+      .check-row { padding: 0.65rem 1rem; }
+      .phase-header { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <div class="logo">Business Agents Platform</div>
+    <div class="badge">Epic 8 · Onboarding Checklist</div>
+  </div>
+  <div class="header-actions no-print">
+    <button class="btn btn-cyan" onclick="resetAll()">Reset All</button>
+    <button class="btn btn-primary" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Print / PDF
+    </button>
+  </div>
+</header>
+
+<div class="page-container">
+
+  <!-- Document header -->
+  <div class="doc-header">
+    <div class="doc-title-block">
+      <div class="doc-title">Client Onboarding Checklist</div>
+      <div class="doc-subtitle">4-phase engagement launch template · Business Agents Platform</div>
+    </div>
+    <div class="company-field-group">
+      <label for="company-name-input">Client Company Name</label>
+      <input type="text" id="company-name-input" placeholder="Enter client name…" oninput="updateCompanyName(this.value)" />
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrapper no-print">
+    <div class="progress-header">
+      <span class="progress-label">Overall Progress — <span id="company-display">New Client</span></span>
+      <span class="progress-pct" id="pct-display">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="phase-progress-row" id="phase-pills"></div>
+  </div>
+
+  <!-- ── Phase 1: Discovery ── -->
+  <div class="phase-card" id="phase-card-1">
+    <div class="phase-header">
+      <div class="phase-icon p1">D</div>
+      <div class="phase-title-block">
+        <div class="phase-title">Phase 1: Discovery</div>
+        <div class="phase-subtitle">Week 1–2 · Understand the client, scope the engagement, lock agreements</div>
+      </div>
+      <div class="phase-count" id="count-1">0 / 7</div>
+    </div>
+    <div class="check-list" id="list-1">
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Kick-off meeting scheduled with client stakeholders</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Questionnaire completed and exported (<code>questionnaire.html</code>)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Process scoring run, top opportunities identified (<code>score_client.py</code>)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Systems access request submitted (SAP read-only credentials)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Data export formats agreed (CSV / API)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Stakeholder map completed (sponsor, ops lead, IT lead)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">NDA / engagement agreement signed</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Phase 2: Technical Setup ── -->
+  <div class="phase-card" id="phase-card-2">
+    <div class="phase-header">
+      <div class="phase-icon p2">T</div>
+      <div class="phase-title-block">
+        <div class="phase-title">Phase 2: Technical Setup</div>
+        <div class="phase-subtitle">Week 2–3 · Configure sandbox, validate data, scaffold agents</div>
+      </div>
+      <div class="phase-count" id="count-2">0 / 6</div>
+    </div>
+    <div class="check-list" id="list-2">
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Sandbox environment configured for client's system versions</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Read-only API credentials tested</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Sample data extracted and validated</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Data schema mapping completed (client fields → agent inputs)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Agent scaffold generated for target blueprint(s)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Local test run verified (no production writes)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Phase 3: Pilot Launch ── -->
+  <div class="phase-card" id="phase-card-3">
+    <div class="phase-header">
+      <div class="phase-icon p3">P</div>
+      <div class="phase-title-block">
+        <div class="phase-title">Phase 3: Pilot Launch</div>
+        <div class="phase-subtitle">Week 3–6 · Deploy first agent, monitor, collect feedback</div>
+      </div>
+      <div class="phase-count" id="count-3">0 / 6</div>
+    </div>
+    <div class="check-list" id="list-3">
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Pilot agent deployed and scheduled</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Monitoring dashboard live (Epic 7 dashboard)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">First run reviewed with client stakeholders</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Feedback loop established (weekly sync cadence)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Exception handling documented</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Go/no-go criteria defined for expansion</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Phase 4: Expand & Measure ── -->
+  <div class="phase-card" id="phase-card-4">
+    <div class="phase-header">
+      <div class="phase-icon p4">E</div>
+      <div class="phase-title-block">
+        <div class="phase-title">Phase 4: Expand &amp; Measure</div>
+        <div class="phase-subtitle">Week 6+ · Scale successful pilots, prove value, plan roadmap</div>
+      </div>
+      <div class="phase-count" id="count-4">0 / 5</div>
+    </div>
+    <div class="check-list" id="list-4">
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Value measurement baseline established</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Second agent scoped and blueprinted</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Client onboarding portal link sent (Epic 10)</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">ROI calculation run with real pilot data</span>
+      </div>
+      <div class="check-row" onclick="toggle(this)">
+        <div class="custom-checkbox"><svg class="checkmark" viewBox="0 0 12 9" fill="none"><polyline points="1 4 4.5 7.5 11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="check-label-text">Expansion roadmap agreed</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-container -->
+
+<script>
+  const PHASE_TOTALS = [7, 6, 6, 5];
+  const PHASE_LABELS = [
+    "Phase 1: Discovery",
+    "Phase 2: Technical Setup",
+    "Phase 3: Pilot Launch",
+    "Phase 4: Expand & Measure",
+  ];
+
+  // ── Toggle ──────────────────────────────────────────────────────────────────
+  function toggle(row) {
+    row.classList.toggle('done');
+    updateProgress();
+    saveState();
+  }
+
+  // ── Progress ─────────────────────────────────────────────────────────────────
+  function updateProgress() {
+    let totalDone = 0;
+    const total = PHASE_TOTALS.reduce((a, b) => a + b, 0);
+
+    const pillsEl = document.getElementById('phase-pills');
+    pillsEl.innerHTML = '';
+
+    PHASE_TOTALS.forEach((phaseTotal, idx) => {
+      const phaseNum = idx + 1;
+      const rows = document.querySelectorAll(`#list-${phaseNum} .check-row`);
+      const done = Array.from(rows).filter(r => r.classList.contains('done')).length;
+      totalDone += done;
+
+      document.getElementById(`count-${phaseNum}`).textContent = `${done} / ${phaseTotal}`;
+
+      // Phase pill
+      const pill = document.createElement('span');
+      pill.className = 'phase-pill';
+      const short = [`P1 Discovery`, `P2 Tech Setup`, `P3 Pilot`, `P4 Expand`][idx];
+      pill.textContent = `${short}: ${done}/${phaseTotal}`;
+      if (done === phaseTotal) pill.classList.add('complete');
+      else if (done > 0) pill.classList.add('in-progress');
+      pillsEl.appendChild(pill);
+    });
+
+    const pct = Math.round((totalDone / total) * 100);
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('pct-display').textContent = pct + '%';
+  }
+
+  // ── Company name stamp ────────────────────────────────────────────────────────
+  function updateCompanyName(val) {
+    const display = document.getElementById('company-display');
+    display.textContent = val.trim() || 'New Client';
+    saveState();
+  }
+
+  // ── Reset ─────────────────────────────────────────────────────────────────────
+  function resetAll() {
+    if (!confirm('Reset all checkboxes?')) return;
+    document.querySelectorAll('.check-row.done').forEach(r => r.classList.remove('done'));
+    updateProgress();
+    saveState();
+  }
+
+  // ── Persistence (localStorage) ────────────────────────────────────────────────
+  function saveState() {
+    const rows = Array.from(document.querySelectorAll('.check-row'));
+    const state = rows.map(r => r.classList.contains('done'));
+    const company = document.getElementById('company-name-input').value;
+    try {
+      localStorage.setItem('checklist-state', JSON.stringify(state));
+      localStorage.setItem('checklist-company', company);
+    } catch (e) { /* ignore quota errors */ }
+  }
+
+  function loadState() {
+    try {
+      const state = JSON.parse(localStorage.getItem('checklist-state') || '[]');
+      const rows = Array.from(document.querySelectorAll('.check-row'));
+      rows.forEach((r, i) => {
+        if (state[i]) r.classList.add('done');
+      });
+      const company = localStorage.getItem('checklist-company') || '';
+      if (company) {
+        document.getElementById('company-name-input').value = company;
+        updateCompanyName(company);
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    loadState();
+    updateProgress();
+  });
+</script>
+</body>
+</html>
