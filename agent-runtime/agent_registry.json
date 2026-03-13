@@ -1,0 +1,31 @@
+{
+  "agents": [
+    {
+      "slug": "replenishment",
+      "name": "Replenishment Agent",
+      "script": "pilot-agents/replenishment_agent.py",
+      "schedule": "0 6 * * 1-5",
+      "authority_level": "MEDIUM",
+      "enabled": true,
+      "description": "Monitors inventory levels and auto-creates purchase requisitions within authority threshold"
+    },
+    {
+      "slug": "demand-forecast",
+      "name": "Demand Forecast Agent",
+      "script": "pilot-agents/demand_forecast_agent.py",
+      "schedule": "0 5 * * 1",
+      "authority_level": "LOW",
+      "enabled": true,
+      "description": "Generates 13-week rolling demand forecasts from sales history"
+    },
+    {
+      "slug": "quality-capa",
+      "name": "Quality CAPA Agent",
+      "script": "pilot-agents/quality_capa_agent.py",
+      "schedule": "0 */4 * * *",
+      "authority_level": "HIGH",
+      "enabled": true,
+      "description": "Detects quality deviations and drafts CAPA recommendations for human review"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "slack_webhook_url": "",
+  "email_config": {
+    "smtp_host": "",
+    "smtp_port": 587,
+    "from_address": "",
+    "to_addresses": []
+  },
+  "escalation_recipients": []
+}
