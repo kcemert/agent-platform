@@ -1,18 +1,105 @@
 {
-  "branchName": "ralph/workspace-setup",
-  "projectName": "Agentic Projects Workspace",
-  "description": "Multi-project workspace managed by Ralph autonomous loop",
+  "branchName": "ralph/epic-2-partner-pitch",
+  "projectName": "Business Agents — Partner Pitch Deck",
+  "description": "Epic 2: Build a concise partner pitch deck using office-skills PPTX generation",
+  "githubRepo": "kcemert/business-agents",
   "userStories": [
     {
-      "id": "SETUP-001",
-      "title": "Workspace README",
-      "project": "root",
+      "id": "E2-S1",
+      "githubIssue": 7,
+      "title": "Define deck outline and narrative arc",
+      "project": "office-skills",
       "priority": 1,
-      "description": "Create a README.md at the workspace root documenting the project structure, what each sub-project does, and how to run the Ralph loop.",
+      "description": "Create a structured outline for the partner pitch deck. Save as business-agents/deck/outline.md. Define 8-12 slides with title, key message, and supporting points. Narrative: Problem → Vision → How It Works → First Pilot → Business Model → Why Us → Next Steps.",
       "acceptanceCriteria": [
-        "README.md exists at workspace root",
-        "Documents joji-charity, party-invites, and business-agents projects",
-        "Explains how to run ralph (./ralph/ralph.sh --tool claude)"
+        "business-agents/deck/outline.md exists with full slide structure",
+        "Each slide has: title, 1-sentence key message, 3-5 bullet supporting points",
+        "Narrative arc flows logically from problem to call to action"
+      ],
+      "passes": false
+    },
+    {
+      "id": "E2-S2",
+      "githubIssue": 8,
+      "title": "Build Problem slides — the enterprise automation gap",
+      "project": "office-skills",
+      "priority": 2,
+      "description": "Create 2 HTML slides for the problem section. Slide 1: scale of manual work in enterprise (cost, errors, speed). Slide 2: why existing automation (RPA) fails — brittleness, no reasoning, exception handling gaps. Convert to PPTX via html2pptx.",
+      "acceptanceCriteria": [
+        "2 HTML slide files in office-skills/outputs/partner-pitch/slides/",
+        "Strong visual headline per slide, minimal text",
+        "PPTX slides generated and readable"
+      ],
+      "passes": false
+    },
+    {
+      "id": "E2-S3",
+      "githubIssue": 9,
+      "title": "Build Solution slides — agentic pilots hooked to real systems",
+      "project": "office-skills",
+      "priority": 3,
+      "description": "Create 3 HTML slides: (1) Our approach diagram: Process Map → Opportunity Matrix → Agent Pilot → Scale. (2) What an agent is vs RPA. (3) Systems we connect to (SAP, Salesforce, MES, CRM). Use data from business-agents DB where relevant.",
+      "acceptanceCriteria": [
+        "3 HTML slides in office-skills/outputs/partner-pitch/slides/",
+        "Opportunity matrix concept visually clear",
+        "Systems slide shows real system names from our DB"
+      ],
+      "passes": false
+    },
+    {
+      "id": "E2-S4",
+      "githubIssue": 10,
+      "title": "Build First Pilot slide — demand forecasting agent",
+      "project": "office-skills",
+      "priority": 4,
+      "description": "Create 1-2 slides showing the concrete demand forecasting pilot. Run `python3 business-agents/query.py opportunities CG` to pull process 4.1.1.1 data. Show: workflow (SAP + POS → forecast → S&OP), systems connected, business value (time saved, accuracy improvement).",
+      "acceptanceCriteria": [
+        "Slides reference real data from business_agents.db",
+        "Agent workflow clearly visualized",
+        "Quantified business value included"
+      ],
+      "passes": false
+    },
+    {
+      "id": "E2-S5",
+      "githubIssue": 11,
+      "title": "Build Business Model slide — consulting + implementation + expansion",
+      "project": "office-skills",
+      "priority": 5,
+      "description": "Create 1 slide showing the three-phase engagement model: Discovery (2-3 weeks, process mapping + opportunity scoring) → Pilot (4-8 weeks, one agent live) → Expand (ongoing, agent library + retainer). Visualize as timeline or phases.",
+      "acceptanceCriteria": [
+        "Three phases clearly shown with timeframes",
+        "Revenue model implied per phase",
+        "Clean, professional design"
+      ],
+      "passes": false
+    },
+    {
+      "id": "E2-S6",
+      "githubIssue": 12,
+      "title": "Build Why Us / Differentiation slide",
+      "project": "office-skills",
+      "priority": 6,
+      "description": "Create 1 slide with 3-4 clear differentiators: (1) Process-first not tech-first, (2) Pre-built agent library from APQC taxonomy, (3) Faster pilot via pre-mapped opportunity matrices, (4) Works with existing systems — no rip and replace.",
+      "acceptanceCriteria": [
+        "3-4 differentiators clearly stated",
+        "Implicitly positions against DIY AI, generic consulting, RPA",
+        "Confident, concise tone"
+      ],
+      "passes": false
+    },
+    {
+      "id": "E2-S7",
+      "githubIssue": 13,
+      "title": "Assemble final PPTX and generate visual review",
+      "project": "office-skills",
+      "priority": 7,
+      "description": "Combine all slides into partner-pitch-v1.pptx. Apply consistent theme: professional color palette, clean fonts, logo placeholder. Generate thumbnail grid PNG for review. Follow office-skills/public/pptx/SKILL.md workflow.",
+      "acceptanceCriteria": [
+        "office-skills/outputs/partner-pitch/partner-pitch-v1.pptx exists",
+        "Thumbnail grid PNG generated",
+        "Consistent design across all slides",
+        "No text overflow or layout issues"
       ],
       "passes": false
     }
