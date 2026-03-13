@@ -23,19 +23,32 @@ You are an autonomous coding agent working across multiple projects in this work
 
 ## Your Task Each Iteration
 
-1. Read `ralph/prd.json` — find the highest priority story where `passes: false`
-2. Read `ralph/progress.txt` — check **Codebase Patterns** section first
-3. Check the story's `project` field to know which directory to work in
-4. If the story requires a new project, create it under the workspace root
-5. Implement that **single user story**
-6. Run quality checks appropriate for the project (lint, typecheck, test, build)
-7. Commit ALL changes to the relevant project's git repo with:
-   `feat: [Story ID] - [Story Title]`
-   - For existing projects: commit to their own git repo
-   - For new projects: initialize git if needed, then commit
-8. Update `ralph/prd.json` — set `passes: true` for the completed story
-9. Append your progress to `ralph/progress.txt`
-10. Log the run to the episodic memory DB (see below)
+1. Check what other agents are doing: `python3 business-agents/query.py status`
+2. Read `ralph/prd.json` — find the highest priority story where `passes: false`
+   - Skip stories already claimed by another session (check story_claims in DB)
+3. Read `ralph/progress.txt` — check **Codebase Patterns** section first
+4. **Claim your story atomically** before starting any work:
+   ```bash
+   python3 business-agents/query.py claim STORY-ID $SESSION_ID
+   ```
+   If exit code is 1 (already claimed), pick the next unclaimed story.
+5. Send a heartbeat with your claimed story:
+   ```bash
+   python3 business-agents/query.py heartbeat $SESSION_ID STORY-ID project-name
+   ```
+6. Check the story's `project` field to know which directory to work in
+7. If the story requires a new project, create it under the workspace root
+8. Implement that **single user story**
+9. Run quality checks appropriate for the project (lint, typecheck, test, build)
+10. Commit ALL changes to the relevant project's git repo with:
+    `feat: [Story ID] - [Story Title]`
+11. Update `ralph/prd.json` — set `passes: true` for the completed story
+12. Release the story claim:
+    ```bash
+    python3 business-agents/query.py release STORY-ID complete
+    ```
+13. Append your progress to `ralph/progress.txt`
+14. Log the run to the episodic memory DB (see below)
 
 ## Progress Report Format
 

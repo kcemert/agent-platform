@@ -1,13 +1,14 @@
 #!/bin/bash
 # Ralph Wiggum - Long-running AI agent loop
-# Usage: ./ralph.sh [--tool amp|claude] [max_iterations]
-# Multi-project workspace edition
+# Usage: ./ralph.sh [--tool amp|claude] [--name agent-name] [max_iterations]
+# Multi-project workspace edition with multi-agent coordination
 
 set -e
 
 # Parse arguments
-TOOL="claude"  # Default to claude for this workspace
+TOOL="claude"
 MAX_ITERATIONS=10
+AGENT_NAME=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -19,6 +20,14 @@ while [[ $# -gt 0 ]]; do
       TOOL="${1#*=}"
       shift
       ;;
+    --name)
+      AGENT_NAME="$2"
+      shift 2
+      ;;
+    --name=*)
+      AGENT_NAME="${1#*=}"
+      shift
+      ;;
     *)
       if [[ "$1" =~ ^[0-9]+$ ]]; then
         MAX_ITERATIONS="$1"
@@ -28,26 +37,35 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Validate tool choice
 if [[ "$TOOL" != "amp" && "$TOOL" != "claude" ]]; then
   echo "Error: Invalid tool '$TOOL'. Must be 'amp' or 'claude'."
   exit 1
 fi
 
+WORKSPACE="/Users/keith_ai/Documents/Agentic Projects"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PRD_FILE="$SCRIPT_DIR/prd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
 ARCHIVE_DIR="$SCRIPT_DIR/archive"
 LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
+QUERY="python3 $WORKSPACE/business-agents/query.py"
 
-# Verify required files exist
 if [ ! -f "$PRD_FILE" ]; then
   echo "Error: prd.json not found at $PRD_FILE"
-  echo "Create a prd.json file with your user stories before running Ralph."
   exit 1
 fi
 
+# ---------------------------------------------------------------
+# Generate a unique session ID for this ralph instance
+# ---------------------------------------------------------------
+SESSION_ID=$(python3 -c "import uuid; print(str(uuid.uuid4()))")
+if [ -n "$AGENT_NAME" ]; then
+  SESSION_ID="${AGENT_NAME}-${SESSION_ID:0:8}"
+fi
+
+# ---------------------------------------------------------------
 # Archive previous run if branch changed
+# ---------------------------------------------------------------
 if [ -f "$PRD_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
   CURRENT_BRANCH=$(jq -r '.branchName // empty' "$PRD_FILE" 2>/dev/null || echo "")
   LAST_BRANCH=$(cat "$LAST_BRANCH_FILE" 2>/dev/null || echo "")
@@ -69,7 +87,6 @@ if [ -f "$PRD_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
   fi
 fi
 
-# Track current branch
 if [ -f "$PRD_FILE" ]; then
   CURRENT_BRANCH=$(jq -r '.branchName // empty' "$PRD_FILE" 2>/dev/null || echo "")
   if [ -n "$CURRENT_BRANCH" ]; then
@@ -77,33 +94,62 @@ if [ -f "$PRD_FILE" ]; then
   fi
 fi
 
-# Initialize progress file if it doesn't exist
 if [ ! -f "$PROGRESS_FILE" ]; then
   echo "# Ralph Progress Log" > "$PROGRESS_FILE"
   echo "Started: $(date)" >> "$PROGRESS_FILE"
   echo "---" >> "$PROGRESS_FILE"
 fi
 
-echo "Starting Ralph - Tool: $TOOL - Max iterations: $MAX_ITERATIONS"
-echo "Workspace: /Users/keith_ai/Documents/Agentic Projects"
+# ---------------------------------------------------------------
+# Register this session in the coordination DB
+# ---------------------------------------------------------------
+$QUERY register "{\"id\": \"$SESSION_ID\", \"pid\": $$, \"tool\": \"$TOOL\"}" 2>/dev/null || true
+
+cleanup() {
+  echo ""
+  echo "Deregistering session $SESSION_ID..."
+  $QUERY deregister "$SESSION_ID" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+echo ""
+echo "==============================================================="
+echo "  Ralph starting — Session: $SESSION_ID"
+echo "  Tool: $TOOL | Max iterations: $MAX_ITERATIONS"
+echo "  Workspace: $WORKSPACE"
+echo "==============================================================="
+echo ""
+echo "Other active agents:"
+$QUERY status 2>/dev/null || echo "  (coordination DB unavailable)"
 echo ""
 
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo ""
-  echo "==============================================================="
-  echo "  Ralph Iteration $i of $MAX_ITERATIONS ($TOOL)"
-  echo "==============================================================="
+  echo "---------------------------------------------------------------"
+  echo "  Iteration $i of $MAX_ITERATIONS | Session: ${SESSION_ID:0:16}..."
+  echo "---------------------------------------------------------------"
+
+  # Heartbeat — let other agents know we're alive
+  $QUERY heartbeat "$SESSION_ID" 2>/dev/null || true
+
+  # Pass session ID to agent so it can use claim/release
+  AGENT_PROMPT=$(cat "$SCRIPT_DIR/CLAUDE.md")
+  AGENT_PROMPT="$AGENT_PROMPT
+
+## This Session
+SESSION_ID=$SESSION_ID
+ITERATION=$i
+"
 
   if [[ "$TOOL" == "amp" ]]; then
-    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
+    OUTPUT=$(echo "$AGENT_PROMPT" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
   else
-    OUTPUT=$(claude --dangerously-skip-permissions --print < "$SCRIPT_DIR/CLAUDE.md" 2>&1 | tee /dev/stderr) || true
+    OUTPUT=$(echo "$AGENT_PROMPT" | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || true
   fi
 
-  # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
     echo ""
-    echo "Ralph completed all tasks!"
+    echo "Ralph completed all tasks! (Session: $SESSION_ID)"
     echo "Completed at iteration $i of $MAX_ITERATIONS"
     exit 0
   fi
@@ -113,6 +159,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 done
 
 echo ""
-echo "Ralph reached max iterations ($MAX_ITERATIONS) without completing all tasks."
+echo "Ralph reached max iterations ($MAX_ITERATIONS)."
+echo "Session: $SESSION_ID"
 echo "Check $PROGRESS_FILE for status."
 exit 1
