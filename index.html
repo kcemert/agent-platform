@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Agents Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+
+      --indigo: #6366f1;
+      --indigo-dim: #6366f120;
+      --indigo-border: #6366f140;
+
+      --cyan: #06b6d4;
+      --cyan-dim: #06b6d420;
+      --cyan-border: #06b6d440;
+
+      --orange: #f97316;
+      --orange-dim: #f9731620;
+      --orange-border: #f9731640;
+
+      --green: #22c55e;
+      --green-dim: #22c55e20;
+
+      --grey-dim: #64748b20;
+      --grey-border: #64748b40;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      min-width: 900px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 48px 64px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-left h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .header-left p {
+      font-size: 0.975rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .stat-badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.01em;
+    }
+
+    .last-updated {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Main content ── */
+    main {
+      flex: 1;
+      padding: 48px 64px;
+    }
+
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+    }
+
+    /* ── Category section ── */
+    .category-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-left: 16px;
+      border-left-width: 3px;
+      border-left-style: solid;
+    }
+
+    .category-header.sales { border-left-color: var(--indigo); }
+    .category-header.platform { border-left-color: var(--cyan); }
+    .category-header.agent-ops { border-left-color: var(--orange); }
+
+    .category-header h2 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .category-header.sales h2 { color: var(--indigo); }
+    .category-header.platform h2 { color: var(--cyan); }
+    .category-header.agent-ops h2 { color: var(--orange); }
+
+    .category-count {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--border);
+      border-radius: 20px;
+      padding: 2px 10px;
+    }
+
+    /* ── Cards grid ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      position: relative;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .card.sales:hover { border-color: var(--indigo-border); }
+    .card.platform:hover { border-color: var(--cyan-border); }
+    .card.agent-ops:hover { border-color: var(--orange-border); }
+
+    .card.coming-soon {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .card.coming-soon:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: var(--border);
+    }
+
+    /* Card top row */
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 10px;
+      flex-shrink: 0;
+    }
+
+    .status-badge.active {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid #22c55e30;
+    }
+
+    .status-badge.coming-soon {
+      background: var(--grey-dim);
+      color: var(--text-muted);
+      border: 1px solid var(--grey-border);
+    }
+
+    /* Card body */
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .card-description {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    /* Audience pills */
+    .audience-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--border);
+      border-radius: 20px;
+      padding: 2px 9px;
+      letter-spacing: 0.02em;
+    }
+
+    /* Open button */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+
+    .open-btn {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 14px;
+      text-decoration: none;
+      transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+      pointer-events: none; /* card handles click */
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card:hover .open-btn {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+    }
+
+    .card.sales:hover .open-btn {
+      color: var(--indigo);
+      border-color: var(--indigo-border);
+      background: var(--indigo-dim);
+    }
+
+    .card.platform:hover .open-btn {
+      color: var(--cyan);
+      border-color: var(--cyan-border);
+      background: var(--cyan-dim);
+    }
+
+    .card.agent-ops:hover .open-btn {
+      color: var(--orange);
+      border-color: var(--orange-border);
+      background: var(--orange-dim);
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 24px 64px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer span {
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <h1>Business Agents Platform</h1>
+        <p>Internal tooling and client-facing materials</p>
+      </div>
+      <div class="header-right">
+        <div class="stat-badge">9 tools across 3 categories</div>
+        <div class="last-updated">Last updated: March 13, 2026</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ── -->
+  <main>
+    <div class="content-inner">
+
+      <!-- ── Sales & Client-Facing ── -->
+      <section class="category-section">
+        <div class="category-header sales">
+          <h2>Sales &amp; Client-Facing</h2>
+          <span class="category-count">4 tools</span>
+        </div>
+
+        <div class="cards-grid">
+
+          <!-- Partner Pitch Deck -->
+          <a class="card sales" href="office-skills/outputs/partner-pitch/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">📊</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Partner Pitch Deck</div>
+            <div class="card-description">13-slide reveal.js presentation covering the full platform story — capabilities, blueprints, and deployment model.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Executive One-Pager -->
+          <a class="card sales" href="office-skills/outputs/comm-framework/exec-summary.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">📄</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Executive One-Pager</div>
+            <div class="card-description">Single-page executive summary of the platform value proposition and business case for agent deployment.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- ROI Calculator -->
+          <a class="card sales" href="office-skills/outputs/comm-framework/roi-calculator.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🧮</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">ROI Calculator</div>
+            <div class="card-description">Interactive calculator for estimating cost savings and productivity gains from agent deployment at scale.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Technical Overview -->
+          <a class="card sales" href="office-skills/outputs/comm-framework/technical-overview.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🔧</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Technical Architecture Overview</div>
+            <div class="card-description">Deep-dive into platform architecture, integration patterns, security model, and deployment options.</div>
+            <div class="audience-pills">
+              <span class="pill">Engineering</span>
+              <span class="pill">Partner</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- ── Platform Tools ── -->
+      <section class="category-section">
+        <div class="category-header platform">
+          <h2>Platform Tools</h2>
+          <span class="category-count">4 tools</span>
+        </div>
+
+        <div class="cards-grid">
+
+          <!-- Process Taxonomy Browser -->
+          <a class="card platform" href="business-agents/browser/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🌳</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Process Taxonomy Browser</div>
+            <div class="card-description">APQC process classification framework browser for mapping agent capabilities to business processes.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Engineering</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Blueprint Viewer -->
+          <a class="card platform" href="business-agents/blueprints/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">📋</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Agent Blueprint Viewer</div>
+            <div class="card-description">Browse, filter, and explore all available agent blueprints — definitions, capabilities, and deployment specs.</div>
+            <div class="audience-pills">
+              <span class="pill">Engineering</span>
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Enterprise Dashboard -->
+          <a class="card platform" href="business-agents/dashboard/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🖥️</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Enterprise Operations Dashboard</div>
+            <div class="card-description">Enterprise-wide view of agent deployments, performance metrics, and real-time operational status.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Value Chain Heatmap — Coming Soon -->
+          <div class="card platform coming-soon">
+            <div class="card-top">
+              <span class="card-icon">🔗</span>
+              <span class="status-badge coming-soon">Coming Soon</span>
+            </div>
+            <div class="card-title">Industry Value Chain Heatmap</div>
+            <div class="card-description">Visual heatmap of agent automation opportunities mapped across industry value chains and business functions.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn" style="opacity: 0.4;">Coming Soon</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── Agent Operations ── -->
+      <section class="category-section">
+        <div class="category-header agent-ops">
+          <h2>Agent Operations</h2>
+          <span class="category-count">1 tool</span>
+        </div>
+
+        <div class="cards-grid">
+
+          <!-- Pilot Agent Dashboard -->
+          <a class="card agent-ops" href="pilot-agents/dashboard.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">⚡</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Pilot Agent Dashboard</div>
+            <div class="card-description">Live run results and operational metrics for pilot agent deployments — tracks real execution data and performance.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Engineering</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span>Business Agents Platform &mdash; Internal use only &nbsp;|&nbsp; Built with Claude Code</span>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+{
+  "last_updated": "2026-03-13",
+  "views": [
+    {
+      "id": "partner-pitch",
+      "title": "Partner Pitch Deck",
+      "description": "13-slide reveal.js presentation covering the full platform story — capabilities, blueprints, and deployment model",
+      "path": "office-skills/outputs/partner-pitch/index.html",
+      "category": "sales",
+      "audience": ["executive", "partner"],
+      "status": "active",
+      "tags": ["pitch", "reveal.js", "capabilities", "blueprints", "slides"]
+    },
+    {
+      "id": "exec-summary",
+      "title": "Executive One-Pager",
+      "description": "Single-page executive summary of the Business Agents platform value proposition and ROI case",
+      "path": "office-skills/outputs/comm-framework/exec-summary.html",
+      "category": "sales",
+      "audience": ["executive", "partner", "client"],
+      "status": "active",
+      "tags": ["executive", "summary", "one-pager", "value-proposition"]
+    },
+    {
+      "id": "roi-calculator",
+      "title": "ROI Calculator",
+      "description": "Interactive calculator for estimating cost savings and productivity gains from agent deployment",
+      "path": "office-skills/outputs/comm-framework/roi-calculator.html",
+      "category": "sales",
+      "audience": ["executive", "partner", "client"],
+      "status": "active",
+      "tags": ["roi", "calculator", "interactive", "cost-savings", "productivity"]
+    },
+    {
+      "id": "technical-overview",
+      "title": "Technical Architecture Overview",
+      "description": "Deep-dive into the platform's technical architecture, integration patterns, and deployment options",
+      "path": "office-skills/outputs/comm-framework/technical-overview.html",
+      "category": "sales",
+      "audience": ["engineering", "partner"],
+      "status": "active",
+      "tags": ["technical", "architecture", "integration", "engineering"]
+    },
+    {
+      "id": "process-taxonomy-browser",
+      "title": "Process Taxonomy Browser",
+      "description": "APQC process classification framework browser for mapping agent capabilities to business processes",
+      "path": "business-agents/browser/index.html",
+      "category": "platform",
+      "audience": ["ops", "engineering", "internal"],
+      "status": "active",
+      "tags": ["apqc", "taxonomy", "processes", "classification", "browser"]
+    },
+    {
+      "id": "blueprint-viewer",
+      "title": "Agent Blueprint Viewer",
+      "description": "Interactive viewer for agent blueprints — browse, filter, and explore all available agent definitions",
+      "path": "business-agents/blueprints/index.html",
+      "category": "platform",
+      "audience": ["engineering", "ops", "internal"],
+      "status": "active",
+      "tags": ["blueprints", "agents", "definitions", "catalog"]
+    },
+    {
+      "id": "enterprise-dashboard",
+      "title": "Enterprise Operations Dashboard",
+      "description": "Real-time enterprise-wide view of agent deployments, performance metrics, and operational status",
+      "path": "business-agents/dashboard/index.html",
+      "category": "platform",
+      "audience": ["executive", "ops", "internal"],
+      "status": "active",
+      "tags": ["dashboard", "enterprise", "metrics", "operations", "monitoring"]
+    },
+    {
+      "id": "value-chain-heatmap",
+      "title": "Industry Value Chain Heatmap",
+      "description": "Visual heatmap of agent automation opportunities mapped across industry value chains",
+      "path": "business-agents/value-chain/index.html",
+      "category": "platform",
+      "audience": ["executive", "partner", "client"],
+      "status": "coming-soon",
+      "tags": ["value-chain", "heatmap", "industry", "automation", "opportunities"]
+    },
+    {
+      "id": "pilot-agent-dashboard",
+      "title": "Pilot Agent Dashboard",
+      "description": "Live run results and operational metrics for pilot agent deployments — tracks real execution data",
+      "path": "pilot-agents/dashboard.html",
+      "category": "agent-ops",
+      "audience": ["ops", "engineering", "internal"],
+      "status": "active",
+      "tags": ["pilot", "agents", "live", "results", "metrics", "operations"]
+    }
+  ]
+}
