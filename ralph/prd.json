@@ -1,0 +1,20 @@
+{
+  "branchName": "ralph/workspace-setup",
+  "projectName": "Agentic Projects Workspace",
+  "description": "Multi-project workspace managed by Ralph autonomous loop",
+  "userStories": [
+    {
+      "id": "SETUP-001",
+      "title": "Workspace README",
+      "project": "root",
+      "priority": 1,
+      "description": "Create a README.md at the workspace root documenting the project structure, what each sub-project does, and how to run the Ralph loop.",
+      "acceptanceCriteria": [
+        "README.md exists at workspace root",
+        "Documents joji-charity, party-invites, and business-agents projects",
+        "Explains how to run ralph (./ralph/ralph.sh --tool claude)"
+      ],
+      "passes": false
+    }
+  ]
+}

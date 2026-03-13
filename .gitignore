@@ -1,0 +1,13 @@
+# Sub-project git repos (each manages its own git history)
+joji-charity/.git/
+party-invites/.git/
+
+# OS
+.DS_Store
+
+# Ralph archives (keep local only)
+ralph/archive/
+ralph/.last-branch
+
+# Node
+node_modules/

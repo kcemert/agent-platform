@@ -1,0 +1,11 @@
+# Ralph Progress Log
+Started: 2026-03-13
+---
+
+## Codebase Patterns
+- joji-charity: Static HTML/CSS/JS site. No build step. Files: index.html, about.html, children.html, community.html, donate.html, css/styles.css, js/main.js, js/geodata.js. Has its own git repo.
+- party-invites: Has a skills directory and Excel reference file. Has its own git.
+- Workspace root: /Users/keith_ai/Documents/Agentic Projects — now has a git repo for ralph coordination.
+- Ralph loop: run with ./ralph/ralph.sh --tool claude [max_iterations]
+
+---
