@@ -1,0 +1,7 @@
+version: 3.0
+default_profile: default
+
+# Profile inheritance can be defined here
+# profiles:
+#   project-profile:
+#     inherits_from: default

@@ -7,10 +7,19 @@ You are an autonomous coding agent working across multiple projects in this work
 ```
 /Users/keith_ai/Documents/Agentic Projects/
 ├── ralph/              ← You live here (prd.json, progress.txt)
+├── business-agents/    ← Agent repository DB (business_agents.db + query.py)
+├── agent-os/           ← Standards management (standards/, specs/)
+├── office-skills/      ← Office doc generation (PPTX, DOCX, XLSX, PDF)
 ├── joji-charity/       ← Charity website (HTML/CSS/JS, has its own git)
 ├── party-invites/      ← Party invites project (has skills)
 └── [new projects]/     ← New projects created as needed
 ```
+
+## Key Capabilities Available
+
+- **Office docs**: Use `office-skills/` to create PPTX, DOCX, XLSX, PDF. Read `office-skills/public/pptx/SKILL.md` before creating any presentation.
+- **Standards**: Run `/discover-standards` or `/inject-standards` for project conventions
+- **DB queries**: `python3 business-agents/query.py <command>` for process/agent data
 
 ## Your Task Each Iteration
 
@@ -22,10 +31,11 @@ You are an autonomous coding agent working across multiple projects in this work
 6. Run quality checks appropriate for the project (lint, typecheck, test, build)
 7. Commit ALL changes to the relevant project's git repo with:
    `feat: [Story ID] - [Story Title]`
-   - For existing projects (joji-charity, party-invites): commit to their own git repo
+   - For existing projects: commit to their own git repo
    - For new projects: initialize git if needed, then commit
 8. Update `ralph/prd.json` — set `passes: true` for the completed story
 9. Append your progress to `ralph/progress.txt`
+10. Log the run to the episodic memory DB (see below)
 
 ## Progress Report Format
 
@@ -49,8 +59,32 @@ If you discover a reusable pattern, add it to the `## Codebase Patterns` section
 ## Codebase Patterns
 - joji-charity: Static HTML site, no build step needed, just edit files directly
 - party-invites: Uses iMessage/SMS via skills
+- business-agents: SQLite DB at business-agents/business_agents.db, query with python3 business-agents/query.py
 - [new patterns go here]
 ```
+
+## Episodic Memory — Log Every Run
+
+After completing (or failing) a story, log it to the agent runs database:
+
+```bash
+python3 /Users/keith_ai/Documents/Agentic\ Projects/business-agents/query.py log_run '{
+  "story_id": "STORY-001",
+  "story_title": "Story title here",
+  "project": "project-name",
+  "outcome": "success",
+  "files_changed": "path/to/file1.py, path/to/file2.ts",
+  "tools_used": "Edit, Bash, Write",
+  "learnings": "Key insight discovered during this iteration",
+  "patterns_added": "Pattern added to progress.txt if any",
+  "commit_hash": "abc1234",
+  "iteration_num": 1,
+  "duration_secs": 120
+}'
+```
+
+outcome must be one of: success | partial | failed | skipped
+Always log even on failure — set outcome to "failed" and fill error_summary.
 
 ## Quality Requirements
 

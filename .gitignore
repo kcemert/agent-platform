@@ -1,6 +1,8 @@
-# Sub-project git repos (each manages its own git history)
+# Sub-project git repos (each manages their own git history)
 joji-charity/.git/
 party-invites/.git/
+business-agents/.git/
+office-skills/.git/
 
 # OS
 .DS_Store
@@ -9,5 +11,10 @@ party-invites/.git/
 ralph/archive/
 ralph/.last-branch
 
-# Node
+# Node / Python deps (installed locally per project)
 node_modules/
+office-skills/node_modules/
+office-skills/venv/
+
+# Agent OS specs (work in progress, keep local)
+agent-os/specs/
