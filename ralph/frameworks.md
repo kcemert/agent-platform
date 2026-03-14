@@ -882,3 +882,192 @@ F20 (Client Profile) → identifies which personas need dashboards
 F21 (Dashboard Specification) → defines what each dashboard must contain
 F19 (Quality Rubric) → evaluates whether the built dashboard meets the spec
 ```
+
+---
+
+## 22. Manufacturing Strategy Framework
+
+**What it is:** A classification system for how a manufacturer produces and delivers its products. Determines which agents are relevant, what data model to use (project-order vs. SKU), and how inventory and capacity should be managed.
+
+**How we use it:** Informs blueprint selection, agent design, and client portal data models. A client's manufacturing strategy determines whether they need ETO-style project agents or MTS-style inventory agents — or both (hybrid).
+
+### Manufacturing Modes
+
+| Mode | Full Name | Definition | Lead Time | Inventory | Agent pattern |
+|---|---|---|---|---|---|
+| ETO | Engineer-to-Order | Design + build custom to spec per order | Weeks–months | Raw material only | RFQ→Spec→BOM→Fabrication agents |
+| MTO | Make-to-Order | Build from standard design to specific order | Days–weeks | WIP components | Order→BOM→Fab agents; some component stock |
+| MTS | Make-to-Stock | Build to forecast; ship from finished goods inventory | Hours–days | Finished goods | Inventory replenishment, demand forecast agents |
+| ATO | Assemble-to-Order | Standard modular components assembled per order | Days | Component stock | Configuration + assembly scheduling agents |
+| Distribution | Resell without manufacturing | Buy from supplier, sell with/without value-add | Hours–days | Finished goods (3rd party) | Procurement, order management, supplier agents |
+
+### Key Classification Dimensions
+
+| Dimension | What to ask | Impact on platform |
+|---|---|---|
+| **Decoupling point** | Where does the customer order enter the supply chain? | Determines inventory investment and agent trigger points |
+| **Volume × Variety** | High variety + low volume = ETO; Low variety + high volume = MTS | Blueprint selection |
+| **Lead time target** | What does the market expect? | Determines where capacity and data latency matter |
+| **Custom design effort** | Hours of engineering per order? | Application engineering agents vs. catalog agents |
+| **Repeat vs. unique** | Are customers reordering the same thing? | Retrofit/reorder agents vs. always-new-spec agents |
+
+### Hybrid Manufacturing (e.g., Kimre)
+
+Many manufacturers operate multiple modes simultaneously. For example:
+- **Kimre**: ETO (B-GON®, LIQUI-NOMIX® custom mist eliminators) + MTO (standard fiber bed cages) + MTS (KON-TANE® packing, fiber media)
+
+In hybrid cases:
+1. Classify each product family separately
+2. Design different agent flows per lane
+3. The client portal should reflect both (project orders + catalog SKUs)
+4. Capacity planning must balance both demand patterns
+
+### Relationship to Other Frameworks
+
+```
+F20 (Client Profile) → business_model_type field now supports multi-mode (ETO+MTO+MTS)
+F22 (Manufacturing Strategy) → informs which blueprint lane applies per product
+F23 (Business Model) → manufacturing mode is one dimension of the broader business model
+```
+
+---
+
+## 23. Business Model Framework
+
+**What it is:** A structured taxonomy of how a company creates, delivers, and captures value. Goes beyond manufacturing mode to include revenue structure, customer relationship type, and strategic expansion opportunities.
+
+**How we use it:** During client profiling (F20), the business model classification determines which agent opportunities are most valuable, what the sales motion looks like, and what strategic expansion paths exist.
+
+### Core Business Model Types
+
+| Type | Revenue driver | Customer relationship | Agent opportunities |
+|---|---|---|---|
+| **ETO Custom** | Per-project revenue | Project-by-project, engineering-led | RFQ triage, spec gen, BOM creation, schedule optimization |
+| **MTO/MTS Product** | Unit sales from catalog | Repeat-order, procurement-led | Inventory replenishment, demand forecast, reorder alerts |
+| **Distribution** | Margin on resold product | Transactional, volume-driven | Supplier sourcing, margin optimization, order routing |
+| **Service/Maintenance** | Recurring contracts, time & materials | Ongoing, relationship-driven | Maintenance scheduling, SLA monitoring, predictive service |
+| **Performance Contract** | Outcome-based (efficiency, uptime guarantee) | Deep partnership, data-sharing | Monitoring agents, outcome tracking, intervention triggers |
+| **Technology Licensing** | Royalty on IP use | Arm's-length, legal-structured | Compliance tracking, royalty calculation |
+| **Digital/SaaS** | Subscription to software or data | Platform relationship, usage-driven | All agent types; platform itself is the product |
+| **Hybrid** | Multiple above | Varies by product line | Mix of above |
+
+### Business Model Expansion Pathways
+
+A common strategic evolution for industrial manufacturers:
+
+```
+Stage 1: Product sales (ETO/MTS) → "we make things"
+Stage 2: Add service layer → "we maintain what we made"
+Stage 3: Add distribution → "we also supply complementary products"
+Stage 4: Add performance contracts → "we guarantee outcomes"
+Stage 5: Add digital layer → "we provide data, insights, customer portal"
+Stage 6: Platform/ecosystem → "our customers' customers interact with our system"
+```
+
+Kimre's current position: Stage 1 (core) with Stage 2 opportunity (service/maintenance) and Stage 5 potential (customer-facing digital tools — asset dashboards, compliance trackers, order portals).
+
+### Customer-Facing Digital (Stage 5)
+
+A manufacturer offering digital tools to their own customers creates a second layer of value:
+
+| Tool | What customer gets | What manufacturer gains |
+|---|---|---|
+| Asset performance dashboard | Real-time health of installed equipment | Installed base visibility, early retrofit signal |
+| Predictive service alerts | "Your unit is due in 3 months" | Proactive sales, no cold outreach |
+| Compliance tracker | EPA/regulatory performance against specs | Positioned as compliance partner, not just vendor |
+| Customer order portal | Self-serve RFQ, order tracking, cert downloads | Reduces CS workload, faster customer experience |
+| Replacement/reorder scheduler | Smart triggers for consumables (media, packing) | Predictable MTS revenue stream |
+
+**Architecture note:** The internal agent platform (dashboards, pilot agents, server.py) is the foundation. Customer-facing tools are a read-optimized, permissioned view of the same data — not a separate system. A `customer_portal` flag on records controls what is visible externally.
+
+### Relationship to Other Frameworks
+
+```
+F20 (Client Profile) → business_model_type field maps to this taxonomy
+F22 (Manufacturing Strategy) → manufacturing mode is a sub-dimension of business model
+F23 (Business Model) → used in pre-sales assessment (F31, planned) and strategic deck design
+F24 (Business Model Reinvention) → applies F23 taxonomy through an assessment lens
+```
+
+---
+
+## 24. Business Model Reinvention Framework (F24)
+
+**What it is:** A structured assessment framework for evaluating strategic shifts in how a company creates, delivers, and captures value. Goes beyond identifying model types (F23) to scoring which moves are realistic, valuable, and worth sequencing.
+
+**How we use it:** Powers the Business Model Assessment Agent (`pilot-agents/business_model_agent.py`). Generic agent reads `profile.json` and applies this framework. Client-specific agents (e.g., `pilot-agents/kimre/business_model_agent.py`) run with pre-configured move sets and industry context. Output surfaces in the Strategy tab of client portals.
+
+### Assessment Dimensions
+
+| Dimension | What it measures | Weight |
+|---|---|---|
+| **Market Attractiveness** | Size and growth of the target model's addressable revenue; competitive dynamics; customer demand signal | 30% |
+| **Capability Fit** | What the company already has that transfers (people, systems, IP, brand); gap size to close | 30% |
+| **Strategic Coherence** | Does this reinforce the core identity or dilute it? Does it leverage existing differentiation? | 25% |
+| **Risk Profile** | Operational, financial, market, and regulatory risks of making the move (inverse scored — lower risk = higher score) | 15% |
+
+Each dimension scored 1–5. Weighted composite score drives recommendation:
+
+| Composite Score | Recommendation | Meaning |
+|---|---|---|
+| 4.0–5.0 | **Expand** | Strong case to move now; high value, low friction |
+| 3.0–3.9 | **Pilot First** | Real opportunity but requires validation; start small |
+| 2.0–2.9 | **Monitor** | Interesting but not yet ready; re-evaluate in 12–18 months |
+| < 2.0 | **Defer** | Poor fit for current capabilities or market conditions |
+
+### Agent Output Schema
+
+```json
+{
+  "client": "<slug>",
+  "current_model": ["ETO_Custom", "MTS_Catalog"],
+  "moves_assessed": 5,
+  "top_recommendation": "<move_id>",
+  "items": [
+    {
+      "move": "<move_id>",
+      "move_label": "Service / Maintenance Contracts",
+      "market_attractiveness": 4,
+      "capability_fit": 4,
+      "strategic_coherence": 5,
+      "risk_profile": 3,
+      "composite_score": 4.05,
+      "recommendation": "Expand",
+      "narrative": "...",
+      "risks": ["...", "..."],
+      "year1_value_est": "$45K ARR from 10 accounts",
+      "enabling_agents": ["retrofit-reorder-agent", "order-notifier-agent"]
+    }
+  ]
+}
+```
+
+### Standard Move Set (Generic Agent)
+
+| Move ID | Move | Best for |
+|---|---|---|
+| `service-maintenance` | Add service / maintenance contracts | ETO manufacturers with installed base |
+| `mts-catalog` | Launch MTS product catalog | ETO manufacturers with repeatable product families |
+| `digital-customer-portal` | Customer-facing digital layer | Any manufacturer with direct customer relationships |
+| `distribution` | Add distribution of complementary products | Manufacturers with established customer relationships |
+| `performance-contract` | Outcome-based pricing | Manufacturers with measurable, monitorable outcomes |
+| `technology-licensing` | License proprietary technology | Manufacturers with defensible IP in non-competing geographies |
+| `saas-tools` | Productize internal tools as external SaaS | Manufacturers with replicable technical tools (e.g., spec generators) |
+
+### Agent Architecture
+
+```
+pilot-agents/business_model_agent.py           ← Generic: reads --client-profile <path>
+pilot-agents/kimre/business_model_agent.py     ← Kimre-specific: DRY_RUN_MODEL_MOVES hardcoded
+pilot-agents/<other_client>/business_model_agent.py  ← future client instances
+```
+
+### Relationship to Other Frameworks
+
+```
+F20 (Client Profile) → provides current_model and industry context for assessment
+F22 (Manufacturing Strategy) → informs capability_fit scoring for production-related moves
+F23 (Business Model) → provides the move taxonomy this framework assesses
+F16 (Opportunity Prioritization) → same 2×2 logic applied at strategic model level vs. agent level
+F21 (Dashboard Spec) → Strategy tab of client portal surfaces F24 agent output
+```

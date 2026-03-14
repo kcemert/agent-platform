@@ -1034,6 +1034,57 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+
+    /* ── Mode Toggle Active ── */
+    .active-mode {
+      background: var(--orange-dim) !important;
+      color: var(--orange) !important;
+      border: 1px solid rgba(249,115,22,0.35) !important;
+    }
+
+    /* ── Prospect Table Lead Score ── */
+    .lead-score-high   { color: var(--red);   font-weight: 700; }
+    .lead-score-medium { color: var(--amber); font-weight: 700; }
+    .lead-score-low    { color: var(--text-muted); font-weight: 600; }
+
+    /* ── Marketing Draft Card ── */
+    .draft-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+    }
+    .draft-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .draft-company {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .draft-subject {
+      font-size: 12.5px;
+      color: var(--text-sec);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    .draft-product-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--orange);
+      background: var(--orange-dim);
+      border: 1px solid rgba(249,115,22,0.25);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -1046,11 +1097,14 @@
     <span class="kimre-nav-brand">Kimre Inc.</span>
     <div class="kimre-nav-links">
       <a href="./index.html" class="kimre-nav-link">Home</a>
+      <a href="./strategy.html" class="kimre-nav-link">Strategy</a>
+      <a href="./marketing.html" class="kimre-nav-link">Marketing</a>
       <a href="./sales.html" class="kimre-nav-link active">Sales</a>
       <a href="./engineering.html" class="kimre-nav-link">Engineering</a>
       <a href="./customer-service.html" class="kimre-nav-link">Customer Service</a>
       <a href="./executive.html" class="kimre-nav-link">Executive</a>
       <a href="./quality.html" class="kimre-nav-link">Quality</a>
+      <a href="./tools/index.html" class="kimre-nav-link">Tools</a>
     </div>
   </div>
 </nav>
@@ -1334,6 +1388,87 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════
+       SECTION: MARKETING & OUTREACH
+  ═══════════════════════════════════ -->
+  <div style="margin-top:32px;margin-bottom:24px;">
+    <div class="section-bar">
+      <div class="section-bar-left">
+        <div class="section-title" style="color:var(--orange);">Marketing &amp; Outreach</div>
+        <div class="section-count" id="marketingCount">0 drafts</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div id="marketingModeToggle" style="display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:3px;">
+          <button class="btn btn-ghost btn-sm marketing-mode-btn active-mode" data-mode="trade-show-followup" onclick="setMarketingMode('trade-show-followup')">Trade Show Follow-up</button>
+          <button class="btn btn-ghost btn-sm marketing-mode-btn" data-mode="installed-base-campaign" onclick="setMarketingMode('installed-base-campaign')">Installed Base Campaign</button>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openRunDrawer('kimre-marketing-agent')">
+          &#9654; Run Marketing Agent
+        </button>
+      </div>
+    </div>
+
+    <div id="marketingResultsArea">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 24px;text-align:center;">
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">
+          Run the Marketing Agent to generate follow-up email drafts from trade show contacts or installed base accounts.
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="openRunDrawer('kimre-marketing-agent')">&#9654; Run Agent to Generate Drafts</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION: PROSPECT PIPELINE
+  ═══════════════════════════════════ -->
+  <div style="margin-top:8px;margin-bottom:24px;">
+    <div class="section-bar">
+      <div class="section-bar-left">
+        <div class="section-title" style="color:var(--orange);">Prospect Pipeline</div>
+        <div class="section-count" id="prospectsCount">0 leads</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div id="researchModeToggle" style="display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:3px;">
+          <button class="btn btn-ghost btn-sm research-mode-btn active-mode" data-mode="plant-intelligence" onclick="setResearchMode('plant-intelligence')">Plant Intelligence</button>
+          <button class="btn btn-ghost btn-sm research-mode-btn" data-mode="regulatory-trigger" onclick="setResearchMode('regulatory-trigger')">Regulatory Trigger</button>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openRunDrawer('kimre-research-agent')">
+          &#9654; Run Research Agent
+        </button>
+      </div>
+    </div>
+
+    <div id="prospectsResultsArea">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 24px;text-align:center;">
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">
+          Run the Research Agent to surface prospect leads from EPA ECHO plant data — violations, permit renewals, and inspection flags.
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="openRunDrawer('kimre-research-agent')">&#9654; Run Agent to Scan Prospects</button>
+      </div>
+    </div>
+
+    <div id="prospectsTableArea" style="display:none;">
+      <div class="table-wrap">
+        <table class="quote-table" id="prospectsTable">
+          <thead>
+            <tr>
+              <th>Facility</th>
+              <th>State</th>
+              <th>Application</th>
+              <th>Lead Score</th>
+              <th>Signal</th>
+              <th>Recommended Action</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="prospectsTableBody">
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -1672,6 +1807,115 @@
     }
   }
 
+  /* ── Marketing & Research mode state ── */
+  let marketingMode = 'trade-show-followup';
+  let researchMode  = 'plant-intelligence';
+
+  function setMarketingMode(mode) {
+    marketingMode = mode;
+    document.querySelectorAll('.marketing-mode-btn').forEach(b => {
+      b.classList.toggle('active-mode', b.dataset.mode === mode);
+    });
+  }
+
+  function setResearchMode(mode) {
+    researchMode = mode;
+    document.querySelectorAll('.research-mode-btn').forEach(b => {
+      b.classList.toggle('active-mode', b.dataset.mode === mode);
+    });
+  }
+
+  /* ── Marketing Draft cards (rendered after agent run) ── */
+  function renderMarketingDrafts(items) {
+    const area = document.getElementById('marketingResultsArea');
+    if (!area) return;
+    if (!items || !items.length) {
+      area.innerHTML = '<div style="font-size:12.5px;color:var(--text-muted);text-align:center;padding:16px 0;">No draft items returned.</div>';
+      document.getElementById('marketingCount').textContent = '0 drafts';
+      return;
+    }
+    document.getElementById('marketingCount').textContent = items.length + ' draft' + (items.length !== 1 ? 's' : '');
+    area.innerHTML = items.map((item, i) => {
+      const name = item.contact_name || item.account_name || 'Unknown';
+      const company = item.company || item.account_name || '';
+      const urgency = item.urgency || 'medium';
+      const subject = item.subject || '';
+      const productRec = item.product_recommendation || item.product_purchased || '';
+      const action = item.recommended_action || 'Send outreach';
+      return `
+        <div class="draft-card" id="mktDraft_${i}">
+          <div class="draft-card-header">
+            <span class="draft-company">${name}${company && company !== name ? ' &mdash; ' + company : ''}</span>
+            <span class="urgency-badge urgency-${urgency}">${urgency}</span>
+          </div>
+          ${productRec ? '<span class="draft-product-tag">' + productRec.split('(')[0].trim() + '</span>' : ''}
+          ${subject ? '<div class="draft-subject">&#9993; ' + subject.substring(0, 90) + (subject.length > 90 ? '...' : '') + '</div>' : ''}
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">${action}</div>
+          <div class="rec-actions">
+            <button class="btn btn-green btn-sm" onclick="acceptMktDraft(${i})">&#10003; Accept</button>
+            <button class="btn btn-secondary btn-sm" onclick="showToast('Opening editor for draft ${i+1}','muted')">&#9998; Edit</button>
+            <button class="btn btn-ghost btn-sm" onclick="rejectMktDraft(${i})">&#215; Reject</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function acceptMktDraft(i) {
+    const card = document.getElementById('mktDraft_' + i);
+    if (!card) return;
+    card.style.borderColor = 'var(--green)';
+    card.style.background = 'var(--green-dim)';
+    card.querySelector('.rec-actions').innerHTML = '<span style="font-size:12px;color:var(--green);font-weight:600;">&#10003; Accepted</span>';
+    showToast('Draft accepted', 'green');
+  }
+
+  function rejectMktDraft(i) {
+    const card = document.getElementById('mktDraft_' + i);
+    if (!card) return;
+    card.style.opacity = '0.4';
+    card.querySelector('.rec-actions').innerHTML = '<span style="font-size:12px;color:var(--text-muted);">Rejected</span>';
+    showToast('Draft rejected', 'muted');
+  }
+
+  /* ── Prospect table (rendered after research agent run) ── */
+  function renderProspectsTable(items) {
+    const tableArea = document.getElementById('prospectsTableArea');
+    const resultsArea = document.getElementById('prospectsResultsArea');
+    if (!items || !items.length) {
+      if (resultsArea) resultsArea.style.display = 'block';
+      if (tableArea) tableArea.style.display = 'none';
+      document.getElementById('prospectsCount').textContent = '0 leads';
+      return;
+    }
+    document.getElementById('prospectsCount').textContent = items.length + ' lead' + (items.length !== 1 ? 's' : '');
+    if (resultsArea) resultsArea.style.display = 'none';
+    if (tableArea) tableArea.style.display = 'block';
+    const tbody = document.getElementById('prospectsTableBody');
+    tbody.innerHTML = items.map(item => {
+      const score = item.lead_score || 0;
+      let scoreClass = 'lead-score-low';
+      if (score >= 5) scoreClass = 'lead-score-high';
+      else if (score >= 3) scoreClass = 'lead-score-medium';
+      const urgency = item.urgency || 'low';
+      const signal = (item.signal_type || '').replace(/_/g, ' ');
+      const action = (item.recommended_action || '').substring(0, 60) + (item.recommended_action && item.recommended_action.length > 60 ? '...' : '');
+      return `<tr>
+        <td style="font-weight:700;color:var(--text);font-size:12.5px;">${item.facility_name || ''}</td>
+        <td style="font-size:12px;color:var(--text-sec);">${item.state || ''}</td>
+        <td style="font-size:12px;color:var(--text-sec);">${item.application || ''}</td>
+        <td><span class="${scoreClass}">${score}/7</span></td>
+        <td><span style="font-size:11px;color:var(--text-muted);">${signal}</span></td>
+        <td style="font-size:12px;color:var(--text-sec);max-width:200px;">${action}</td>
+        <td>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="showToast('${(item.facility_name || '').replace(/'/g, "\\'")} added to CRM','green')">+ CRM</button>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Scheduling call with ${(item.facility_name || '').replace(/'/g, "\\'")}','muted')">&#128222; Schedule</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
   /* ── Agent Run Drawer ── */
   const RUN_STEPS = [
     'Reading 8 RFQ descriptions...',
@@ -1714,11 +1958,55 @@
   let runStepIdx = 0;
   let runComplete = false;
 
+  /* ── Run steps per agent slug ── */
+  const AGENT_RUN_STEPS = {
+    'kimre-rfq-quote-agent': [
+      'Reading 8 RFQ descriptions...',
+      'Matching applications to product families...',
+      'Selecting model recommendations...',
+      'Drafting scope paragraphs...',
+      'Flagging clarification gaps...',
+      'Generating 6 scope drafts...'
+    ],
+    'kimre-marketing-agent': [
+      'Loading contact list...',
+      'Computing follow-up urgency...',
+      'Matching product family recommendations...',
+      'Drafting personalized email bodies...',
+      'Generating recommendations...'
+    ],
+    'kimre-research-agent': [
+      'Loading facility data...',
+      'Checking violation flags...',
+      'Evaluating permit status...',
+      'Computing lead scores...',
+      'Ranking prospect leads...',
+      'Generating prospect recommendations...'
+    ],
+  };
+
+  const AGENT_TITLES = {
+    'kimre-rfq-quote-agent':    '\u25B6 RFQ-to-Quote Agent',
+    'kimre-marketing-agent':    '\u25B6 Marketing Agent',
+    'kimre-research-agent':     '\u25B6 Research Agent — Plant Intelligence',
+  };
+
   function openRunDrawer(slug) {
     runDrawerSlug = slug;
     runStepIdx = 0;
     runComplete = false;
-    document.getElementById('runDrawerTitle').textContent = '\u25B6 RFQ-to-Quote Agent';
+
+    // Select mode-specific title
+    if (slug === 'kimre-marketing-agent') {
+      const modeLabel = marketingMode === 'installed-base-campaign' ? 'Installed Base Campaign' : 'Trade Show Follow-up';
+      document.getElementById('runDrawerTitle').textContent = '\u25B6 Marketing Agent \u2014 ' + modeLabel;
+    } else if (slug === 'kimre-research-agent') {
+      const modeLabel = researchMode === 'regulatory-trigger' ? 'Regulatory Trigger' : 'Plant Intelligence';
+      document.getElementById('runDrawerTitle').textContent = '\u25B6 Research Agent \u2014 ' + modeLabel;
+    } else {
+      document.getElementById('runDrawerTitle').textContent = AGENT_TITLES[slug] || '\u25B6 Running Agent...';
+    }
+
     document.getElementById('runDrawerBody').innerHTML = buildRunStepsHTML(-1);
     document.getElementById('runDrawerOverlay').classList.add('open');
     startRunAnimation(slug);
@@ -1734,9 +2022,14 @@
     if (e.target === document.getElementById('runDrawerOverlay')) closeRunDrawer();
   }
 
+  function getCurrentSteps() {
+    return AGENT_RUN_STEPS[runDrawerSlug] || RUN_STEPS;
+  }
+
   function buildRunStepsHTML(activeIdx) {
+    const steps = getCurrentSteps();
     return `<div class="run-steps">
-      ${RUN_STEPS.map((s, i) => {
+      ${steps.map((s, i) => {
         let cls = 'run-step';
         let icon = (i + 1).toString();
         if (i < activeIdx) { cls += ' done'; icon = '\u2713'; }
@@ -1750,6 +2043,7 @@
     // Try API first, fallback to local animation
     const ctrl = new AbortController();
     const timeoutId = setTimeout(() => ctrl.abort(), 3000);
+    let apiData = null;
 
     fetch(API + '/api/run/' + slug, {
       method: 'POST',
@@ -1760,23 +2054,25 @@
       clearTimeout(timeoutId);
       return r.json();
     }).then(data => {
-      runLocally();
+      apiData = data;
+      runLocally(apiData);
     }).catch(() => {
       clearTimeout(timeoutId);
-      runLocally();
+      runLocally(null);
     });
   }
 
-  function runLocally() {
+  function runLocally(apiData) {
+    const steps = getCurrentSteps();
     runStepIdx = 0;
     renderRunStep(runStepIdx);
     runInterval = setInterval(() => {
       runStepIdx++;
-      if (runStepIdx >= RUN_STEPS.length) {
+      if (runStepIdx >= steps.length) {
         clearInterval(runInterval);
         runInterval = null;
-        renderRunStep(RUN_STEPS.length); // all done
-        showRunResults();
+        renderRunStep(steps.length); // all done
+        showRunResults(apiData);
         return;
       }
       renderRunStep(runStepIdx);
@@ -1787,9 +2083,48 @@
     document.getElementById('runDrawerBody').innerHTML = buildRunStepsHTML(idx);
   }
 
-  function showRunResults() {
+  function showRunResults(apiData) {
     const body = document.getElementById('runDrawerBody');
-    body.innerHTML = buildRunStepsHTML(RUN_STEPS.length) + `
+    const steps = getCurrentSteps();
+    const slug = runDrawerSlug;
+
+    // Handle marketing agent results
+    if (slug === 'kimre-marketing-agent') {
+      const items = apiData && apiData.output && apiData.output.items ? apiData.output.items : getMktDemoItems();
+      const count = items.length;
+      // Render into the dashboard section too
+      renderMarketingDrafts(items);
+      body.innerHTML = buildRunStepsHTML(steps.length) + `
+        <div style="margin-top:20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">&#10003; Run Complete &mdash; ${count} Draft${count !== 1 ? 's' : ''} Generated</div>
+          <div style="font-size:13px;color:var(--text-sec);margin-bottom:16px;">Drafts have been added to the Marketing &amp; Outreach section below. Review and accept or reject each one.</div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-primary" onclick="closeRunDrawer()">View Drafts</button>
+            <button class="btn btn-secondary" onclick="closeRunDrawer()">Close</button>
+          </div>
+        </div>`;
+      return;
+    }
+
+    // Handle research agent results
+    if (slug === 'kimre-research-agent') {
+      const items = apiData && apiData.output && apiData.output.items ? apiData.output.items : getResearchDemoItems();
+      const leads = items.filter(i => i.lead_score >= 2).length;
+      renderProspectsTable(items);
+      body.innerHTML = buildRunStepsHTML(steps.length) + `
+        <div style="margin-top:20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">&#10003; Run Complete &mdash; ${items.length} Facilities Scanned, ${leads} Leads Identified</div>
+          <div style="font-size:13px;color:var(--text-sec);margin-bottom:16px;">Prospect leads are now visible in the Prospect Pipeline table below. Use "Add to CRM" or "Schedule Call" on each row.</div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-primary" onclick="closeRunDrawer()">View Prospects</button>
+            <button class="btn btn-secondary" onclick="closeRunDrawer()">Close</button>
+          </div>
+        </div>`;
+      return;
+    }
+
+    // Default: RFQ agent
+    body.innerHTML = buildRunStepsHTML(steps.length) + `
       <div style="margin-top:20px;">
         <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">&#10003; Run Complete &mdash; 3 Recommendations Generated</div>
         <div class="rec-cards">
@@ -1815,6 +2150,69 @@
         </div>
       </div>
     `;
+  }
+
+  /* ── Demo data for offline fallback ── */
+  function getMktDemoItems() {
+    return [
+      {contact_id:'KC001', contact_name:'James Holloway', company:'Mosaic Fertilizer LLC', title:'Sr. Process Engineer',
+       rec_type:'marketing_followup', urgency:'high', days_since_contact:18,
+       application_discussed:'HNO3 scrubber mist elimination \u2014 potential B-GON upgrade on Train 3',
+       tradeshow:'AIChE Annual 2024, Atlanta',
+       product_recommendation:'B-GON\u00ae Mist Eliminator (PP grade) \u2014 nitric acid service',
+       subject:'Kimre Inc. \u2014 Follow-up: HNO3 scrubber mist elimination \u2014 B-GON\u00ae specification',
+       recommended_action:'Send follow-up email'},
+      {contact_id:'KC002', contact_name:'Priya Nambiar', company:'Nucor Steel Birmingham', title:'Environmental Engineer',
+       rec_type:'marketing_followup', urgency:'medium', days_since_contact:9,
+       application_discussed:'HCl pickling tank ventilation \u2014 current unit underperforming',
+       tradeshow:'METALS USA 2024',
+       product_recommendation:'B-GON\u00ae Mist Eliminator (CPVC grade) for HCl pickling service',
+       subject:'Kimre Inc. \u2014 Follow-up: HCl pickling tank ventilation \u2014 B-GON\u00ae (CPVC) specification',
+       recommended_action:'Send follow-up email'},
+      {contact_id:'KC003', contact_name:'David Strickland', company:'Chemours Beaumont', title:'Reliability Engineer',
+       rec_type:'marketing_followup', urgency:'high', days_since_contact:31,
+       application_discussed:'H2SO4 absorber outlet mist \u2014 EPA inspection coming Q1',
+       tradeshow:'AIChE Spring 2024',
+       product_recommendation:'Fiber Bed Filter (FRP housing) for sulfuric acid mist elimination',
+       subject:'Kimre Inc. \u2014 Follow-up: H2SO4 absorber outlet mist \u2014 Fiber Bed Filter specification',
+       recommended_action:'Send follow-up email \u2014 EPA deadline is urgent'},
+      {contact_id:'KC004', contact_name:'Maria Santos', company:'OCI Nitrogen', title:'Process Engineer',
+       rec_type:'marketing_followup', urgency:'low', days_since_contact:5,
+       application_discussed:'NH3 converter outlet \u2014 B-GON or fiber bed comparison',
+       tradeshow:'Ammonia Forum 2024',
+       product_recommendation:'B-GON\u00ae Mist Eliminator (PP mesh) for ammonia service',
+       subject:'Kimre Inc. \u2014 Follow-up: NH3 converter outlet \u2014 B-GON vs Fiber Bed comparison',
+       recommended_action:'Send technical comparison document'},
+    ];
+  }
+
+  function getResearchDemoItems() {
+    return [
+      {facility_id:'KF001', facility_name:'Mosaic Fertilizer New Wales', state:'FL', naics:'325311',
+       application:'NH3/HNO3 Fertilizer Production', lead_score:4, urgency:'medium',
+       signal_type:'permit_renewal_due + long_overdue_inspection',
+       recommended_action:'Send Kimre capability overview \u2014 B-GON\u00ae for HNO3 mist'},
+      {facility_id:'KF002', facility_name:'Chemours Beaumont Plant', state:'TX', naics:'325181',
+       application:'H2SO4 Processing', lead_score:3, urgency:'medium',
+       signal_type:'violation_flag',
+       recommended_action:'Schedule application consultation \u2014 Fiber Bed Filter for H2SO4'},
+      {facility_id:'KF005', facility_name:'Valero Corpus Christi Refinery', state:'TX', naics:'324110',
+       application:'H2SO4 Alkylation Unit', lead_score:5, urgency:'high',
+       signal_type:'violation_flag + long_overdue_inspection',
+       recommended_action:'Schedule application consultation \u2014 Fiber Bed Filter for H2SO4 alkylation'},
+      {facility_id:'KF006', facility_name:'CF Industries Donaldsonville', state:'LA', naics:'325311',
+       application:'Ammonia / UAN Production', lead_score:4, urgency:'medium',
+       signal_type:'permit_renewal_due + long_overdue_inspection',
+       recommended_action:'Send Kimre capability overview \u2014 B-GON\u00ae for ammonia mist control'},
+      {facility_id:'KF007', facility_name:'Gerdau Ameristeel Tampa', state:'FL', naics:'331110',
+       application:'Steel Pickling (HCl)', lead_score:3, urgency:'medium',
+       signal_type:'violation_flag',
+       recommended_action:'Send Kimre capability overview \u2014 B-GON\u00ae CPVC for HCl service'},
+      {facility_id:'KF003', facility_name:'Nucor Steel Hertford', state:'NC', naics:'331110',
+       application:'Steel Pickling (HCl)', lead_score:0, urgency:'low',
+       signal_type:'low_priority',
+       recommended_action:'Add to Kimre watch list \u2014 Steel Pickling (HCl)'},
+    ];
   }
 
   function acceptRec(idx) {

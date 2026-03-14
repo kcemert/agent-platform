@@ -472,8 +472,9 @@
       <div class="stat"><div class="stat-value">1,755</div><div class="stat-label">Agent Actions</div></div>
       <div class="stat"><div class="stat-value">131</div><div class="stat-label">Systems</div></div>
       <div class="stat"><div class="stat-value">3</div><div class="stat-label">Clients</div></div>
-      <div class="stat"><div class="stat-value">21</div><div class="stat-label">Frameworks</div></div>
+      <div class="stat"><div class="stat-value">21</div><div class="stat-label">Frameworks (F1–F21)</div></div>
       <div class="stat"><div class="stat-value">38</div><div class="stat-label">Platform Tools</div></div>
+      <div class="stat"><div class="stat-value">25%</div><div class="stat-label">Doc Coverage</div></div>
     </div>
     <p style="font-size:12px;color:#475569;margin-top:-12px;margin-bottom:20px">
       Stats are hardcoded in this file. Run <code>python3 docs/generate.py</code> to refresh
@@ -512,8 +513,18 @@
 <span class="dir">Agentic Projects/</span>
 ├── <span class="acc">index.html</span>              <span class="ann"># Platform home — 38 tools, 7 categories, badge-counted</span>
 ├── <span class="acc">registry.json</span>           <span class="ann"># Machine-readable views registry (29+ entries)</span>
-├── <span class="dir">docs/</span>                   <span class="ann"># ← This file lives here</span>
-│   └── architecture.html
+├── <span class="dir">docs/</span>                   <span class="ann"># Documentation hub</span>
+│   ├── architecture.html   <span class="ann"># ← This file</span>
+│   ├── generate.py         <span class="ann"># Regenerates status.json from live DB counts</span>
+│   ├── index.html          <span class="ann"># Docs hub landing page</span>
+│   ├── status.json         <span class="ann"># Coverage report (generated)</span>
+│   ├── <span class="dir">agents/</span>             <span class="ann"># Per-agent spec pages (17 files)</span>
+│   └── <span class="dir">guides/</span>             <span class="ann"># User-facing guides</span>
+│       ├── developer.md    <span class="ann"># Developer onboarding guide</span>
+│       └── client-kimre.md <span class="ann"># Kimre staff user guide (8 dashboards)</span>
+├── <span class="dir">.apm/</span>                   <span class="ann"># AI Project Memory (auto-managed)</span>
+│   ├── Implementation_Plan.md <span class="ann"># Active epic tracking</span>
+│   └── <span class="dir">Memory/</span>             <span class="ann"># Conversation memory snapshots</span>
 ├── <span class="dir">ralph/</span>                  <span class="ann"># Agent loop orchestration</span>
 │   ├── prd.json            <span class="ann"># Product backlog (stories + epic tracking)</span>
 │   ├── CLAUDE.md           <span class="ann"># Agent instructions for autonomous loop</span>
@@ -1003,7 +1014,7 @@ sequenceDiagram
   <section id="frameworks">
     <div class="section-label">Section 07</div>
     <h2>Framework Registry</h2>
-    <p>21 canonical frameworks documented in <code>ralph/frameworks.md</code>. Every DB table, blueprint, visualisation, and client deliverable maps back to one or more of these.</p>
+    <p>21 canonical frameworks (F1–F21) documented in <code>ralph/frameworks.md</code>. Every DB table, blueprint, visualisation, and client deliverable maps back to one or more of these.</p>
 
     <div class="table-wrap">
       <table>

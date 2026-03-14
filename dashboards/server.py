@@ -34,6 +34,12 @@ AGENT_PATHS = {
     # ── Platform Agents ──
     "mfg-predictive-maintenance-agent": str(AGENTS_DIR / "mfg-predictive-maintenance-agent.py"),
     "ap-invoice-processing":            str(AGENTS_DIR / "ap-invoice-processing.py"),
+    # ── Kimre New Agents ──
+    "kimre-marketing-agent":       str(AGENTS_DIR / "kimre" / "marketing_agent.py"),
+    "kimre-research-agent":        str(AGENTS_DIR / "kimre" / "research_agent.py"),
+    "kimre-business-model-agent":  str(AGENTS_DIR / "kimre" / "business_model_agent.py"),
+    # ── Platform Ops Agents ──
+    "github-push-agent":           str(AGENTS_DIR / "github_push_agent.py"),
 }
 
 PERSONA_MAP = {
@@ -46,6 +52,10 @@ PERSONA_MAP = {
     "kimre-retrofit-reorder-agent":    "executive",
     "mfg-predictive-maintenance-agent": "operations",
     "ap-invoice-processing":            "finance",
+    "kimre-marketing-agent":            "sales",
+    "kimre-research-agent":             "sales",
+    "kimre-business-model-agent":       "executive",
+    "github-push-agent":                "operations",
 }
 
 # ── Flask app ───────────────────────────────────────────────────────────────
@@ -128,6 +138,14 @@ def init_db():
 def index():
     return send_from_directory(str(BASE_DIR), "operations.html")
 
+@app.route("/clients/<path:filename>")
+def client_files(filename):
+    return send_from_directory(str(WORKSPACE / "clients"), filename)
+
+@app.route("/docs/<path:filename>")
+def docs_files(filename):
+    return send_from_directory(str(WORKSPACE / "docs"), filename)
+
 @app.route("/<path:filename>")
 def static_files(filename):
     return send_from_directory(str(BASE_DIR), filename)
@@ -142,6 +160,52 @@ def health():
         return jsonify({"status": "ok", "db": "connected", "blueprints": bp_count, "agents": 3})
     except Exception as e:
         return jsonify({"status": "error", "db": str(e)}), 500
+
+# ── API: DB Stats ────────────────────────────────────────────────────────────
+@app.route("/api/db-stats")
+def db_stats():
+    """Return live platform statistics from the DB."""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        stats = {}
+
+        # Core counts
+        stats["industries"]    = cur.execute("SELECT COUNT(*) FROM industries").fetchone()[0]
+        stats["processes"]     = cur.execute("SELECT COUNT(*) FROM processes").fetchone()[0]
+        stats["blueprints"]    = cur.execute("SELECT COUNT(*) FROM agent_blueprints").fetchone()[0]
+        stats["agent_actions"] = cur.execute("SELECT COUNT(*) FROM process_agent_actions").fetchone()[0]
+        stats["systems"]       = cur.execute("SELECT COUNT(*) FROM systems").fetchone()[0]
+        stats["features"]      = cur.execute("SELECT COUNT(*) FROM features").fetchone()[0]
+        stats["pilot_runs"]    = cur.execute("SELECT COUNT(*) FROM pilot_runs").fetchone()[0]
+        stats["approvals_pending"] = cur.execute("SELECT COUNT(*) FROM approvals WHERE decision='pending'").fetchone()[0]
+        stats["recommendations_pending"] = cur.execute("SELECT COUNT(*) FROM recommendations WHERE decision='pending'").fetchone()[0]
+
+        # Blueprint lifecycle distribution
+        lifecycle_rows = cur.execute(
+            "SELECT lifecycle_stage, COUNT(*) as cnt FROM agent_blueprints GROUP BY lifecycle_stage"
+        ).fetchall()
+        stats["blueprint_lifecycle"] = {r["lifecycle_stage"]: r["cnt"] for r in lifecycle_rows}
+
+        # Blueprint size_fit distribution
+        size_rows = cur.execute(
+            "SELECT size_fit, COUNT(*) as cnt FROM agent_blueprints WHERE size_fit IS NOT NULL GROUP BY size_fit"
+        ).fetchall()
+        stats["blueprint_size_fit"] = {r["size_fit"]: r["cnt"] for r in size_rows}
+
+        # Industry process coverage
+        coverage_rows = cur.execute("""
+            SELECT i.code, i.name, COUNT(ip.process_id) as process_count
+            FROM industries i
+            LEFT JOIN industry_processes ip ON i.id = ip.industry_id
+            GROUP BY i.id ORDER BY i.code
+        """).fetchall()
+        stats["industry_coverage"] = [{"code": r["code"], "name": r["name"], "processes": r["process_count"]} for r in coverage_rows]
+
+        conn.close()
+        return jsonify({"status": "ok", "stats": stats, "db_connected": True})
+    except Exception as e:
+        return jsonify({"status": "error", "error": str(e), "db_connected": False})
 
 # ── API: Agents list ─────────────────────────────────────────────────────────
 @app.route("/api/agents")
@@ -430,6 +494,61 @@ def _extract_recommendations(slug, run_id, output, conn):
                     (run_id, slug, rec_type, item_id, label, urgency, action, json.dumps(item)))
                 recs.append({"item_id": item_id, "item_label": label, "urgency": urgency, "recommended_action": action, "rec_type": rec_type})
 
+        elif slug == "kimre-marketing-agent":
+            for item in output.get("items", []):
+                rec_type = "marketing_followup"
+                # Trade show contacts
+                if "contact_id" in item:
+                    item_id = item.get("contact_id", "")
+                    label = f"{item.get('contact_name', '')} @ {item.get('company', '')} — {item.get('tradeshow', '')}"
+                    urgency = item.get("urgency", "medium")
+                    action = f"Send follow-up email: {item.get('subject', '')[:80]}"
+                # Installed base accounts
+                else:
+                    item_id = item.get("account_id", "")
+                    label = f"{item.get('account_name', '')} — {item.get('product_purchased', '')}"
+                    urgency = item.get("urgency", "medium")
+                    action = item.get("recommended_action", "Send outreach")
+                conn.execute("INSERT INTO recommendations (run_id, slug, rec_type, item_id, item_label, urgency, recommended_action, detail_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (run_id, slug, rec_type, item_id, label, urgency, action, json.dumps(item)))
+                recs.append({"item_id": item_id, "item_label": label, "urgency": urgency, "recommended_action": action, "rec_type": rec_type})
+
+        elif slug == "kimre-research-agent":
+            for item in output.get("items", []):
+                rec_type = "prospect_lead"
+                item_id = item.get("facility_id", "")
+                label = f"{item.get('facility_name', '')} ({item.get('state', '')}) — {item.get('application', '')}"
+                urgency = item.get("urgency", "medium")
+                action = item.get("recommended_action", "Prospect follow-up")
+                conn.execute("INSERT INTO recommendations (run_id, slug, rec_type, item_id, item_label, urgency, recommended_action, detail_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (run_id, slug, rec_type, item_id, label, urgency, action, json.dumps(item)))
+                recs.append({"item_id": item_id, "item_label": label, "urgency": urgency, "recommended_action": action, "rec_type": rec_type})
+
+        elif slug == "kimre-business-model-agent":
+            for item in output.get("items", []):
+                if item.get("recommendation") not in ("Expand", "Pilot First"):
+                    continue
+                rec_type = "model_move"
+                item_id = item.get("move", "")
+                label = item.get("move_label", item_id)
+                urgency = item.get("urgency", "medium")
+                action = f"{item.get('recommendation', '')} — {label} (score {item.get('composite_score', 0):.2f})"
+                conn.execute("INSERT INTO recommendations (run_id, slug, rec_type, item_id, item_label, urgency, recommended_action, detail_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (run_id, slug, rec_type, item_id, label, urgency, action, json.dumps(item)))
+                recs.append({"item_id": item_id, "item_label": label, "urgency": urgency, "recommended_action": action, "rec_type": rec_type})
+
+        elif slug == "github-push-agent":
+            for item in output.get("recommendations", []):
+                rec_type = item.get("rec_type", "git_push")
+                item_id = item.get("item_id", "")
+                item_label = item.get("item_label", "")
+                urgency = item.get("urgency", "medium")
+                recommended_action = item.get("recommended_action", "")
+                detail_json = json.dumps(item.get("detail", {}))
+                conn.execute("INSERT INTO recommendations (run_id, slug, rec_type, item_id, item_label, urgency, recommended_action, detail_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (run_id, slug, rec_type, item_id, item_label, urgency, recommended_action, detail_json))
+                recs.append({"item_id": item_id, "item_label": item_label, "urgency": urgency, "recommended_action": recommended_action, "rec_type": rec_type})
+
     except Exception as e:
         print(f"[recommendations] extraction error: {e}")
     return recs
@@ -560,6 +679,29 @@ def _build_summary(slug, output, stdout):
             auto = output.get("auto_approved", 0)
             review = output.get("approval_required", 0)
             return f"{auto} auto-approved | {review} require approval"
+        elif slug == "kimre-marketing-agent":
+            mode = output.get("mode", "trade-show-followup")
+            if mode == "installed-base-campaign":
+                n = output.get("outreach_flagged", 0)
+                t = output.get("accounts_scanned", 0)
+                return f"{t} accounts scanned — {n} flagged for outreach"
+            else:
+                n = output.get("drafts_generated", 0)
+                return f"{n} follow-up drafts generated"
+        elif slug == "kimre-research-agent":
+            n = output.get("leads_identified", 0)
+            t = output.get("facilities_scanned", 0)
+            return f"{t} facilities scanned — {n} leads identified"
+        elif slug == "kimre-business-model-agent":
+            top = output.get("top_recommendation", "")
+            n = output.get("moves_assessed", 0)
+            return f"{n} moves assessed — top: {top}"
+        elif slug == "github-push-agent":
+            s = output.get("summary", {})
+            remote_ok = "configured" if s.get("remote_configured") else "not configured"
+            return (f"Git: {s.get('files_to_stage', 0)} files to stage, "
+                    f"remote {remote_ok}, "
+                    f"{s.get('submodules_registered', 0)} submodules registered")
     except Exception:
         pass
     return "Run completed"
@@ -781,6 +923,141 @@ def advance_lifecycle(slug):
     conn.commit()
     conn.close()
     return jsonify({"success": True, "slug": slug, "from_stage": current_stage, "to_stage": next_stage})
+
+# ── API: Contact Enrichment (Proxycurl) ──────────────────────────────────────
+@app.route("/api/enrich-contact", methods=["POST"])
+def enrich_contact():
+    """Enrich a contact's LinkedIn profile via Proxycurl API."""
+    import requests as req_lib
+    data = request.get_json() or {}
+    linkedin_url = data.get("linkedin_url", "").strip()
+    client_slug  = data.get("client_slug", "")
+    dry_run      = data.get("dry_run", False)
+
+    if not linkedin_url:
+        return jsonify({"error": "linkedin_url required"}), 400
+
+    PROXYCURL_API_KEY = os.environ.get("PROXYCURL_API_KEY", "")
+    PROXYCURL_URL = "https://nubela.co/proxycurl/api/v2/linkedin"
+
+    # ── Dry-run / no API key fallback ──
+    MOCK_PROFILES = {
+        "https://www.linkedin.com/in/george-c-pedersen-76231910/": {
+            "full_name": "George C. Pedersen",
+            "headline": "Founder & Chairman of the Board at Kimre Inc.",
+            "occupation": "Founder & Chairman of the Board",
+            "summary": "Founded Kimre Inc., a leading manufacturer of mist eliminators, drift eliminators, and coalescers for industrial separation applications worldwide.",
+            "city": "Miami", "country_full_name": "United States",
+            "skills": ["Mist Elimination", "Industrial Filtration", "Chemical Engineering", "Manufacturing"],
+            "experiences": [{"company": "Kimre Inc.", "title": "Founder & Chairman", "starts_at": {"year": 1973}}]
+        },
+        "https://www.linkedin.com/in/marygaston/": {
+            "full_name": "Mary Gaston",
+            "headline": "President & Chief Legal Officer at Kimre Inc.",
+            "occupation": "President & Chief Legal Officer",
+            "summary": "Leads operations, client relationships, and legal affairs at Kimre Inc. Key decision-maker for agent program expansion.",
+            "city": "Miami", "country_full_name": "United States",
+            "skills": ["Operations Management", "Legal Affairs", "Strategic Planning", "Client Relations"],
+            "experiences": [{"company": "Kimre Inc.", "title": "President & CLO", "starts_at": {"year": 2005}}]
+        },
+        "https://www.linkedin.com/in/chris-pedersen-56ab407/": {
+            "full_name": "Chris Pedersen",
+            "headline": "Senior Manufacturing Engineer at Kimre Inc.",
+            "occupation": "Senior Manufacturing Engineer",
+            "summary": "Hands-on fabrication and process engineering. Specialist in mist eliminator construction and BOM accuracy.",
+            "city": "Miami", "country_full_name": "United States",
+            "skills": ["Manufacturing Engineering", "BOM Management", "FRP Fabrication", "Process Optimization"],
+            "experiences": [{"company": "Kimre Inc.", "title": "Senior Manufacturing Engineer", "starts_at": {"year": 2015}}]
+        }
+    }
+
+    if dry_run or not PROXYCURL_API_KEY:
+        # Use mock data — match by URL or return generic mock
+        profile_data = MOCK_PROFILES.get(linkedin_url, {
+            "full_name": "Contact",
+            "headline": "Team Member at Kimre Inc.",
+            "occupation": "Engineering",
+            "summary": "Kimre Inc. team member.",
+            "city": "Miami", "country_full_name": "United States",
+            "skills": [], "experiences": []
+        })
+        source = "dry_run"
+    else:
+        try:
+            resp = req_lib.get(
+                PROXYCURL_URL,
+                params={"url": linkedin_url, "use_cache": "if-present"},
+                headers={"Authorization": f"Bearer {PROXYCURL_API_KEY}"},
+                timeout=30
+            )
+            if resp.status_code != 200:
+                return jsonify({"error": f"Proxycurl returned {resp.status_code}", "detail": resp.text}), 502
+            profile_data = resp.json()
+            source = "proxycurl"
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    # Build contact record
+    skills_list = profile_data.get("skills", [])
+    if isinstance(skills_list, list):
+        skills_str = ", ".join(str(s) for s in skills_list[:8])
+    else:
+        skills_str = ""
+
+    exps = profile_data.get("experiences") or []
+    company = exps[0].get("company", "") if exps else ""
+
+    contact = {
+        "name":         profile_data.get("full_name", ""),
+        "title":        profile_data.get("occupation") or profile_data.get("headline", ""),
+        "company":      company,
+        "location":     f"{profile_data.get('city','')}, {profile_data.get('country_full_name','')}".strip(", "),
+        "summary":      profile_data.get("summary", ""),
+        "skills":       skills_str,
+        "enriched_at":  datetime.utcnow().isoformat() + "Z",
+        "source":       source
+    }
+
+    # Store in contacts table (if it exists)
+    try:
+        conn = get_db()
+        conn.execute("""
+            UPDATE contacts
+            SET name=:name, title=:title, company=:company, location=:location,
+                summary=:summary, skills=:skills, enriched_json=:enriched_json, enriched_at=:enriched_at
+            WHERE linkedin_url=:linkedin_url
+        """, {**contact, "enriched_json": json.dumps(profile_data), "linkedin_url": linkedin_url})
+        if conn.total_changes == 0:
+            # Insert if not found
+            conn.execute("""
+                INSERT OR IGNORE INTO contacts (client_slug, name, title, company, linkedin_url, location, summary, skills, enriched_json, enriched_at)
+                VALUES (:client_slug, :name, :title, :company, :linkedin_url, :location, :summary, :skills, :enriched_json, :enriched_at)
+            """, {**contact, "client_slug": client_slug, "linkedin_url": linkedin_url, "enriched_json": json.dumps(profile_data)})
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass  # contacts table may not exist yet; return result anyway
+
+    return jsonify({"success": True, "contact": contact, "source": source})
+
+
+@app.route("/api/contacts")
+def get_contacts():
+    """Return all contacts for a client slug."""
+    client_slug = request.args.get("client_slug", "")
+    try:
+        conn = get_db()
+        if client_slug:
+            rows = conn.execute(
+                "SELECT * FROM contacts WHERE client_slug=? ORDER BY name", (client_slug,)
+            ).fetchall()
+        else:
+            rows = conn.execute("SELECT * FROM contacts ORDER BY client_slug, name").fetchall()
+        conn.close()
+        return jsonify([dict(r) for r in rows])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":

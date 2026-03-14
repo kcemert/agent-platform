@@ -1,9 +1,11 @@
 # Sub-project git repos (each manages their own git history)
-joji-charity/.git/
-party-invites/.git/
-business-agents/.git/
-office-skills/.git/
-sandbox-systems/.git/
+# These are separate git repos — clone them independently
+joji-charity/
+party-invites/
+business-agents/
+office-skills/
+sandbox-systems/
+pilot-agents/
 
 # OS
 .DS_Store
@@ -19,3 +21,21 @@ office-skills/venv/
 
 # Agent OS specs (work in progress, keep local)
 agent-os/specs/
+
+# Local settings (machine-specific)
+.claude/settings.local.json
+.cursor/
+
+# Agent run outputs (local ephemeral data)
+outputs/
+pilot-agents/outputs/
+
+# Log files
+*.log
+
+# Stale DB copy in dashboards/ (real DB is in business-agents/)
+dashboards/business_agents.db
+
+# Personal projects
+party-invites/
+joji-charity/
