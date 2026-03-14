@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meridian Community Bank — Agent Platform Engagement Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0f1117;
+      --card:         #161b2e;
+      --card-alt:     #1a2035;
+      --border:       #1e293b;
+      --border-light: #253047;
+      --text:         #f1f5f9;
+      --text-sec:     #94a3b8;
+      --text-muted:   #64748b;
+      --accent:       #22c55e;
+      --accent-dim:   rgba(34,197,94,0.12);
+      --accent-glow:  rgba(34,197,94,0.25);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.12);
+      --amber:        #f59e0b;
+      --amber-dim:    rgba(245,158,11,0.12);
+      --indigo:       #6366f1;
+      --indigo-dim:   rgba(99,102,241,0.12);
+      --cyan:         #06b6d4;
+      --cyan-dim:     rgba(6,182,212,0.12);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    h2.section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 0 40px;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .company-name {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .company-tagline {
+      font-size: 15px;
+      color: var(--text-sec);
+      margin-top: 6px;
+    }
+
+    .company-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .company-meta span { display: flex; align-items: center; gap: 6px; }
+
+    .header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-accent { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(34,197,94,0.3); }
+    .badge-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(239,68,68,0.3); }
+    .badge-amber  { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(245,158,11,0.3); }
+    .badge-muted  { background: rgba(100,116,139,0.15); color: var(--text-sec); border: 1px solid rgba(100,116,139,0.3); }
+
+    .tier-badge {
+      background: var(--accent);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      align-self: flex-start;
+    }
+
+    /* ── Regulatory warning card ── */
+    .reg-warning {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-left: 4px solid var(--red);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 48px;
+    }
+
+    .reg-warning-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--red);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .reg-warning p {
+      font-size: 13px;
+      color: var(--text-sec);
+    }
+
+    /* ── Scorecard grid ── */
+    .scorecard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .scorecard-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .scorecard-item label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .scorecard-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .scorecard-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .scorecard-item.highlight { border-color: rgba(34,197,94,0.4); background: var(--accent-dim); }
+    .scorecard-item.highlight .scorecard-val { color: var(--accent); }
+    .scorecard-item.danger { border-color: rgba(239,68,68,0.4); background: var(--red-dim); }
+    .scorecard-item.danger .scorecard-val { color: var(--red); }
+
+    /* ── Agent cards ── */
+    .agent-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .agent-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: border-color 150ms ease;
+    }
+
+    .agent-card:hover { border-color: rgba(34,197,94,0.4); }
+    .agent-card.pilot-ready { border-left: 3px solid var(--accent); }
+
+    .agent-rank {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .agent-body { flex: 1; min-width: 0; }
+
+    .agent-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .agent-desc {
+      font-size: 13px;
+      color: var(--text-sec);
+    }
+
+    .agent-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .agent-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .agent-value-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .status-pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .status-pilot-ready { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(34,197,94,0.3); }
+    .status-blueprint    { background: rgba(100,116,139,0.15); color: var(--text-muted); border: 1px solid rgba(100,116,139,0.3); }
+
+    /* ── Pilot card ── */
+    .pilot-card {
+      background: var(--card);
+      border: 1px solid rgba(34,197,94,0.4);
+      border-radius: 16px;
+      padding: 32px;
+      background: linear-gradient(135deg, var(--card) 0%, rgba(34,197,94,0.05) 100%);
+    }
+
+    .pilot-card h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .pilot-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    @media (max-width: 768px) {
+      .pilot-metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .pilot-metric {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .pilot-metric label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .pilot-metric .val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .pilot-metric .val.neutral { color: var(--text); }
+
+    /* ── Persona cards ── */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .persona-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .persona-grid { grid-template-columns: 1fr; }
+    }
+
+    .persona-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .persona-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .persona-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .persona-role {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .persona-goal {
+      font-size: 13px;
+      color: var(--text-sec);
+      font-style: italic;
+      margin-bottom: 16px;
+      padding-left: 12px;
+      border-left: 2px solid var(--accent-dim);
+    }
+
+    .persona-agents {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .persona-agent-tag {
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 4px;
+      padding: 3px 8px;
+    }
+
+    /* ── Value calculator ── */
+    .calc-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .calc-equation {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .calc-factor {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 20px;
+      text-align: center;
+    }
+
+    .calc-factor .num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .calc-factor .lbl {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    .calc-op {
+      font-size: 24px;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .calc-result {
+      background: var(--accent-dim);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 10px;
+      padding: 14px 20px;
+      text-align: center;
+    }
+
+    .calc-result .num {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .calc-result .lbl {
+      font-size: 10px;
+      color: var(--accent);
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    .calc-breakdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .calc-breakdown { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .breakdown-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .breakdown-item .b-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+    .breakdown-item .b-val   { font-size: 20px; font-weight: 700; color: var(--text); }
+    .breakdown-item .b-desc  { font-size: 11px; color: var(--text-sec); margin-top: 2px; }
+
+    /* ── Timeline ── */
+    .timeline {
+      display: flex;
+      gap: 0;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: var(--border);
+    }
+
+    .timeline-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      border: 2px solid var(--border);
+      background: var(--bg);
+    }
+
+    .timeline-dot.done {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .timeline-dot.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .timeline-dot.future {
+      background: var(--card);
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+
+    .timeline-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .timeline-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ── Next steps CTA ── */
+    .cta-card {
+      background: linear-gradient(135deg, var(--card) 0%, rgba(34,197,94,0.08) 100%);
+      border: 1px solid rgba(34,197,94,0.4);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .cta-card h3 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .cta-card p {
+      color: var(--text-sec);
+      margin-bottom: 28px;
+      font-size: 15px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 150ms ease;
+    }
+
+    .btn-primary:hover { opacity: 0.9; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color 150ms ease;
+    }
+
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Summary bar ── */
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 48px;
+    }
+
+    .summary-stat {
+      padding: 20px 24px;
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .summary-stat:last-child { border-right: none; }
+
+    .summary-stat .s-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .summary-stat .s-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+
+    /* ── Nav ── */
+    .portal-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .portal-nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .nav-link {
+      padding: 14px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+
+    .nav-link:hover { color: var(--text); border-bottom-color: var(--border); }
+    .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Footer ── */
+    .site-footer {
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .site-footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- ── Site Header ── -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <div>
+        <div class="company-name">Meridian Community Bank</div>
+        <div class="company-tagline">Community Banking &mdash; Charlotte, NC</div>
+        <div class="company-meta">
+          <span>&#128205; Charlotte, North Carolina</span>
+          <span>&#127968; 12 branches</span>
+          <span>&#128101; 200 employees</span>
+          <span>&#128176; ~$45M revenue</span>
+        </div>
+        <div class="header-badges">
+          <span class="badge badge-accent">FS</span>
+          <span class="badge badge-accent">Service</span>
+          <span class="badge badge-muted">FDIC Member</span>
+          <span class="badge badge-muted">OCC Supervised</span>
+          <span class="badge badge-red">BSA/AML</span>
+          <span class="badge badge-accent">Integration T2</span>
+        </div>
+      </div>
+      <div>
+        <div class="tier-badge">PILOT</div>
+        <div style="text-align:right;margin-top:12px;font-size:12px;color:var(--text-muted)">Engagement Start<br><strong style="color:var(--text)">April 2026</strong></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Sticky Nav ── -->
+<nav class="portal-nav">
+  <div class="container">
+    <div class="portal-nav-inner">
+      <a class="nav-link active" href="#profile">F20 Profile</a>
+      <a class="nav-link" href="#regulatory">Regulatory</a>
+      <a class="nav-link" href="#agents">Agent Opportunities</a>
+      <a class="nav-link" href="#pilot">Recommended Pilot</a>
+      <a class="nav-link" href="#personas">Persona Impact</a>
+      <a class="nav-link" href="#value">Value Calculator</a>
+      <a class="nav-link" href="#timeline">Timeline</a>
+      <a class="nav-link" href="#next">Next Steps</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<main>
+  <div class="container">
+
+    <!-- Summary bar -->
+    <div style="padding-top:48px">
+      <div class="summary-bar">
+        <div class="summary-stat">
+          <div class="s-val">4</div>
+          <div class="s-label">Agent Opportunities</div>
+        </div>
+        <div class="summary-stat">
+          <div class="s-val">28 hrs</div>
+          <div class="s-label">Recoverable / Week</div>
+        </div>
+        <div class="summary-stat">
+          <div class="s-val">£127K</div>
+          <div class="s-label">Annual Value</div>
+        </div>
+        <div class="summary-stat">
+          <div class="s-val">6 wks</div>
+          <div class="s-label">Pilot Timeline</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 1: F20 Profile ── -->
+    <section id="profile">
+      <h2 class="section-title">F20 Company Profile — Scorecard</h2>
+      <div class="scorecard-grid">
+        <div class="scorecard-item">
+          <label>Size Tier</label>
+          <div class="scorecard-val">MID</div>
+          <div class="scorecard-sub">200 employees / $45M revenue</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Industry</label>
+          <div class="scorecard-val">FS</div>
+          <div class="scorecard-sub">Financial Services / Community Banking</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Business Model</label>
+          <div class="scorecard-val">Service</div>
+          <div class="scorecard-sub">Community banking — 12 branches</div>
+        </div>
+        <div class="scorecard-item danger">
+          <label>Regulatory Score &#9888;</label>
+          <div class="scorecard-val">5 / 5</div>
+          <div class="scorecard-sub">HITL required — all agent actions</div>
+        </div>
+        <div class="scorecard-item highlight">
+          <label>Integration Tier</label>
+          <div class="scorecard-val">T2</div>
+          <div class="scorecard-sub">Jack Henry Silverlight — API</div>
+        </div>
+        <div class="scorecard-item highlight">
+          <label>Data Readiness</label>
+          <div class="scorecard-val">19 / 25</div>
+          <div class="scorecard-sub">Strong — Verafin AML structured data</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Engagement Tier</label>
+          <div class="scorecard-val">Pilot</div>
+          <div class="scorecard-sub">Starting April 2026</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Primary Systems</label>
+          <div class="scorecard-val" style="font-size:14px">Jack Henry</div>
+          <div class="scorecard-sub">Salesforce FSC · Verafin AML</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 2: Regulatory Note ── -->
+    <section id="regulatory" style="padding-bottom:32px">
+      <h2 class="section-title">Regulatory Framework — Agent Governance</h2>
+      <div class="reg-warning">
+        <div class="reg-warning-title">&#9888; Regulatory Score: 5/5 — Maximum Compliance Oversight Required</div>
+        <p>All agent outputs require human review before any action is taken. AML agents operate at MEDIUM authority level — BSA Officer approval is required for all SAR recommendations. No agent may submit regulatory filings, flag accounts for restriction, or generate SAR reports without explicit human sign-off. Human-in-the-loop (HITL) is mandatory for every agent decision pathway at Meridian Community Bank.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">AML Agent Authority</div>
+          <div style="font-size:16px;font-weight:700;color:var(--amber)">MEDIUM</div>
+          <div style="font-size:12px;color:var(--text-sec);margin-top:4px">Triage and recommendation only — BSA Officer approves all SAR actions</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Audit Trail</div>
+          <div style="font-size:16px;font-weight:700;color:var(--accent)">Full Logging</div>
+          <div style="font-size:12px;color:var(--text-sec);margin-top:4px">Every agent decision logged with timestamp, confidence score, and approver</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Escalation Path</div>
+          <div style="font-size:16px;font-weight:700;color:var(--accent)">CCO + BSA</div>
+          <div style="font-size:12px;color:var(--text-sec);margin-top:4px">James Whitfield (CCO) and BSA Officer are mandatory approvers on pilot</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 3: Agent Opportunities ── -->
+    <section id="agents">
+      <h2 class="section-title">Agent Opportunities — Ranked by Value</h2>
+      <div class="agent-grid">
+
+        <!-- Agent 1 -->
+        <div class="agent-card pilot-ready">
+          <div class="agent-rank">1</div>
+          <div class="agent-body">
+            <div class="agent-name">AML Alert Triage Agent</div>
+            <div class="agent-desc">AI triage of Verafin AML alerts — separates false positives from genuine suspicious activity cases, reducing analyst review time by 60% while maintaining 100% SAR accuracy. BSA Officer approval required for all SAR recommendations.</div>
+          </div>
+          <div class="agent-meta">
+            <div style="text-align:right">
+              <div class="agent-value">£35K</div>
+              <div class="agent-value-sub">/ year</div>
+            </div>
+            <span class="status-pill status-pilot-ready">Pilot Ready</span>
+          </div>
+        </div>
+
+        <!-- Agent 2 -->
+        <div class="agent-card">
+          <div class="agent-rank" style="background:rgba(100,116,139,0.12);color:var(--text-muted)">2</div>
+          <div class="agent-body">
+            <div class="agent-name">Credit Limit Review Agent</div>
+            <div class="agent-desc">Automated credit line analysis with risk scoring for portfolio review cycles — pulls Jack Henry data, calculates risk-adjusted limits, presents recommendations for credit manager approval. Never changes limits autonomously.</div>
+          </div>
+          <div class="agent-meta">
+            <div style="text-align:right">
+              <div class="agent-value">£28K</div>
+              <div class="agent-value-sub">/ year</div>
+            </div>
+            <span class="status-pill status-blueprint">Blueprint</span>
+          </div>
+        </div>
+
+        <!-- Agent 3 -->
+        <div class="agent-card">
+          <div class="agent-rank" style="background:rgba(100,116,139,0.12);color:var(--text-muted)">3</div>
+          <div class="agent-body">
+            <div class="agent-name">Regulatory Report Generator</div>
+            <div class="agent-desc">Auto-generate BSA/FinCEN reports from transaction data — structures CTR and SAR narrative drafts from Jack Henry transaction data, routes to BSA Officer for review and filing approval.</div>
+          </div>
+          <div class="agent-meta">
+            <div style="text-align:right">
+              <div class="agent-value">£42K</div>
+              <div class="agent-value-sub">/ year</div>
+            </div>
+            <span class="status-pill status-blueprint">Blueprint</span>
+          </div>
+        </div>
+
+        <!-- Agent 4 -->
+        <div class="agent-card">
+          <div class="agent-rank" style="background:rgba(100,116,139,0.12);color:var(--text-muted)">4</div>
+          <div class="agent-body">
+            <div class="agent-name">Loan Document Checker</div>
+            <div class="agent-desc">Pre-closing document completeness check for mortgage and commercial loans — validates all required docs are present, flagged, and signature-ready before closing appointment. Reduces closing delays by catching missing items 48 hours in advance.</div>
+          </div>
+          <div class="agent-meta">
+            <div style="text-align:right">
+              <div class="agent-value">£22K</div>
+              <div class="agent-value-sub">/ year</div>
+            </div>
+            <span class="status-pill status-blueprint">Blueprint</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Opportunity total -->
+      <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="color:var(--text-muted);font-size:13px">Total identified agent opportunity</div>
+        <div style="font-size:24px;font-weight:800;color:var(--accent)">£127,000 <span style="font-size:13px;font-weight:400;color:var(--text-muted)">/ year across all 4 agents</span></div>
+      </div>
+    </section>
+
+    <!-- ── Section 4: Recommended Pilot ── -->
+    <section id="pilot">
+      <h2 class="section-title">Recommended Pilot</h2>
+      <div class="pilot-card">
+        <h3>AML Alert Triage Agent</h3>
+        <p style="color:var(--text-sec);margin-bottom:0">Verafin API + Jack Henry integration — AI triage of AML alerts to separate false positives from genuine cases, with full BSA Officer approval workflow.</p>
+
+        <div class="pilot-metrics">
+          <div class="pilot-metric">
+            <label>Timeline</label>
+            <div class="val neutral">6 weeks</div>
+          </div>
+          <div class="pilot-metric">
+            <label>Year 1 Value</label>
+            <div class="val">£35,000</div>
+          </div>
+          <div class="pilot-metric">
+            <label>Pilot Investment</label>
+            <div class="val neutral">£25,000</div>
+          </div>
+          <div class="pilot-metric">
+            <label>Break-even</label>
+            <div class="val neutral">Week 9</div>
+          </div>
+        </div>
+
+        <div style="margin-top:28px;padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:10px;">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px">Integration Specification</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font-size:13px">
+            <div><span style="color:var(--text-muted)">Primary:</span> <strong>Verafin API</strong></div>
+            <div><span style="color:var(--text-muted)">Core Banking:</span> <strong>Jack Henry Silverlight</strong></div>
+            <div><span style="color:var(--text-muted)">Tier:</span> <strong>T2 — REST API</strong></div>
+            <div><span style="color:var(--text-muted)">Authority:</span> <strong>MEDIUM (HITL)</strong></div>
+            <div><span style="color:var(--text-muted)">CRM:</span> <strong>Salesforce FSC</strong></div>
+            <div><span style="color:var(--text-muted)">Data score:</span> <strong>19 / 25</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding:16px 20px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:8px;font-size:13px;color:var(--text-sec)">
+          <strong style="color:var(--red)">Regulatory Note:</strong> — This pilot operates at MEDIUM authority. The agent triages and scores AML alerts but never autonomously files SARs or restricts accounts. All agent recommendations route to the BSA Officer approval queue before any action is taken. Full audit trail is maintained for OCC examination purposes.
+        </div>
+
+        <div style="margin-top:16px;padding:16px 20px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:8px;font-size:13px;color:var(--text-sec)">
+          <strong style="color:var(--accent)">Why this agent first?</strong> — AML triage is the highest-volume manual compliance task at Meridian. Verafin's structured alert data (score: 19/25) means the agent can be trained quickly on historical true/false positive patterns. CCO James Whitfield is the internal champion, and the BSA Officer is already engaged in scoping. 6-week timeline includes a 2-week compliance review period.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 5: Persona Impact Map ── -->
+    <section id="personas">
+      <h2 class="section-title">Persona Impact Map</h2>
+      <div class="persona-grid">
+
+        <!-- James Whitfield -->
+        <div class="persona-card">
+          <div class="persona-avatar">&#9878;</div>
+          <div class="persona-name">James Whitfield</div>
+          <div class="persona-role">Chief Compliance Officer · Primary Contact</div>
+          <div class="persona-goal">"Zero regulatory violations, audit-ready documentation, and SAR accuracy at scale as transaction volumes grow."</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Key agents for James:</div>
+          <div class="persona-agents">
+            <span class="persona-agent-tag">AML Alert Triage</span>
+            <span class="persona-agent-tag">Reg Report Generator</span>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-sec)">CCO is the pilot champion — directly manages BSA compliance and OCC examination readiness.</div>
+        </div>
+
+        <!-- Credit Manager -->
+        <div class="persona-card">
+          <div class="persona-avatar">&#128200;</div>
+          <div class="persona-name">Credit Manager</div>
+          <div class="persona-role">Credit &amp; Risk</div>
+          <div class="persona-goal">"Faster credit reviews, consistent risk-adjusted decisioning, and clear portfolio risk visibility across all commercial relationships."</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Key agents for Credit Manager:</div>
+          <div class="persona-agents">
+            <span class="persona-agent-tag">Credit Limit Review</span>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-sec)">Phase 2 priority — credit review cycles currently take 3x longer than peer banks.</div>
+        </div>
+
+        <!-- Mortgage Operations -->
+        <div class="persona-card">
+          <div class="persona-avatar">&#127968;</div>
+          <div class="persona-name">Mortgage Operations</div>
+          <div class="persona-role">Loan Processing &amp; Closing</div>
+          <div class="persona-goal">"Faster loan closings, zero missing documents at closing, and full compliance confidence before every signing appointment."</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Key agents for Mortgage Ops:</div>
+          <div class="persona-agents">
+            <span class="persona-agent-tag">Loan Document Checker</span>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-sec)">Phase 3 — document errors are the #1 cause of closing delays and customer complaints.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Section 6: Value Calculator ── -->
+    <section id="value">
+      <h2 class="section-title">Value Calculator — Baseline Soft Savings</h2>
+      <div class="calc-card">
+        <div style="margin-bottom:24px">
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Conservative baseline calculation — compliance and banking staff time recovered at standard blended rate:</div>
+          <div class="calc-equation">
+            <div class="calc-factor">
+              <div class="num">28</div>
+              <div class="lbl">hrs / week</div>
+            </div>
+            <div class="calc-op">&times;</div>
+            <div class="calc-factor">
+              <div class="num">48</div>
+              <div class="lbl">working weeks</div>
+            </div>
+            <div class="calc-op">&times;</div>
+            <div class="calc-factor">
+              <div class="num">£25</div>
+              <div class="lbl">blended rate / hr</div>
+            </div>
+            <div class="calc-op">=</div>
+            <div class="calc-result">
+              <div class="num">£33,600</div>
+              <div class="lbl">soft savings / yr</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-breakdown">
+          <div class="breakdown-item">
+            <div class="b-label">AML Alert Triage</div>
+            <div class="b-val">£35,000</div>
+            <div class="b-desc">Alert review automation — 12 hrs/wk recovered</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="b-label">Credit Limit Review</div>
+            <div class="b-val">£28,000</div>
+            <div class="b-desc">Review cycle automation — 8 hrs/wk</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="b-label">Reg Report Generator</div>
+            <div class="b-val">£42,000</div>
+            <div class="b-desc">BSA/FinCEN drafting — 6 hrs/wk + accuracy</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="b-label">Loan Doc Checker</div>
+            <div class="b-val">£22,000</div>
+            <div class="b-desc">Pre-closing validation — 2 hrs/loan</div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;padding:16px 20px;background:var(--bg);border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="color:var(--text-muted);font-size:13px">Total annual value across all 4 agents</span>
+          <span style="font-size:22px;font-weight:800;color:var(--accent)">£127,000 / year</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 7: Engagement Timeline ── -->
+    <section id="timeline">
+      <h2 class="section-title">Engagement Timeline</h2>
+      <div class="timeline">
+        <div class="timeline-step">
+          <div class="timeline-dot done">&#10003;</div>
+          <div class="timeline-label">Discovery</div>
+          <div class="timeline-sub">Completed<br>F20 profile set</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot active">P</div>
+          <div class="timeline-label">Pilot</div>
+          <div class="timeline-sub">April 2026<br>AML Triage · 6 wks</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot future">2</div>
+          <div class="timeline-label">Phase 2</div>
+          <div class="timeline-sub">July 2026<br>Credit Limit Review</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot future">3</div>
+          <div class="timeline-label">Phase 3</div>
+          <div class="timeline-sub">Q3 2026<br>Reg Report Generator</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot future">&#9679;</div>
+          <div class="timeline-label">Platform</div>
+          <div class="timeline-sub">Q4 2026<br>Loan Doc Checker</div>
+        </div>
+      </div>
+
+      <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Pilot Phase (6 weeks)</div>
+          <div style="font-size:13px;color:var(--text-sec)">Weeks 1–2: Verafin API integration + compliance review<br>Weeks 3–4: AML triage logic + HITL workflow build<br>Week 5: UAT with James Whitfield + BSA Officer<br>Week 6: Go-live with full approval queue + audit logging</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Success Criteria</div>
+          <div style="font-size:13px;color:var(--text-sec)">&#10003; &ge; 70% reduction in false positive review time<br>&#10003; 100% of SAR recommendations reviewed by BSA Officer<br>&#10003; Full audit trail for OCC examination readiness<br>&#10003; Break-even achieved by Week 9</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 8: Next Steps CTA ── -->
+    <section id="next">
+      <h2 class="section-title">Next Steps</h2>
+      <div class="cta-card">
+        <h3>Ready to start the Pilot?</h3>
+        <p>6-week AML Alert Triage Agent pilot · Verafin + Jack Henry T2 integration · £35K Year 1 value</p>
+        <div style="margin-bottom:28px;font-size:13px;color:var(--text-muted)">
+          Contact: <strong style="color:var(--text)">James Whitfield</strong>, Chief Compliance Officer &nbsp;&bull;&nbsp; <a href="mailto:j.whitfield@meridianbank.com" style="color:var(--accent)">j.whitfield@meridianbank.com</a>
+        </div>
+        <div class="cta-buttons">
+          <a class="btn-primary" href="mailto:j.whitfield@meridianbank.com?subject=Meridian Bank — AML Triage Agent Pilot">Schedule Pilot Working Session &rarr;</a>
+          <a class="btn-secondary" href="../index.html">View All Client Portals</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    Meridian Community Bank &mdash; Agent Platform Engagement Portal &nbsp;|&nbsp; <a href="../index.html">All Portals</a> &nbsp;|&nbsp; Business Agents Platform &nbsp;|&nbsp; Confidential
+  </div>
+</footer>
+
+</body>
+</html>

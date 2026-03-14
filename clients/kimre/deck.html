@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kimre Inc. — AI Agent Platform Engagement Proposal</title>
+
+  <!-- Reveal.js CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --kimre: #f97316;
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --blue: #3b82f6;
+    }
+
+    .reveal { font-family: 'Inter', sans-serif; }
+    .reveal .slides section { color: var(--text); }
+
+    /* Override Reveal black theme backgrounds */
+    .reveal .slide-background { background: var(--bg) !important; }
+    .reveal .backgrounds { background: var(--bg); }
+
+    /* Shared slide styles */
+    .reveal h1 { font-size: 2em; font-weight: 800; line-height: 1.15; color: var(--text); margin: 0 0 12px; }
+    .reveal h2 { font-size: 1.5em; font-weight: 700; color: var(--text); margin: 0 0 20px; }
+    .reveal h3 { font-size: 1.1em; font-weight: 700; color: var(--kimre); margin: 0 0 10px; }
+    .reveal p, .reveal li { font-size: 0.85em; line-height: 1.6; color: var(--text); }
+    .reveal ul { list-style: none; padding: 0; }
+    .reveal ul li::before { content: '→ '; color: var(--kimre); font-weight: 700; }
+
+    .kimre-accent { color: var(--kimre); }
+    .text-muted { color: var(--muted); }
+    .text-green { color: var(--green); }
+    .text-amber { color: var(--amber); }
+
+    /* Card component */
+    .slide-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .slide-card-orange { background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3); border-radius: 12px; padding: 20px; }
+
+    /* KPI numbers */
+    .big-number { font-size: 2.4em; font-weight: 800; color: var(--kimre); line-height: 1; }
+    .big-sub { font-size: 0.75em; color: var(--muted); margin-top: 4px; }
+
+    /* Table */
+    .deck-table { width: 100%; border-collapse: collapse; font-size: 0.78em; }
+    .deck-table th { text-align: left; color: var(--muted); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    .deck-table td { padding: 9px 10px; border-bottom: 1px solid rgba(30,41,59,0.5); }
+    .deck-table tr:last-child td { border-bottom: none; }
+    .deck-table td:first-child { font-weight: 700; color: var(--kimre); }
+
+    /* Timeline bar */
+    .timeline { display: flex; gap: 0; margin-top: 16px; }
+    .timeline-item { flex: 1; position: relative; }
+    .timeline-bar { height: 10px; background: var(--kimre); opacity: 0.7; }
+    .timeline-item:first-child .timeline-bar { border-radius: 6px 0 0 6px; }
+    .timeline-item:last-child .timeline-bar { border-radius: 0 6px 6px 0; }
+    .timeline-label { font-size: 0.62em; color: var(--muted); margin-top: 6px; text-align: center; line-height: 1.3; }
+    .timeline-week { font-size: 0.65em; font-weight: 700; color: var(--kimre); text-align: center; margin-bottom: 4px; }
+
+    /* Persona boxes */
+    .persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .persona-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: left; }
+    .persona-name { font-size: 0.9em; font-weight: 800; color: var(--kimre); margin-bottom: 4px; }
+    .persona-agent { font-size: 0.75em; color: var(--muted); margin-bottom: 8px; }
+    .persona-value { font-size: 0.8em; color: var(--text); font-style: italic; }
+
+    /* Phase cards */
+    .phase-grid { display: flex; gap: 12px; }
+    .phase-card { flex: 1; border-radius: 10px; padding: 16px; border: 1px solid; }
+    .phase-complete { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.06); }
+    .phase-active { border-color: rgba(249,115,22,0.4); background: rgba(249,115,22,0.08); }
+    .phase-future { border-color: var(--border); background: var(--card); }
+    .phase-title { font-size: 0.85em; font-weight: 700; margin-bottom: 4px; }
+    .phase-price { font-size: 1.1em; font-weight: 800; color: var(--kimre); }
+    .phase-detail { font-size: 0.7em; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+    .phase-badge { font-size: 0.6em; font-weight: 700; padding: 2px 7px; border-radius: 99px; display: inline-block; margin-bottom: 6px; }
+    .badge-done { background: rgba(34,197,94,0.2); color: var(--green); }
+    .badge-active { background: rgba(249,115,22,0.2); color: var(--kimre); }
+    .badge-future { background: rgba(100,116,139,0.2); color: var(--muted); }
+
+    /* ROI chart */
+    .roi-chart { display: flex; gap: 16px; align-items: flex-end; height: 120px; margin: 16px 0 8px; }
+    .roi-bar-wrap { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; justify-content: flex-end; }
+    .roi-bar-label { font-size: 0.6em; color: var(--muted); margin-bottom: 4px; }
+    .roi-bar { width: 100%; border-radius: 4px 4px 0 0; }
+    .roi-val { font-size: 0.65em; font-weight: 700; margin-top: 4px; text-align: center; }
+    .roi-month { font-size: 0.6em; color: var(--muted); text-align: center; }
+
+    /* Next steps */
+    .next-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; }
+    .step-num { background: var(--kimre); color: #fff; font-weight: 800; font-size: 0.75em; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-text { font-size: 0.8em; line-height: 1.4; }
+
+    .cta-btn { display: inline-block; background: var(--kimre); color: #fff; padding: 14px 32px; border-radius: 10px; font-size: 0.9em; font-weight: 700; margin-top: 16px; text-decoration: none; border: none; cursor: pointer; }
+    .cta-btn:hover { filter: brightness(1.1); }
+
+    /* Subtitle / footer */
+    .slide-footer { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 0.55em; color: var(--muted); white-space: nowrap; }
+    .slide-subtitle { font-size: 0.85em; color: var(--muted); margin-bottom: 24px; }
+
+    /* Bottleneck items */
+    .bottleneck { display: flex; align-items: flex-start; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 10px; }
+    .bottleneck-icon { font-size: 1.4em; flex-shrink: 0; line-height: 1; }
+    .bottleneck-content h4 { font-size: 0.85em; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+    .bottleneck-content p { font-size: 0.75em; color: var(--muted); margin: 0; }
+
+    /* Milestone chart for slide 8 */
+    .milestone-grid { display: flex; flex-direction: column; gap: 8px; }
+    .milestone-row { display: flex; align-items: center; gap: 14px; }
+    .ms-week { font-size: 0.7em; font-weight: 700; color: var(--kimre); width: 70px; flex-shrink: 0; }
+    .ms-bar-wrap { flex: 1; }
+    .ms-bar { height: 28px; border-radius: 6px; display: flex; align-items: center; padding: 0 12px; font-size: 0.7em; font-weight: 600; color: #fff; }
+    .ms-bar-1 { background: rgba(249,115,22,0.5); }
+    .ms-bar-2 { background: rgba(249,115,22,0.65); }
+    .ms-bar-3 { background: rgba(249,115,22,0.8); }
+    .ms-bar-4 { background: var(--kimre); }
+    .ms-bar-5 { background: rgba(59,130,246,0.6); }
+    .ms-bar-6 { background: rgba(34,197,94,0.7); }
+
+    /* Demo slide */
+    .demo-item { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 0.78em; }
+    .demo-check { color: var(--green); font-weight: 700; font-size: 1em; }
+    .demo-arrow { color: var(--kimre); font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="reveal">
+  <div class="slides">
+
+    <!-- SLIDE 1: TITLE -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <div style="text-align:center;padding:20px 0;">
+        <div style="font-size:0.7em;font-weight:700;color:var(--kimre);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:20px;">Kimre Inc.</div>
+        <h1 style="font-size:2.2em;line-height:1.1">AI Agent Platform<br><span class="kimre-accent">Engagement Proposal</span></h1>
+        <p class="slide-subtitle" style="margin-top:16px;font-size:1em;">Recovering 34 hours/week. £190K annual value. Starting this month.</p>
+        <div style="margin-top:36px;display:flex;justify-content:center;gap:32px;">
+          <div style="text-align:center;">
+            <div class="big-number">34h</div>
+            <div class="big-sub">Per week recoverable</div>
+          </div>
+          <div style="text-align:center;">
+            <div class="big-number">£190K</div>
+            <div class="big-sub">Annual value</div>
+          </div>
+          <div style="text-align:center;">
+            <div class="big-number">5</div>
+            <div class="big-sub">AI agents</div>
+          </div>
+        </div>
+        <div class="slide-footer">Prepared March 2026 &nbsp;&bull;&nbsp; Confidential</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: WHY NOW -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>ETO Manufacturers Face<br><span class="kimre-accent">3 Compounding Bottlenecks</span></h2>
+
+      <div class="bottleneck">
+        <div class="bottleneck-icon">🔁</div>
+        <div class="bottleneck-content">
+          <h4>RFQ → Quote: 3–5 days average. Customers expect 24h.</h4>
+          <p>Every day of delay reduces win rate by ~8%. High-value ETO customers have alternatives.</p>
+        </div>
+      </div>
+
+      <div class="bottleneck">
+        <div class="bottleneck-icon">📦</div>
+        <div class="bottleneck-content">
+          <h4>Material Shortages: Found during fabrication — too late.</h4>
+          <p>Manual stock checks miss critical batch issues. Shortages discovered at fabrication = 2–4 week schedule impact.</p>
+        </div>
+      </div>
+
+      <div class="bottleneck">
+        <div class="bottleneck-icon">📞</div>
+        <div class="bottleneck-content">
+          <h4>Customer Comms: Reactive. Customers call before you notify.</h4>
+          <p>Inbound status calls consume 5h/week. Each unanswered delay erodes trust with high-value accounts.</p>
+        </div>
+      </div>
+
+      <p style="text-align:center;margin-top:16px;font-size:0.85em;font-weight:700;color:var(--kimre);">"Each bottleneck costs you orders, margin, and relationships."</p>
+    </section>
+
+    <!-- SLIDE 3: KIMRE'S AGENT OPPORTUNITY -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>Kimre's Agent Opportunity</h2>
+      <p style="color:var(--kimre);font-weight:700;font-size:0.85em;margin-bottom:16px;">34 hours/week recoverable across 4 roles</p>
+
+      <table class="deck-table">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>Current Waste</th>
+            <th>Agent Opportunity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Alex (Sales)</td>
+            <td style="color:var(--text)">8h/wk on spec lookup + scope drafting</td>
+            <td style="color:var(--green)">RFQ-to-Quote Agent</td>
+          </tr>
+          <tr>
+            <td>Sam (Engineering)</td>
+            <td style="color:var(--text)">6h/wk on material checks + PR creation</td>
+            <td style="color:var(--green)">Material Requisition Agent</td>
+          </tr>
+          <tr>
+            <td>Jordan (CS)</td>
+            <td style="color:var(--text)">5h/wk on order tracking + notifications</td>
+            <td style="color:var(--green)">Order Milestone Notifier</td>
+          </tr>
+          <tr>
+            <td>Mary (President)</td>
+            <td style="color:var(--text)">3h/wk gathering status from team</td>
+            <td style="color:var(--green)">Executive Dashboard</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="slide-card-orange" style="margin-top:20px;text-align:center;">
+        <div class="big-number">£190,000</div>
+        <div class="big-sub">Annual value (conservative estimate across all 5 agents)</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: RECOMMENDED PILOT -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>Start Here: <span class="kimre-accent">Material Requisition Agent</span></h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+        <div class="slide-card">
+          <h3>Live Pilot Status</h3>
+          <ul>
+            <li style="color:var(--green)">Live pilot, running now</li>
+            <li>Sam saves 6+ hours/week</li>
+            <li>Every PR automated</li>
+            <li>No more manual Excel + phone calls</li>
+          </ul>
+        </div>
+        <div class="slide-card">
+          <h3>ROI Summary</h3>
+          <div style="margin-bottom:8px;">
+            <div class="big-number" style="font-size:1.8em">Week 8</div>
+            <div class="big-sub">Break-even point</div>
+          </div>
+          <div>
+            <div style="font-size:1.1em;font-weight:800;color:var(--green)">£24,000</div>
+            <div style="font-size:0.7em;color:var(--muted)">Year 1 value</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:0.75em;font-weight:700;color:var(--muted);margin-bottom:8px;">6-WEEK PILOT TIMELINE</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-week">Wk 1–2</div>
+          <div class="timeline-bar" style="opacity:1;background:var(--green)"></div>
+          <div class="timeline-label">Configure</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-week">Wk 3–4</div>
+          <div class="timeline-bar" style="opacity:1;background:var(--green)"></div>
+          <div class="timeline-label">Validate</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-week">Wk 5–6</div>
+          <div class="timeline-bar"></div>
+          <div class="timeline-label">Live + Measure</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: AGENT DEMO -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>Material Requisition Agent<br><span class="kimre-accent">Live Run</span></h2>
+
+      <div style="display:flex;gap:14px;margin-bottom:14px;">
+        <div class="slide-card" style="flex:1">
+          <h3>What the Agent Does</h3>
+          <div class="demo-item"><span class="demo-check">✓</span> Checks 10 open orders vs. material stock</div>
+          <div class="demo-item"><span class="demo-check">✓</span> Identifies 2 shortages (CPVC, PP mesh)</div>
+          <div class="demo-item"><span class="demo-check">✓</span> Recommends purchase requisitions</div>
+          <div class="demo-item"><span class="demo-check">✓</span> Sam approves in 1 click</div>
+        </div>
+        <div class="slide-card-orange" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+          <div style="font-size:0.75em;color:var(--muted);margin-bottom:8px;">TIME SAVINGS</div>
+          <div class="big-number">6 hrs</div>
+          <div style="font-size:1.5em;font-weight:800;color:var(--muted);margin:4px 0">→</div>
+          <div class="big-number">2 min</div>
+          <div style="font-size:0.75em;color:var(--muted);margin-top:8px;">6 hours of work → 2 minutes per week</div>
+        </div>
+      </div>
+
+      <div class="slide-card" style="background:#0a0e1a;border-color:rgba(249,115,22,0.3)">
+        <div style="font-size:0.65em;color:var(--kimre);font-weight:700;margin-bottom:8px;">AGENT OUTPUT — SAMPLE</div>
+        <div style="font-family:monospace;font-size:0.7em;color:var(--muted)">
+          <div style="color:var(--green)">[14:22:01] Material Requisition Agent starting...</div>
+          <div>[14:22:02] Checking 10 open orders vs. stock...</div>
+          <div style="color:var(--amber)">[14:22:03] SHORTAGE: CPVC sheeting — 2 orders affected (KIM-050, KIM-047)</div>
+          <div style="color:var(--amber)">[14:22:04] SHORTAGE: PP mesh — 1 order affected (KIM-052)</div>
+          <div style="color:var(--green)">[14:22:05] 2 PRs drafted — awaiting Sam's approval</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: PERSONA IMPACT MAP -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>Persona Impact Map</h2>
+      <p class="slide-subtitle">How each agent creates specific value for your team</p>
+
+      <div class="persona-grid">
+        <div class="persona-box">
+          <div class="persona-name">Alex — Sales</div>
+          <div class="persona-agent">RFQ-to-Quote Agent</div>
+          <div class="persona-value">"Quote in 2 hours, not 2 days. 8 RFQs in the queue — all scoped by Monday morning."</div>
+          <div style="margin-top:10px;font-size:0.75em;color:var(--kimre);font-weight:700">£38,000/year value</div>
+        </div>
+        <div class="persona-box">
+          <div class="persona-name">Sam — Engineering</div>
+          <div class="persona-agent">Material Requisition Agent</div>
+          <div class="persona-value">"6h/week saved + zero stockout surprises. Every purchase request automated — I just approve."</div>
+          <div style="margin-top:10px;font-size:0.75em;color:var(--green);font-weight:700">🟢 PILOT — Live Now</div>
+        </div>
+        <div class="persona-box">
+          <div class="persona-name">Jordan — Customer Service</div>
+          <div class="persona-agent">Order Milestone Notifier</div>
+          <div class="persona-value">"Proactive notifications — customers never call first. Every milestone triggers an update automatically."</div>
+          <div style="margin-top:10px;font-size:0.75em;color:var(--kimre);font-weight:700">£22,000/year value</div>
+        </div>
+        <div class="persona-box">
+          <div class="persona-name">Mary — President</div>
+          <div class="persona-agent">Executive Dashboard</div>
+          <div class="persona-value">"Business health in 5 minutes, not 30. Pipeline, OTD, margins, and agent ROI — all in one view."</div>
+          <div style="margin-top:10px;font-size:0.75em;color:var(--kimre);font-weight:700">3h/week reclaimed</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: ENGAGEMENT MODEL -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>Engagement Model</h2>
+      <p class="slide-subtitle">Three-phase commercial model — start small, prove value, scale</p>
+
+      <div class="phase-grid">
+        <div class="phase-card phase-complete">
+          <span class="phase-badge badge-done">✓ COMPLETE</span>
+          <div class="phase-title">Phase 1 — Discovery</div>
+          <div class="phase-price">£8,000</div>
+          <div style="font-size:0.7em;color:var(--muted);margin-top:2px;">2 weeks</div>
+          <div class="phase-detail">Process mapping, opportunity assessment, pilot scoping. All 5 agent opportunities identified and sized.</div>
+        </div>
+        <div class="phase-card phase-active">
+          <span class="phase-badge badge-active">→ IN PROGRESS</span>
+          <div class="phase-title">Phase 2 — Pilot</div>
+          <div class="phase-price">£25,000</div>
+          <div style="font-size:0.7em;color:var(--muted);margin-top:2px;">6 weeks</div>
+          <div class="phase-detail">Material Requisition live. RFQ-to-Quote next. Dashboards deployed for all personas.</div>
+        </div>
+        <div class="phase-card phase-future">
+          <span class="phase-badge badge-future">NEXT</span>
+          <div class="phase-title">Phase 3 — Platform</div>
+          <div class="phase-price">£80,000+</div>
+          <div style="font-size:0.7em;color:var(--muted);margin-top:2px;">6–12 months</div>
+          <div class="phase-detail">All 5 agents, full dashboard suite, ongoing value measurement and continuous improvement.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.25);border-radius:10px;padding:14px;text-align:center;">
+        <div style="font-size:0.8em;color:var(--muted)">Total 3-Phase Investment</div>
+        <div style="font-size:1.5em;font-weight:800;color:var(--kimre)">£113,000</div>
+        <div style="font-size:0.75em;color:var(--muted)">vs. £190,000+ annual value — payback within 8 months</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: 6-WEEK PILOT TIMELINE -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>6-Week Pilot Timeline</h2>
+      <p class="slide-subtitle">Material Requisition Agent live — RFQ-to-Quote next</p>
+
+      <div class="milestone-grid">
+        <div class="milestone-row">
+          <div class="ms-week">Week 1</div>
+          <div class="ms-bar-wrap">
+            <div class="ms-bar ms-bar-1" style="width:100%">Sam onboarding + ERP read access</div>
+          </div>
+        </div>
+        <div class="milestone-row">
+          <div class="ms-week">Week 2</div>
+          <div class="ms-bar-wrap">
+            <div class="ms-bar ms-bar-2" style="width:100%">First dry-run — output validation with Sam</div>
+          </div>
+        </div>
+        <div class="milestone-row">
+          <div class="ms-week">Week 3</div>
+          <div class="ms-bar-wrap">
+            <div class="ms-bar ms-bar-3" style="width:100%">Live run with human oversight</div>
+          </div>
+        </div>
+        <div class="milestone-row">
+          <div class="ms-week">Week 4</div>
+          <div class="ms-bar-wrap">
+            <div class="ms-bar ms-bar-4" style="width:100%">First full autonomous week — measure savings</div>
+          </div>
+        </div>
+        <div class="milestone-row">
+          <div class="ms-week">Week 5</div>
+          <div class="ms-bar-wrap">
+            <div class="ms-bar ms-bar-5" style="width:100%">RFQ-to-Quote agent scoping begins</div>
+          </div>
+        </div>
+        <div class="milestone-row">
+          <div class="ms-week">Week 6</div>
+          <div class="ms-bar-wrap">
+            <div class="ms-bar ms-bar-6" style="width:100%">Pilot review — value measurement — next phase decision</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: ROI -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>Return on Investment</h2>
+      <p style="color:var(--kimre);font-weight:700;font-size:0.85em;margin-bottom:16px;">Break-even at Week 8. £190K by Month 18.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div>
+          <table class="deck-table">
+            <tbody>
+              <tr>
+                <td style="color:var(--muted);font-size:0.78em">Pilot investment</td>
+                <td style="color:var(--text);font-weight:700">£25,000</td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-size:0.78em">Year 1 — Material Req only</td>
+                <td style="color:var(--green);font-weight:700">£24,000</td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-size:0.78em">Year 1 — All 5 agents</td>
+                <td style="color:var(--kimre);font-weight:700">£190,000</td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-size:0.78em">Break-even point</td>
+                <td style="color:var(--text);font-weight:700">Week 8</td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-size:0.78em">Total investment (3 phases)</td>
+                <td style="color:var(--text);font-weight:700">£113,000</td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-size:0.78em">Month 18 cumulative value</td>
+                <td style="color:var(--kimre);font-weight:700">£190,000+</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <!-- Simple SVG bar chart -->
+          <div style="font-size:0.65em;color:var(--muted);margin-bottom:8px;text-align:center;">Value vs. Investment (cumulative)</div>
+          <svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:120px;">
+            <!-- Grid lines -->
+            <line x1="40" y1="10" x2="40" y2="100" stroke="#1e293b" stroke-width="1"/>
+            <line x1="40" y1="100" x2="270" y2="100" stroke="#1e293b" stroke-width="1"/>
+            <!-- Investment line (flat-ish, £33K over 18 months) -->
+            <polyline points="40,100 80,88 120,82 160,80 200,79 240,78 270,78" stroke="#64748b" stroke-width="2" fill="none" stroke-dasharray="4,2"/>
+            <!-- Value line (grows to £190K by M18) -->
+            <polyline points="40,100 80,99 120,92 160,75 200,52 240,28 270,15" stroke="#f97316" stroke-width="2.5" fill="none"/>
+            <!-- Break-even marker -->
+            <circle cx="98" cy="88" r="4" fill="#22c55e"/>
+            <text x="102" y="83" fill="#22c55e" font-size="7" font-family="Inter,sans-serif" font-weight="700">Break-even</text>
+            <!-- Labels -->
+            <text x="42" y="113" fill="#64748b" font-size="6" font-family="Inter,sans-serif">M0</text>
+            <text x="112" y="113" fill="#64748b" font-size="6" font-family="Inter,sans-serif">M6</text>
+            <text x="192" y="113" fill="#64748b" font-size="6" font-family="Inter,sans-serif">M12</text>
+            <text x="252" y="113" fill="#64748b" font-size="6" font-family="Inter,sans-serif">M18</text>
+            <!-- Legend -->
+            <line x1="42" y1="12" x2="58" y2="12" stroke="#f97316" stroke-width="2"/>
+            <text x="61" y="16" fill="#f1f5f9" font-size="6.5" font-family="Inter,sans-serif">Agent value</text>
+            <line x1="120" y1="12" x2="136" y2="12" stroke="#64748b" stroke-width="2" stroke-dasharray="3,2"/>
+            <text x="139" y="16" fill="#64748b" font-size="6.5" font-family="Inter,sans-serif">Investment</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: NEXT STEPS -->
+    <section data-background-color="#0f1117" data-auto-slide="5000">
+      <h2>Let's Build This Together</h2>
+
+      <div style="margin-bottom:16px;">
+        <div class="next-step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Schedule working session:</strong> Mary + Alex + Sam — this week. Pilot review and next agent prioritisation.</div>
+        </div>
+        <div class="next-step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>RFQ-to-Quote Agent scoping:</strong> 2-hour session with Alex — spec lookup rules, product family mapping, confidence thresholds.</div>
+        </div>
+        <div class="next-step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Platform access review with Sam:</strong> ERP read permissions for material stock + open orders data feed.</div>
+        </div>
+        <div class="next-step" style="border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.06)">
+          <div class="step-num" style="background:var(--border)">4</div>
+          <div class="step-text"><strong>Decision:</strong> Platform contract — £80K, 6–12 months, all 5 agents + full dashboard suite. Break-even Month 8.</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;">
+        <div style="font-size:0.8em;color:var(--muted);margin-bottom:10px;">Questions? Contact your agent platform team</div>
+        <button class="cta-btn" onclick="alert('Schedule a working session with the Kimre AI Agent team.')">Schedule Working Session →</button>
+      </div>
+
+      <div class="slide-footer">Kimre Inc. AI Agent Platform — March 2026 &nbsp;&bull;&nbsp; Confidential</div>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: true,
+    controls: true,
+    progress: true,
+    center: true,
+    transition: 'fade',
+    transitionSpeed: 'default',
+    autoSlide: 5000,
+    autoSlideStoppable: true,
+    loop: false,
+    width: 960,
+    height: 700,
+    margin: 0.04,
+    minScale: 0.2,
+    maxScale: 2.0,
+  });
+</script>
+</body>
+</html>

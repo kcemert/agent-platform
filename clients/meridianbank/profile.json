@@ -1,0 +1,44 @@
+{
+  "slug": "meridianbank",
+  "name": "Meridian Community Bank",
+  "tagline": "Community Banking — Charlotte, NC",
+  "location": "Charlotte, North Carolina, USA",
+  "employees": 200,
+  "revenue_usd_m": 45,
+  "size_tier": "MID",
+  "industry_code": "FS",
+  "business_model": "Service",
+  "regulatory_score": 5,
+  "integration_tier": "T2",
+  "data_readiness_score": 19,
+  "engagement_tier": "Pilot",
+  "certifications": ["FDIC Member", "OCC Supervised", "BSA/AML Compliant"],
+  "branches": 12,
+  "primary_systems": {
+    "core_banking": "Jack Henry Silverlight",
+    "crm": "Salesforce Financial Services Cloud",
+    "compliance": "Verafin AML"
+  },
+  "pilot_agent": {
+    "name": "AML Alert Triage Agent",
+    "slug": "fs-aml-alert-triage-agent",
+    "timeline_weeks": 6,
+    "year1_value_gbp": 35000,
+    "authority_level": "MEDIUM"
+  },
+  "agents": [
+    {"rank": 1, "name": "AML Alert Triage Agent", "slug": "fs-aml-alert-triage-agent", "value_gbp_annual": 35000, "status": "pilot_ready"},
+    {"rank": 2, "name": "Credit Limit Review Agent", "slug": "fs-credit-limit-review-agent", "value_gbp_annual": 28000, "status": "blueprint"},
+    {"rank": 3, "name": "Regulatory Report Generator", "slug": "fs-reg-report-gen-agent", "value_gbp_annual": 42000, "status": "blueprint"},
+    {"rank": 4, "name": "Loan Document Checker", "slug": "fs-loan-doc-checker-agent", "value_gbp_annual": 22000, "status": "blueprint"}
+  ],
+  "hours_recoverable_per_week": 28,
+  "annual_value_gbp": 127000,
+  "contact": {
+    "name": "James Whitfield",
+    "title": "Chief Compliance Officer",
+    "email": "j.whitfield@meridianbank.com"
+  },
+  "engagement_start": "2026-04-15",
+  "notes": "Regulatory score 5/5 — HITL required for all agent actions. Strong data readiness (Verafin integration). CCO is champion. BSA Officer involved in pilot scoping."
+}

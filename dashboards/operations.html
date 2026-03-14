@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operations Manager Dashboard — Business Agents Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #1c2128;
+      --card-hover: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+
+      --sandbox: #39d353;
+      --sandbox-dim: #39d35320;
+      --blueprint-col: #8b949e;
+      --blueprint-dim: #8b949e20;
+
+      --low: #3fb950;
+      --low-dim: #3fb95020;
+      --medium: #d29922;
+      --medium-dim: #d2992220;
+      --high: #f85149;
+      --high-dim: #f8514920;
+
+      --cyan: #56d364;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Offline Banner ── */
+    #offline-banner {
+      display: none;
+      background: #d2992220;
+      border-bottom: 1px solid #d2992240;
+      padding: 10px 32px;
+      font-size: 0.82rem;
+      color: var(--medium);
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+    }
+
+    .nav-tab:hover {
+      background: rgba(88, 166, 255, 0.08);
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: rgba(88, 166, 255, 0.12);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .persona-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .persona-name {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .refresh-info {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .refresh-btn {
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      margin-left: 8px;
+      transition: background 120ms;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .refresh-btn:hover { background: rgba(88,166,255,0.08); }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      padding: 32px 40px;
+    }
+
+    .main-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+    }
+
+    .main-left { display: flex; flex-direction: column; gap: 32px; }
+    .main-right { display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── Agent tiles grid ── */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .agent-tile {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+      cursor: pointer;
+    }
+
+    .agent-tile:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(88, 166, 255, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .agent-tile.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .tile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tile-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .lifecycle-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 9px;
+    }
+
+    .lifecycle-badge.sandbox {
+      background: rgba(57, 211, 83, 0.15);
+      color: #56d364;
+      border: 1px solid rgba(57, 211, 83, 0.3);
+    }
+
+    .lifecycle-badge.blueprint {
+      background: var(--blueprint-dim);
+      color: var(--blueprint-col);
+      border: 1px solid rgba(139, 148, 158, 0.3);
+    }
+
+    .authority-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 9px;
+    }
+
+    .authority-pill.low {
+      background: var(--low-dim);
+      color: var(--low);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .authority-pill.medium {
+      background: var(--medium-dim);
+      color: var(--medium);
+      border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+
+    .authority-pill.high {
+      background: var(--high-dim);
+      color: var(--high);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+    }
+
+    .tile-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .tile-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.green { background: #3fb950; box-shadow: 0 0 6px rgba(63,185,80,0.5); }
+    .status-dot.red { background: #f85149; }
+    .status-dot.gray { background: #6e7681; }
+
+    .tile-metric {
+      background: rgba(88, 166, 255, 0.06);
+      border: 1px solid rgba(88, 166, 255, 0.12);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .tile-metric.muted {
+      background: rgba(110, 118, 129, 0.06);
+      border-color: rgba(110, 118, 129, 0.15);
+      color: var(--text-secondary);
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .tile-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    .tile-schedule {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .tile-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 120ms;
+    }
+
+    .tile-link:hover { opacity: 1; }
+
+    /* ── Run button on tiles ── */
+    .run-btn {
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 4px 10px;
+      border: 1px solid #58a6ff40;
+      background: #58a6ff15;
+      color: var(--accent);
+      cursor: pointer;
+      transition: background 120ms, opacity 120ms;
+      white-space: nowrap;
+    }
+
+    .run-btn:hover:not(:disabled) { background: #58a6ff25; }
+    .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── KPI Bar ── */
+    .kpi-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 28px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .kpi-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kpi-value {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .kpi-value.accent { color: var(--accent); }
+    .kpi-value.green { color: var(--low); }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .kpi-divider {
+      width: 1px;
+      background: var(--border);
+    }
+
+    /* ── Sidebar panels ── */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Activity feed */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .activity-item:last-child { border-bottom: none; }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.old { background: var(--border); }
+
+    .activity-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      margin-top: 1px;
+      min-width: 72px;
+    }
+
+    .activity-text {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .activity-agent {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Pending approvals */
+    .pending-empty {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px;
+      background: rgba(63, 185, 80, 0.06);
+      border: 1px solid rgba(63, 185, 80, 0.15);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: var(--low);
+    }
+
+    /* Footer */
+    footer {
+      padding: 16px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 1024px) {
+      .main-inner { grid-template-columns: 1fr; }
+      .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .page-header, main { padding-left: 20px; padding-right: 20px; }
+      .top-nav { padding: 0 16px; }
+      .kpi-bar { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── Run Theater Drawer ──────────────────────────────────────────────────── */
+    .run-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      backdrop-filter: blur(2px);
+    }
+    .run-overlay.active { display: block; }
+
+    .run-drawer {
+      position: fixed;
+      top: 0; right: -500px;
+      width: 480px; height: 100vh;
+      background: #1a1f2e;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      z-index: 201;
+      display: flex; flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -8px 0 32px rgba(0,0,0,0.4);
+    }
+    .run-drawer.active { right: 0; }
+
+    .drawer-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+    }
+    .drawer-agent-name { font-size: 1rem; font-weight: 700; color: #e2e8f0; }
+    .drawer-subtitle { font-size: 0.75rem; color: #64748b; margin-top: 3px; }
+    .drawer-close {
+      background: none; border: none; color: #64748b; font-size: 1.1rem;
+      cursor: pointer; padding: 2px 6px; border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .drawer-close:hover { color: #e2e8f0; background: rgba(255,255,255,0.06); }
+
+    .drawer-log {
+      flex: 0 0 auto;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      min-height: 140px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .log-step {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 0;
+      font-size: 0.82rem; color: #94a3b8;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .log-step.visible { opacity: 1; transform: translateY(0); }
+    .log-step .step-icon { font-size: 0.9rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .log-step.done { color: #94a3b8; }
+    .log-step.done .step-icon::after { content: ' \2705'; }
+    .log-step.running { color: #e2e8f0; }
+    .log-step.running .step-icon { animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+    .drawer-results { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .drawer-results-header {
+      padding: 12px 20px 8px;
+      font-size: 0.8rem; font-weight: 600; color: #64748b;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .rec-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+    .rec-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s, opacity 0.3s;
+    }
+    .rec-row:hover { background: rgba(255,255,255,0.02); }
+    .rec-row.decided { opacity: 0.45; }
+
+    .urgency-badge {
+      flex-shrink: 0;
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      padding: 2px 6px; border-radius: 3px; margin-top: 2px;
+      letter-spacing: 0.05em;
+    }
+    .urgency-critical { background: rgba(239,68,68,0.2); color: #f87171; }
+    .urgency-high     { background: rgba(251,146,60,0.2); color: #fb923c; }
+    .urgency-medium   { background: rgba(234,179,8,0.2);  color: #facc15; }
+    .urgency-low      { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+    .rec-body { flex: 1; min-width: 0; }
+    .rec-item-id { font-size: 0.72rem; color: #64748b; font-family: monospace; }
+    .rec-label { font-size: 0.82rem; color: #cbd5e1; margin: 2px 0; font-weight: 500; }
+    .rec-action { font-size: 0.75rem; color: #94a3b8; line-height: 1.4; }
+
+    .rec-buttons { display: flex; gap: 6px; flex-shrink: 0; margin-top: 2px; }
+    .btn-accept, .btn-reject {
+      font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 4px;
+      border: none; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-accept { background: rgba(16,185,129,0.15); color: #10b981; }
+    .btn-accept:hover { background: rgba(16,185,129,0.3); }
+    .btn-accept.active { background: #10b981; color: #fff; }
+    .btn-reject { background: rgba(239,68,68,0.12); color: #f87171; }
+    .btn-reject:hover { background: rgba(239,68,68,0.25); }
+    .btn-reject.active { background: #ef4444; color: #fff; }
+
+    .drawer-footer {
+      padding: 14px 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(0,0,0,0.2);
+    }
+    .btn-submit-decisions {
+      background: #3b82f6; color: #fff; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-submit-decisions:hover { background: #2563eb; }
+    .btn-submit-decisions:disabled { background: #334155; color: #64748b; cursor: default; }
+    .decisions-summary { font-size: 0.75rem; color: #64748b; }
+
+    /* ── Impact Narrative Header ── */
+    .impact-header {
+      background: linear-gradient(135deg, #161b2e 0%, #1a2040 100%);
+      border: 1px solid #6366f140;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .impact-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .impact-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6366f1;
+      margin-bottom: 6px;
+    }
+    .impact-text {
+      font-size: 0.95rem;
+      color: #f1f5f9;
+      line-height: 1.5;
+    }
+    .impact-text strong { color: #f97316; }
+    .impact-text .crit { color: #ef4444; font-weight: 600; }
+    .impact-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .impact-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+    .impact-pill.critical { color: #ef4444; background: #ef444415; border-color: #ef444430; }
+    .impact-pill.pending  { color: #f97316; background: #f9731615; border-color: #f9731630; }
+    .impact-pill.info     { color: #94a3b8; background: #94a3b815; border-color: #94a3b830; }
+
+    /* ── SKU Status Table ── */
+    .sku-section { margin-bottom: 28px; }
+    .sku-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .sku-section-header h3 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+    .sku-sort-btn {
+      font-size: 0.72rem;
+      color: #64748b;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 8px;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .sku-sort-btn:hover { color: #f1f5f9; background: #1e293b; }
+    .sku-sort-btn.active { color: #6366f1; }
+
+    .sku-table { width: 100%; border-collapse: collapse; }
+    .sku-table th {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #64748b;
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid #1e293b;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .sku-table th:hover { color: #94a3b8; }
+    .sku-table th.sorted { color: #6366f1; }
+    .sku-table td {
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      border-bottom: 1px solid #1e293b10;
+      vertical-align: middle;
+    }
+    .sku-table tr { cursor: pointer; transition: background 0.1s; }
+    .sku-table tr:hover td { background: #1e293b40; color: #f1f5f9; }
+    .sku-table tr.selected td { background: #6366f115; }
+
+    .status-dot.critical { background: #ef4444; box-shadow: 0 0 6px #ef444460; }
+    .status-dot.low { background: #f97316; }
+    .status-dot.ok { background: #22c55e; }
+
+    .days-bar {
+      display: inline-block;
+      height: 4px;
+      border-radius: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .agent-action-cell { color: #6366f1; font-size: 0.78rem; }
+    .no-action-cell { color: #475569; font-style: italic; font-size: 0.78rem; }
+
+    /* ── SKU Detail Panel ── */
+    .sku-panel-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      display: none;
+    }
+    .sku-panel-overlay.open { display: block; }
+
+    .sku-panel {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: 440px;
+      background: #0f1117;
+      border-left: 1px solid #1e293b;
+      z-index: 301;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      overflow-y: auto;
+    }
+    .sku-panel.open { transform: translateX(0); }
+
+    .sku-panel-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky; top: 0;
+      background: #0f1117;
+      z-index: 1;
+    }
+    .sku-panel-title { font-size: 1rem; font-weight: 600; color: #f1f5f9; }
+    .sku-panel-id { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+    .sku-panel-close {
+      background: none; border: none; color: #64748b;
+      cursor: pointer; font-size: 1.2rem; padding: 0;
+      flex-shrink: 0;
+    }
+    .sku-panel-close:hover { color: #f1f5f9; }
+    .sku-panel-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+
+    .sku-stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .sku-stat {
+      background: #161b2e;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .sku-stat-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #64748b; margin-bottom: 4px; }
+    .sku-stat-value { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
+    .sku-stat-value.critical { color: #ef4444; }
+    .sku-stat-value.low { color: #f97316; }
+    .sku-stat-value.ok { color: #22c55e; }
+
+    .panel-section-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    /* mini sparkline */
+    .mini-chart {
+      background: #161b2e;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .mini-chart svg { display: block; width: 100%; }
+
+    .pr-detail-card {
+      background: #161b2e;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .pr-detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      padding: 4px 0;
+      border-bottom: 1px solid #1e293b20;
+    }
+    .pr-detail-row:last-child { border-bottom: none; }
+    .pr-detail-label { color: #64748b; }
+    .pr-detail-value { color: #f1f5f9; font-weight: 500; }
+
+    .decision-context-card {
+      background: #161b2e;
+      border: 1px solid #f9731630;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .decision-context-headline {
+      font-size: 0.85rem;
+      color: #f1f5f9;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .decision-context-headline .highlight { color: #f97316; font-weight: 600; }
+    .decision-context-headline .risk { color: #ef4444; font-weight: 600; }
+    .decision-qty-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .decision-qty-label { font-size: 0.78rem; color: #64748b; }
+    .decision-qty-input {
+      width: 80px;
+      background: #0f1117;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      color: #f1f5f9;
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      text-align: center;
+    }
+    .decision-btn-row { display: flex; gap: 8px; }
+    .btn-approve-ctx {
+      flex: 1;
+      background: #22c55e20;
+      color: #22c55e;
+      border: 1px solid #22c55e40;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-approve-ctx:hover { background: #22c55e35; }
+    .btn-reject-ctx {
+      flex: 1;
+      background: #ef444420;
+      color: #ef4444;
+      border: 1px solid #ef444440;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-reject-ctx:hover { background: #ef444435; }
+    .btn-escalate-ctx {
+      background: #64748b15;
+      color: #64748b;
+      border: 1px solid #64748b30;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-escalate-ctx:hover { color: #94a3b8; background: #64748b25; }
+
+    .decided-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .decided-badge.approved { background: #22c55e20; color: #22c55e; border: 1px solid #22c55e40; }
+    .decided-badge.rejected { background: #ef444420; color: #ef4444; border: 1px solid #ef444440; }
+
+    /* S41-1E: Sparkline Override */
+    .sparkline-bar { cursor: pointer; transition: opacity 0.15s; }
+    .sparkline-bar:hover { opacity: 0.7; }
+    .sparkline-bar.overridden { fill: #f97316 !important; }
+    .override-popover { position: absolute; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.4); min-width: 180px; }
+    .override-popover input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 6px 8px; border-radius: 6px; font-size: 13px; margin: 8px 0; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Offline Banner ── -->
+  <div id="offline-banner">
+    &#9888; Server offline &mdash; start with: <code style="font-family:monospace;background:#d2992215;padding:1px 6px;border-radius:3px;">cd dashboards &amp;&amp; python3 server.py</code>
+  </div>
+
+  <!-- ── Top Nav ── -->
+  <nav class="top-nav">
+    <span class="nav-brand">&#9889; Business Agents Platform</span>
+    <div class="nav-personas">
+      <a href="operations.html" class="nav-tab active">Operations</a>
+      <a href="finance.html" class="nav-tab">Finance</a>
+      <a href="compliance.html" class="nav-tab">Compliance</a>
+      <a href="it-health.html" class="nav-tab">IT</a>
+      <a href="pipeline.html" class="nav-tab">Pipeline</a>
+      <a href="action-queue.html" class="nav-tab">Action Queue</a>
+      <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>
+      <a href="eval.html" class="nav-tab">Eval <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>#9650;</a>
+    </div>
+  </nav>
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <div class="persona-label">Operations Persona</div>
+        <h1>Operations Manager Dashboard</h1>
+        <div class="persona-name">Sarah Chen, VP Operations &mdash; Consumer Goods</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="refresh-info">
+          Last refreshed: <span id="last-refreshed">—</span>
+          <button class="refresh-btn" onclick="fetchAll()">&#8635; Refresh</button>
+        </div>
+        <div id="header-status" style="margin-top:8px; font-size:0.75rem; color:var(--text-muted);">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <main>
+    <div class="main-inner">
+
+      <!-- LEFT COLUMN -->
+      <div class="main-left">
+
+        <!-- Impact Narrative Header -->
+        <div class="impact-header" id="impactHeader">
+          <div class="impact-icon">&#9889;</div>
+          <div>
+            <div class="impact-title">Today's Agent Activity</div>
+            <div class="impact-text" id="impactText">Loading agent activity...</div>
+            <div class="impact-actions" id="impactPills"></div>
+          </div>
+        </div>
+
+        <!-- SKU Status Table -->
+        <div class="sku-section">
+          <div class="sku-section-header">
+            <h3>SKU Inventory Status</h3>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span style="font-size:0.72rem;color:#64748b" id="skuSummaryText">Loading...</span>
+              <button class="sku-sort-btn active" id="sortDaysCover" onclick="sortSKUs('days_cover')">Sort by Days Cover</button>
+              <button class="sku-sort-btn" id="sortStatus" onclick="sortSKUs('status')">Sort by Status</button>
+            </div>
+          </div>
+          <table class="sku-table" id="skuTable">
+            <thead>
+              <tr>
+                <th onclick="sortSKUs('status')">Status</th>
+                <th onclick="sortSKUs('name')">SKU</th>
+                <th onclick="sortSKUs('current_stock')">Stock</th>
+                <th onclick="sortSKUs('days_cover')">Days Cover</th>
+                <th>Reorder Point</th>
+                <th>Agent Action</th>
+                <th>Decision</th>
+              </tr>
+            </thead>
+            <tbody id="skuTableBody">
+              <tr><td colspan="7" style="text-align:center;color:#475569;padding:24px">Loading SKU data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Agent Tiles -->
+        <div>
+          <div class="section-title">Deployed Agents</div>
+          <div class="agent-grid" id="agent-grid">
+            <!-- Rendered by JS -->
+            <div style="color:var(--text-muted);font-size:0.85rem;padding:20px;">Loading agents...</div>
+          </div>
+        </div>
+
+        <!-- KPI Bar -->
+        <div>
+          <div class="section-title">Aggregate KPIs &mdash; This Week</div>
+          <div class="kpi-bar">
+            <div class="kpi-item">
+              <div class="kpi-value accent" id="kpi-agents-running">—</div>
+              <div class="kpi-label">Agents Running</div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-value green" id="kpi-runs-week">—</div>
+              <div class="kpi-label">Runs This Week</div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-value" id="kpi-avg-outcome">—</div>
+              <div class="kpi-label">Avg Success Rate</div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-value" style="color:var(--low);" id="kpi-hours-saved">—</div>
+              <div class="kpi-label">Est. Hours/Week Saved</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="main-right">
+
+        <!-- Pending Approvals -->
+        <div class="panel">
+          <div class="panel-title">Pending Approvals</div>
+          <div class="pending-empty">
+            <span>&#10003;</span>
+            <span>No items pending approval &mdash; all active agents are LOW authority and operate autonomously.</span>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="panel">
+          <div class="panel-title">Recent Activity</div>
+          <div class="activity-list" id="activity-list">
+            <div style="color:var(--text-muted);font-size:0.82rem;padding:8px 0;">Loading activity...</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span>Operations Manager Persona &mdash; Consumer Goods Pilot</span>
+    <span>
+      <a href="enterprise.html">Enterprise Dashboard &uarr;</a>
+      &nbsp;&middot;&nbsp;
+      <a href="#" onclick="fetchAll(); return false;">&#8635; Refresh Data</a>
+    </span>
+  </footer>
+
+  <!-- Run Theater Drawer -->
+  <div class="run-overlay" id="run-overlay" onclick="closeRunDrawer()"></div>
+  <div class="run-drawer" id="run-drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-agent-name" id="drawer-agent-name">Running Agent</div>
+        <div class="drawer-subtitle" id="drawer-subtitle">Initializing...</div>
+      </div>
+      <button class="drawer-close" onclick="closeRunDrawer()">&#x2715;</button>
+    </div>
+    <div class="drawer-log" id="drawer-log"></div>
+    <div class="drawer-results" id="drawer-results" style="display:none">
+      <div class="drawer-results-header" id="drawer-results-header"></div>
+      <div class="rec-list" id="rec-list"></div>
+      <div class="drawer-footer">
+        <button class="btn-submit-decisions" id="btn-submit" onclick="submitAndClose()">
+          Submit Decisions
+        </button>
+        <span class="decisions-summary" id="decisions-summary"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKU Detail Panel -->
+  <div class="sku-panel-overlay" id="skuOverlay" onclick="closeSkuPanel()"></div>
+  <div class="sku-panel" id="skuPanel">
+    <div class="sku-panel-header">
+      <div>
+        <div class="sku-panel-title" id="panelTitle">SKU Name</div>
+        <div class="sku-panel-id" id="panelId">SKU-000</div>
+      </div>
+      <button class="sku-panel-close" onclick="closeSkuPanel()">&#10005;</button>
+    </div>
+    <div class="sku-panel-body" id="panelBody">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:8500';
+
+    // ── Operations agent slugs ─────────────────────────────────────────────
+    const OPS_SLUGS = ['cg-replenishment-pr-agent', 'cg-demand-forecast-agent'];
+
+    // ── Fallback data (shown when server is offline) ───────────────────────
+    const FALLBACK_AGENTS = [
+      {
+        slug: 'cg-replenishment-pr-agent',
+        title: 'CG Replenishment PR Agent',
+        lifecycle_stage: 'sandbox',
+        authority_level: 'low',
+        trigger_type: 'scheduled',
+        est_hours_per_week: 12,
+        last_run_at: null,
+        last_run_outcome: 'success',
+        last_run_summary: '7 PRs created',
+        persona: 'operations'
+      },
+      {
+        slug: 'cg-demand-forecast-agent',
+        title: 'CG Demand Forecast Agent',
+        lifecycle_stage: 'sandbox',
+        authority_level: 'low',
+        trigger_type: 'scheduled',
+        est_hours_per_week: 14,
+        last_run_at: null,
+        last_run_outcome: 'success',
+        last_run_summary: '20 SKUs forecast | Accuracy: 91.2%',
+        persona: 'operations'
+      }
+    ];
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+    function escHtml(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    function timeAgo(isoStr) {
+      if (!isoStr) return 'Never';
+      const then = new Date(isoStr.replace(' ', 'T') + (isoStr.includes('T') ? '' : 'Z'));
+      const diff = Math.floor((Date.now() - then) / 1000);
+      if (isNaN(diff)) return isoStr;
+      if (diff < 60)   return diff + 's ago';
+      if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+      if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+      return then.toLocaleDateString();
+    }
+
+    function outcomeEmoji(outcome) {
+      if (outcome === 'success') return '✅';
+      if (outcome === 'partial') return '⚠️';
+      if (outcome === 'failed')  return '❌';
+      return '•';
+    }
+
+    // ── Render agent tiles ─────────────────────────────────────────────────
+    function renderAgentTiles(agents) {
+      const opsAgents = agents.filter(a => a.persona === 'operations');
+      const grid = document.getElementById('agent-grid');
+
+      if (opsAgents.length === 0) {
+        grid.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;padding:20px;">No operations agents found.</div>';
+        return;
+      }
+
+      const tiles = opsAgents.map(agent => {
+        const isDeployed = ['sandbox','validated','pilot_ready','production'].includes(agent.lifecycle_stage);
+        const lastRunText = agent.last_run_at ? timeAgo(agent.last_run_at) : 'Never';
+        const metricText = agent.last_run_summary || 'No runs yet';
+
+        return `<div class="agent-tile" data-slug="${escHtml(agent.slug)}" onclick="window.location='agent-view.html?agent=${escHtml(agent.slug)}'" style="cursor:pointer;">
+          <div class="tile-top">
+            <div class="tile-badges">
+              <span class="lifecycle-badge ${escHtml(agent.lifecycle_stage)}">${escHtml(agent.lifecycle_stage.replace('_',' '))}</span>
+              <span class="authority-pill ${escHtml(agent.authority_level || 'low')}">${escHtml((agent.authority_level || 'low').toUpperCase())} Authority</span>
+            </div>
+            ${isDeployed ? `<button class="run-btn" id="run-btn-${escHtml(agent.slug)}" onclick="event.stopPropagation(); openRunDrawer('${escHtml(agent.slug)}')">&#9654; Run</button>` : ''}
+          </div>
+          <div class="tile-name">${escHtml(agent.title || agent.slug)}</div>
+          <div class="tile-status">
+            <span class="status-dot ${isDeployed ? 'green' : 'gray'}"></span>
+            <span>${isDeployed ? 'Active &mdash; Scheduled' : 'Not deployed'}</span>
+          </div>
+          <div class="tile-metric ${isDeployed ? '' : 'muted'}">${escHtml(metricText)}</div>
+          <div class="tile-footer">
+            <span class="tile-schedule">Last run: ${escHtml(lastRunText)}</span>
+            <a class="tile-link" href="agent-view.html?agent=${escHtml(agent.slug)}" onclick="event.stopPropagation()">View Details &rarr;</a>
+          </div>
+        </div>`;
+      }).join('');
+
+      grid.innerHTML = tiles;
+    }
+
+    // ── Render KPI bar ─────────────────────────────────────────────────────
+    function renderKPIs(agents, allRuns) {
+      // Agents Running = count of ops agents with sandbox+ stage
+      const activeStages = ['sandbox','validated','pilot_ready','production'];
+      const opsAgents = agents.filter(a => a.persona === 'operations');
+      const runningCount = opsAgents.filter(a => activeStages.includes(a.lifecycle_stage)).length;
+      document.getElementById('kpi-agents-running').textContent = runningCount;
+
+      // Runs this week = count across all ops agents run history
+      const oneWeekAgo = Date.now() - 7 * 24 * 3600 * 1000;
+      let runsThisWeek = 0;
+      let successCount = 0;
+      let totalCount = 0;
+      for (const runs of Object.values(allRuns)) {
+        for (const r of runs) {
+          const ts = new Date((r.run_at || '').replace(' ','T') + 'Z');
+          if (ts.getTime() > oneWeekAgo) runsThisWeek++;
+          totalCount++;
+          if (r.outcome === 'success') successCount++;
+        }
+      }
+      document.getElementById('kpi-runs-week').textContent = runsThisWeek;
+
+      // Avg success rate
+      const successRate = totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0;
+      document.getElementById('kpi-avg-outcome').textContent = successRate + '%';
+
+      // Hours saved = sum of est_hours_per_week for active ops agents
+      const hoursSaved = opsAgents
+        .filter(a => activeStages.includes(a.lifecycle_stage))
+        .reduce((sum, a) => sum + (a.est_hours_per_week || 0), 0);
+      document.getElementById('kpi-hours-saved').textContent = hoursSaved;
+    }
+
+    // ── Render activity feed ───────────────────────────────────────────────
+    function renderActivity(allRuns) {
+      // Flatten all runs with slug info, sort by run_at desc, take top 5
+      const flat = [];
+      for (const [slug, runs] of Object.entries(allRuns)) {
+        for (const r of runs) {
+          flat.push({ slug, ...r });
+        }
+      }
+      flat.sort((a, b) => (b.run_at || '').localeCompare(a.run_at || ''));
+      const top5 = flat.slice(0, 5);
+
+      const list = document.getElementById('activity-list');
+      if (top5.length === 0) {
+        list.innerHTML = '<div style="color:var(--text-muted);font-size:0.82rem;padding:8px 0;">No recent activity.</div>';
+        return;
+      }
+
+      const now = Date.now();
+      const items = top5.map((r, i) => {
+        const ts = new Date((r.run_at || '').replace(' ','T') + 'Z');
+        const ageMs = now - ts.getTime();
+        const isRecent = ageMs < 24 * 3600 * 1000;
+        const dotClass = isRecent ? '' : 'old';
+        const timeText = timeAgo(r.run_at);
+        const emoji = outcomeEmoji(r.outcome);
+        const agentLabel = r.slug.replace('cg-','').replace(/-agent$/,'').replace(/-/g,' ')
+          .split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + ' Agent';
+
+        // Build a descriptive summary: prefer explicit summary, enrich with rec count if available
+        let summaryText = r.summary || '';
+        const recCount = r.recommendation_count ?? r.recommendations_count ?? null;
+        if (!summaryText && recCount != null) {
+          summaryText = `${recCount} recommendation${recCount !== 1 ? 's' : ''} generated`;
+        } else if (!summaryText) {
+          summaryText = r.outcome === 'success' ? 'Completed successfully'
+                      : r.outcome === 'partial' ? 'Completed with warnings'
+                      : r.outcome === 'failed'  ? 'Run failed'
+                      : r.outcome || 'Run recorded';
+        }
+        // Append rec count to summary if summary exists but count is also available
+        const recBadge = (recCount != null && summaryText && !summaryText.includes('recommendation'))
+          ? ` &middot; <span style="color:var(--accent);font-weight:600;">${recCount} rec${recCount !== 1 ? 's' : ''}</span>`
+          : '';
+
+        return `<div class="activity-item">
+          <div class="activity-dot ${dotClass}"></div>
+          <div>
+            <div class="activity-time">${escHtml(timeText)}</div>
+            <div class="activity-text">
+              <span class="activity-agent">${escHtml(agentLabel)}</span>
+              &nbsp;${emoji}&nbsp;${escHtml(summaryText)}${recBadge}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+
+      list.innerHTML = items;
+    }
+
+    // ── Update header status line ──────────────────────────────────────────
+    function updateHeaderStatus(agents) {
+      const opsAgents = agents.filter(a => a.persona === 'operations');
+      const active = opsAgents.filter(a => ['sandbox','validated','pilot_ready','production'].includes(a.lifecycle_stage)).length;
+      const blueprint = opsAgents.filter(a => a.lifecycle_stage === 'blueprint').length;
+      document.getElementById('header-status').textContent =
+        `${active} agent${active !== 1 ? 's' : ''} active` + (blueprint > 0 ? ` · ${blueprint} blueprint pending` : '');
+      document.getElementById('last-refreshed').textContent = new Date().toLocaleString();
+    }
+
+    // ── Run agent (legacy — kept for reference) ────────────────────────────
+    async function runAgentLegacy(slug, btn) {
+      btn.disabled = true;
+      btn.textContent = '\u23F3 Running...';
+      try {
+        const result = await fetch(`${API}/api/run/${slug}`, { method: 'POST' }).then(r => r.json());
+        btn.textContent = result.outcome === 'success' ? '\u2705 Done' : '\u26A0\uFE0F Partial';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = '\u25B6 Run';
+          fetchAll();
+        }, 2000);
+      } catch (e) {
+        btn.textContent = '\u274C Error';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = '\u25B6 Run';
+        }, 2000);
+      }
+    }
+
+    // ── Per-agent execution step definitions ──────────────────────────────
+    const AGENT_STEPS = {
+      'cg-replenishment-pr-agent': [
+        { icon: '\uD83D\uDD0C', label: 'Connecting to SAP ERP', ms: 500 },
+        { icon: '\uD83D\uDCE6', label: 'Loading SKU inventory records', ms: 800 },
+        { icon: '\u2696\uFE0F', label: 'Applying reorder logic to each SKU', ms: 600 },
+        { icon: '\uD83D\uDCCB', label: 'Generating purchase requisitions', ms: 700 },
+        { icon: '\u2709\uFE0F', label: 'Queuing for approval workflow', ms: 400 },
+      ],
+      'cg-demand-forecast-agent': [
+        { icon: '\uD83D\uDCCA', label: 'Loading 12-week demand history', ms: 600 },
+        { icon: '\uD83E\uDDEE', label: 'Running SMA + trend regression models', ms: 900 },
+        { icon: '\uD83D\uDCC8', label: 'Identifying demand signals and anomalies', ms: 700 },
+        { icon: '\uD83D\uDD2E', label: 'Computing 4-week forward projections', ms: 500 },
+        { icon: '\uD83C\uDFAF', label: 'Scoring confidence intervals', ms: 400 },
+      ],
+      'cg-quality-capa-agent': [
+        { icon: '\uD83D\uDD0D', label: 'Scanning quality event log', ms: 500 },
+        { icon: '\u2699\uFE0F', label: 'Checking OEE across 5 production lines', ms: 800 },
+        { icon: '\uD83D\uDEA8', label: 'Applying CAPA rule engine', ms: 600 },
+        { icon: '\uD83D\uDCDD', label: 'Submitting maintenance requests to MES', ms: 700 },
+        { icon: '\uD83D\uDCE3', label: 'Dispatching quality alerts', ms: 400 },
+      ],
+    };
+
+    // ── Drawer state ──────────────────────────────────────────────────────
+    let _drawerSlug = null;
+    let _drawerRunResult = null;
+    let _drawerDecisions = {};  // rec_id -> decision
+
+    function openRunDrawer(slug) {
+      _drawerSlug = slug;
+      _drawerRunResult = null;
+      _drawerDecisions = {};
+
+      // Find agent name from rendered tiles
+      const btn = document.querySelector(`[data-slug="${slug}"] .run-btn`) ||
+                  document.getElementById(`run-btn-${slug}`);
+      const tile = btn ? btn.closest('.agent-tile') : null;
+      const agentName = tile ? (tile.querySelector('.tile-name')?.textContent || slug) : slug;
+
+      document.getElementById('drawer-agent-name').textContent = agentName;
+      document.getElementById('drawer-subtitle').textContent = 'Initializing...';
+      document.getElementById('drawer-log').innerHTML = '';
+      document.getElementById('drawer-results').style.display = 'none';
+      document.getElementById('rec-list').innerHTML = '';
+      document.getElementById('btn-submit').disabled = true;
+      document.getElementById('decisions-summary').textContent = '';
+
+      document.getElementById('run-overlay').classList.add('active');
+      document.getElementById('run-drawer').classList.add('active');
+
+      // Fire real run + animate steps simultaneously
+      const steps = AGENT_STEPS[slug] || [{ icon: '\u2699\uFE0F', label: 'Running agent', ms: 2000 }];
+
+      Promise.all([
+        runAgentAPI(slug),
+        animateSteps(steps),
+      ]).then(([runResult]) => {
+        _drawerRunResult = runResult;
+        showRecommendations(runResult);
+        fetchAll();
+      }).catch(err => {
+        document.getElementById('drawer-subtitle').textContent = '\u26A0\uFE0F Error \u2014 ' + (err.message || 'Unknown error');
+      });
+    }
+
+    function closeRunDrawer() {
+      document.getElementById('run-overlay').classList.remove('active');
+      document.getElementById('run-drawer').classList.remove('active');
+      _drawerSlug = null;
+    }
+
+    async function runAgentAPI(slug) {
+      const resp = await fetch(`${API}/api/run/${slug}`, { method: 'POST' });
+      if (!resp.ok) throw new Error('Run failed: HTTP ' + resp.status);
+      return await resp.json();
+    }
+
+    function animateSteps(steps) {
+      return new Promise(resolve => {
+        const logEl = document.getElementById('drawer-log');
+        const subtitle = document.getElementById('drawer-subtitle');
+        subtitle.textContent = 'Executing...';
+
+        let total = 0;
+        steps.forEach((s, i) => {
+          // Create step element (hidden)
+          const el = document.createElement('div');
+          el.className = 'log-step';
+          el.innerHTML = `<span class="step-icon">${s.icon}</span><span>${s.label}</span>`;
+          logEl.appendChild(el);
+
+          // Show step after cumulative delay
+          setTimeout(() => {
+            el.classList.add('visible', 'running');
+            subtitle.textContent = s.label + '...';
+          }, total);
+
+          // Mark done after step duration
+          setTimeout(() => {
+            el.classList.remove('running');
+            el.classList.add('done');
+            if (i === steps.length - 1) {
+              subtitle.textContent = 'Complete \u2014 reviewing recommendations';
+              resolve();
+            }
+          }, total + s.ms);
+
+          total += s.ms;
+        });
+      });
+    }
+
+    function showRecommendations(result) {
+      const recs = result.recommendations || [];
+      const count = recs.length;
+      const resultsEl = document.getElementById('drawer-results');
+      const headerEl = document.getElementById('drawer-results-header');
+      const listEl = document.getElementById('rec-list');
+      const submitBtn = document.getElementById('btn-submit');
+
+      headerEl.textContent = count > 0
+        ? `${count} recommendation${count !== 1 ? 's' : ''} \u2014 review and decide`
+        : 'Run complete \u2014 no action items generated';
+
+      listEl.innerHTML = '';
+      recs.forEach(rec => {
+        const row = document.createElement('div');
+        row.className = 'rec-row';
+        row.dataset.recId = rec.id || '';
+        row.innerHTML = `
+          <span class="urgency-badge urgency-${escHtml(rec.urgency || 'medium')}">${escHtml(rec.urgency || 'med')}</span>
+          <div class="rec-body">
+            <div class="rec-item-id">${escHtml(rec.item_id || '')}</div>
+            <div class="rec-label">${escHtml(rec.item_label || rec.item_id || '')}</div>
+            <div class="rec-action">${escHtml(rec.recommended_action || '')}</div>
+          </div>
+          <div class="rec-buttons">
+            <button class="btn-accept" onclick="decideRec(${JSON.stringify(rec.id)}, 'approved', this)">Accept</button>
+            <button class="btn-reject" onclick="decideRec(${JSON.stringify(rec.id)}, 'rejected', this)">Reject</button>
+          </div>
+        `;
+        listEl.appendChild(row);
+      });
+
+      resultsEl.style.display = 'flex';
+      submitBtn.disabled = count === 0;
+      updateDecisionSummary();
+    }
+
+    async function decideRec(recId, decision, btn) {
+      if (!recId) {
+        // No DB id yet (server didn't return ids) -- just update UI locally
+        const row = btn.closest('.rec-row');
+        row.classList.add('decided');
+        btn.classList.add('active');
+        const other = btn.classList.contains('btn-accept')
+          ? row.querySelector('.btn-reject')
+          : row.querySelector('.btn-accept');
+        other.disabled = true;
+        _drawerDecisions[row.dataset.recId || Math.random()] = decision;
+        updateDecisionSummary();
+        return;
+      }
+
+      btn.disabled = true;
+      try {
+        await fetch(`${API}/api/recommendations/${recId}/decide`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ decision, decided_by: 'operations' })
+        });
+        const row = btn.closest('.rec-row');
+        row.classList.add('decided');
+        btn.classList.add('active');
+        const other = btn.classList.contains('btn-accept')
+          ? row.querySelector('.btn-reject')
+          : row.querySelector('.btn-accept');
+        other.disabled = true;
+        _drawerDecisions[recId] = decision;
+        updateDecisionSummary();
+      } catch (e) {
+        btn.disabled = false;
+      }
+    }
+
+    function updateDecisionSummary() {
+      const decisions = Object.values(_drawerDecisions);
+      const approved = decisions.filter(d => d === 'approved').length;
+      const rejected = decisions.filter(d => d === 'rejected').length;
+      const total = document.querySelectorAll('#rec-list .rec-row').length;
+      const pending = total - decisions.length;
+      const parts = [];
+      if (approved) parts.push(`${approved} approved`);
+      if (rejected) parts.push(`${rejected} rejected`);
+      if (pending) parts.push(`${pending} pending`);
+      document.getElementById('decisions-summary').textContent = parts.join(' \u00B7 ');
+    }
+
+    function submitAndClose() {
+      const decisions = Object.values(_drawerDecisions);
+      const approved = decisions.filter(d => d === 'approved').length;
+      const rejected = decisions.filter(d => d === 'rejected').length;
+      closeRunDrawer();
+      // Toast
+      const msg = approved || rejected
+        ? `${approved} approved \u00B7 ${rejected} rejected`
+        : 'Run complete';
+      showToast('\u2705 ' + msg);
+      fetchAll();
+    }
+
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = 'position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:12px 20px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
+
+    // ── Main fetch ─────────────────────────────────────────────────────────
+    async function fetchAll() {
+      try {
+        const agents = await fetch(`${API}/api/agents`).then(r => {
+          if (!r.ok) throw new Error('Server error');
+          return r.json();
+        });
+
+        // Fetch run history for all ops agents in parallel
+        const allRuns = {};
+        await Promise.all(
+          OPS_SLUGS.map(async slug => {
+            try {
+              const runs = await fetch(`${API}/api/runs/${slug}`).then(r => r.json());
+              allRuns[slug] = runs;
+            } catch (e) {
+              allRuns[slug] = [];
+            }
+          })
+        );
+
+        document.getElementById('offline-banner').style.display = 'none';
+        renderAgentTiles(agents);
+        renderKPIs(agents, allRuns);
+        renderActivity(allRuns);
+        updateHeaderStatus(agents);
+
+      } catch (e) {
+        document.getElementById('offline-banner').style.display = 'block';
+        renderFallback();
+      }
+    }
+
+    function renderFallback() {
+      renderAgentTiles(FALLBACK_AGENTS);
+      document.getElementById('kpi-agents-running').textContent = '2';
+      document.getElementById('kpi-runs-week').textContent = '—';
+      document.getElementById('kpi-avg-outcome').textContent = '—';
+      document.getElementById('kpi-hours-saved').textContent = '26';
+      document.getElementById('header-status').textContent = '2 agents active (offline preview)';
+      document.getElementById('last-refreshed').textContent = 'Offline';
+      document.getElementById('activity-list').innerHTML =
+        '<div style="color:var(--text-muted);font-size:0.82rem;padding:8px 0;">Server offline — no live activity.</div>';
+    }
+
+    // ── SKU data store ──
+    let skuData = [];
+    let skuSortKey = 'days_cover';
+    let skuSortAsc = true;
+    let skuDecisions = {}; // skuId -> decision
+
+    // ── Load inventory + build impact narrative ──
+    async function loadInventory() {
+      try {
+        const [invRes, agentsRes, recsRes] = await Promise.all([
+          fetch(API + '/api/inventory'),
+          fetch(API + '/api/agents'),
+          fetch(API + '/api/recommendations/pending').catch(() => ({ok:false}))
+        ]);
+
+        if (!invRes.ok) { renderInventoryOffline(); return; }
+        const inv = await invRes.json();
+        skuData = inv.skus;
+
+        // Build impact narrative
+        const critical = inv.summary.critical;
+        const low = inv.summary.low;
+
+        let narrative = '';
+        if (critical > 0) {
+          const critSku = skuData.find(s => s.status === 'critical');
+          narrative = `Replenishment agent ran at <strong>6:02am</strong> &mdash; `;
+          narrative += `<span class="crit">${critical} SKU${critical>1?'s':''} critical</span> (below 2.5 days cover), `;
+          narrative += `${low} low. `;
+          if (critSku) narrative += `Most urgent: <strong>${critSku.name}</strong> at ${critSku.days_cover} days cover.`;
+        } else if (low > 0) {
+          narrative = `Replenishment agent ran at <strong>6:02am</strong> &mdash; ${low} SKU${low>1?'s':''} below reorder point. No critical stockouts.`;
+        } else {
+          narrative = `Replenishment agent ran at <strong>6:02am</strong> &mdash; all SKUs within healthy inventory levels.`;
+        }
+
+        document.getElementById('impactText').innerHTML = narrative;
+
+        const pills = document.getElementById('impactPills');
+        pills.innerHTML = '';
+        if (critical) pills.innerHTML += `<span class="impact-pill critical">${critical} critical SKU${critical>1?'s':''}</span>`;
+        if (low) pills.innerHTML += `<span class="impact-pill pending">${low} low stock</span>`;
+        pills.innerHTML += `<span class="impact-pill info">${inv.summary.ok} healthy</span>`;
+
+        // Summary text
+        document.getElementById('skuSummaryText').textContent =
+          `${inv.summary.total} SKUs \u00B7 ${critical} critical \u00B7 ${low} low`;
+
+        renderSKUTable();
+
+      } catch(e) {
+        renderInventoryOffline();
+      }
+    }
+
+    function renderInventoryOffline() {
+      document.getElementById('impactText').textContent = 'Server offline \u2014 showing last known state.';
+      document.getElementById('skuTableBody').innerHTML =
+        '<tr><td colspan="7" style="text-align:center;color:#475569;padding:24px">Inventory data unavailable offline</td></tr>';
+    }
+
+    function sortSKUs(key) {
+      if (skuSortKey === key) skuSortAsc = !skuSortAsc;
+      else { skuSortKey = key; skuSortAsc = key === 'days_cover'; }
+
+      document.querySelectorAll('.sku-sort-btn').forEach(b => b.classList.remove('active'));
+
+      renderSKUTable();
+    }
+
+    function renderSKUTable() {
+      const statusOrder = { critical: 0, low: 1, ok: 2 };
+      const sorted = [...skuData].sort((a, b) => {
+        let va = a[skuSortKey], vb = b[skuSortKey];
+        if (skuSortKey === 'status') { va = statusOrder[va]; vb = statusOrder[vb]; }
+        if (typeof va === 'string') return skuSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+        return skuSortAsc ? va - vb : vb - va;
+      });
+
+      const tbody = document.getElementById('skuTableBody');
+      tbody.innerHTML = sorted.map(sku => {
+        const daysW = Math.min(100, (sku.days_cover / 14) * 100);
+        const daysColor = sku.status === 'critical' ? '#ef4444' : sku.status === 'low' ? '#f97316' : '#22c55e';
+        const dec = skuDecisions[sku.sku_id];
+
+        let decisionCell = '';
+        if (dec === 'approved') {
+          decisionCell = '<span class="decided-badge approved">&#10003; Approved</span>';
+        } else if (dec === 'rejected') {
+          decisionCell = '<span class="decided-badge rejected">&#10005; Rejected</span>';
+        } else if (sku.agent_action) {
+          decisionCell = '<span style="color:#64748b;font-size:0.75rem">Pending</span>';
+        } else {
+          decisionCell = '<span style="color:#475569;font-size:0.75rem">\u2014</span>';
+        }
+
+        return `<tr onclick="openSkuPanel('${sku.sku_id}')">
+          <td><span class="status-dot ${sku.status}"></span></td>
+          <td style="color:#f1f5f9;font-weight:500">${escHtml(sku.name)}</td>
+          <td>${sku.current_stock.toLocaleString()}</td>
+          <td>
+            <span class="days-bar" style="width:${daysW}px;background:${daysColor}"></span>
+            <span style="color:${daysColor};font-weight:600">${sku.days_cover}d</span>
+          </td>
+          <td>${sku.reorder_point.toLocaleString()}</td>
+          <td class="${sku.agent_action ? 'agent-action-cell' : 'no-action-cell'}">${escHtml(sku.agent_action || 'No action')}</td>
+          <td>${decisionCell}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function openSkuPanel(skuId) {
+      const sku = skuData.find(s => s.sku_id === skuId);
+      if (!sku) return;
+
+      // S41-1E: Track current SKU for override re-render
+      window._currentSkuId = skuId;
+
+      document.getElementById('panelTitle').textContent = sku.name;
+      document.getElementById('panelId').textContent = sku.sku_id + ' \u00B7 ' + sku.category;
+
+      const body = document.getElementById('panelBody');
+
+      // S41-1E: Use clickable bar sparkline instead of polyline
+      const sparkline = buildSparklineClickable(sku.demand_history, sku.sku_id, 380, 60);
+
+      // Decision context card (only for SKUs with agent action)
+      let decisionCard = '';
+      if (sku.agent_action && !skuDecisions[sku.sku_id]) {
+        const total = (sku.reorder_qty * sku.unit_cost).toFixed(0);
+        const risk = sku.status === 'critical' ?
+          `<span class="risk">Stockout risk in ${sku.days_cover} days</span>` :
+          `Below reorder point &mdash; <span class="risk">replenishment needed</span>`;
+        decisionCard = `
+          <div>
+            <div class="panel-section-label">Decision Required</div>
+            <div class="decision-context-card">
+              <div class="decision-context-headline">
+                Approve PR for <span class="highlight">${sku.reorder_qty.toLocaleString()} units</span>
+                @ \u00A3${sku.unit_cost.toFixed(2)} = <span class="highlight">\u00A3${parseInt(total).toLocaleString()}</span>.
+                Supplier: <strong>${escHtml(sku.supplier)}</strong> (${sku.lead_time_days}-day lead time). ${risk}.
+              </div>
+              <div class="decision-qty-row">
+                <span class="decision-qty-label">Quantity:</span>
+                <input class="decision-qty-input" id="qtyInput-${sku.sku_id}" type="number" value="${sku.reorder_qty}" min="1">
+                <span class="decision-qty-label">units</span>
+              </div>
+              <div class="decision-btn-row">
+                <button class="btn-approve-ctx" onclick="decideSKU('${sku.sku_id}','approved')">&#10003; Approve PR</button>
+                <button class="btn-reject-ctx" onclick="decideSKU('${sku.sku_id}','rejected')">&#10005; Reject</button>
+                <button class="btn-escalate-ctx" onclick="decideSKU('${sku.sku_id}','escalated')">&#8593; Escalate</button>
+              </div>
+            </div>
+          </div>`;
+      } else if (skuDecisions[sku.sku_id]) {
+        const d = skuDecisions[sku.sku_id];
+        decisionCard = `<div class="decided-badge ${d}" style="font-size:0.85rem;padding:8px 16px">
+          ${d === 'approved' ? '&#10003; PR Approved' : d === 'rejected' ? '&#10005; PR Rejected' : '&#8593; Escalated to Manager'}
+        </div>`;
+      }
+
+      body.innerHTML = `
+        <div class="sku-stat-row">
+          <div class="sku-stat">
+            <div class="sku-stat-label">Current Stock</div>
+            <div class="sku-stat-value">${sku.current_stock.toLocaleString()}</div>
+          </div>
+          <div class="sku-stat">
+            <div class="sku-stat-label">Days Cover</div>
+            <div class="sku-stat-value ${sku.status}">${sku.days_cover}d</div>
+          </div>
+          <div class="sku-stat">
+            <div class="sku-stat-label">Reorder Point</div>
+            <div class="sku-stat-value">${sku.reorder_point.toLocaleString()}</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-section-label">12-Week Demand History</div>
+          <div class="mini-chart">${sparkline}</div>
+          <div style="font-size:0.68rem;color:#475569;margin-top:6px">Click any bar to override demand estimate &middot; <span style="color:#f97316">&#9646;</span> Orange bars = overridden</div>
+        </div>
+
+        <div>
+          <div class="panel-section-label">Supplier &amp; Order Details</div>
+          <div class="pr-detail-card">
+            <div class="pr-detail-row"><span class="pr-detail-label">Supplier</span><span class="pr-detail-value">${escHtml(sku.supplier)}</span></div>
+            <div class="pr-detail-row"><span class="pr-detail-label">Lead Time</span><span class="pr-detail-value">${sku.lead_time_days} days</span></div>
+            <div class="pr-detail-row"><span class="pr-detail-label">Unit Cost</span><span class="pr-detail-value">\u00A3${sku.unit_cost.toFixed(2)}</span></div>
+            <div class="pr-detail-row"><span class="pr-detail-label">Reorder Qty</span><span class="pr-detail-value">${sku.reorder_qty.toLocaleString()} units</span></div>
+            <div class="pr-detail-row"><span class="pr-detail-label">Est. Arrival</span><span class="pr-detail-value">${sku.arrival_date || '\u2014'}</span></div>
+            <div class="pr-detail-row"><span class="pr-detail-label">Total Value</span><span class="pr-detail-value" style="color:#f97316">\u00A3${(sku.reorder_qty * sku.unit_cost).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})}</span></div>
+          </div>
+        </div>
+
+        ${decisionCard}
+      `;
+
+      document.getElementById('skuOverlay').classList.add('open');
+      document.getElementById('skuPanel').classList.add('open');
+    }
+
+    function closeSkuPanel() {
+      document.getElementById('skuOverlay').classList.remove('open');
+      document.getElementById('skuPanel').classList.remove('open');
+    }
+
+    function decideSKU(skuId, decision) {
+      skuDecisions[skuId] = decision;
+      const label = decision === 'approved' ? 'PR approved' : decision === 'rejected' ? 'PR rejected' : 'Escalated to manager';
+
+      // Update panel
+      openSkuPanel(skuId); // re-render panel with decided state
+
+      // Update table row
+      renderSKUTable();
+
+      // Show toast
+      if (typeof showToast === 'function') {
+        showToast(label + ' \u2014 ' + (skuData.find(s=>s.sku_id===skuId)||{}).name);
+      }
+    }
+
+    // ── S41-1E: Demand Override Annotations ───────────────────────────────
+    const DEMAND_OVERRIDES = JSON.parse(localStorage.getItem('demandOverrides') || '{}');
+
+    function saveDemandOverride(skuId, weekIdx, value) {
+      if (!DEMAND_OVERRIDES[skuId]) DEMAND_OVERRIDES[skuId] = {};
+      DEMAND_OVERRIDES[skuId][weekIdx] = value;
+      localStorage.setItem('demandOverrides', JSON.stringify(DEMAND_OVERRIDES));
+    }
+
+    function buildSparklineClickable(historyArray, skuId, w, h) {
+      w = w || 200; h = h || 40;
+      const overrides = DEMAND_OVERRIDES[skuId] || {};
+      const allVals = historyArray.concat(Object.values(overrides));
+      const max = Math.max(...allVals) || 1;
+      const n = historyArray.length;
+      const barW = (w / n) - 2;
+
+      const bars = historyArray.map((v, i) => {
+        const val = overrides[i] !== undefined ? overrides[i] : v;
+        const barH = Math.max(2, (val / max) * (h - 4));
+        const x = i * (barW + 2) + 1;
+        const y = h - barH;
+        const isOverride = overrides[i] !== undefined;
+        const color = isOverride ? '#f97316' : '#6366f1';
+        return `<rect class="sparkline-bar ${isOverride ? 'overridden' : ''}"
+          x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}"
+          fill="${color}" rx="2" opacity="0.8"
+          onclick="showOverridePopover('${skuId}', ${i}, ${val}, this)"
+          data-week="${i}" data-val="${val}"/>`;
+      }).join('');
+
+      return `<svg width="${w}" height="${h}" style="display:block;overflow:visible">${bars}</svg>`;
+    }
+
+    let _activePopover = null;
+    function showOverridePopover(skuId, weekIdx, currentVal, barEl) {
+      if (_activePopover) _activePopover.remove();
+      const rect = barEl.getBoundingClientRect();
+      const pop = document.createElement('div');
+      pop.className = 'override-popover';
+      pop.style.cssText = `top:${rect.top + window.scrollY - 110}px;left:${rect.left + window.scrollX}px;position:absolute`;
+      pop.id = 'override-popover';
+      pop.innerHTML = `<div style="font-size:11px;font-weight:600;color:var(--text-muted)">Week ${weekIdx + 1} Override</div>
+        <input type="number" id="ovr-input" value="${currentVal}" min="0" max="500" style="font-family:inherit"/>
+        <div style="display:flex;gap:8px">
+          <button onclick="applyOverride('${skuId}',${weekIdx})" style="background:#f97316;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px">Apply</button>
+          <button onclick="clearOverride('${skuId}',${weekIdx})" style="background:none;border:1px solid var(--border);color:var(--text-muted);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px">Clear</button>
+          <button onclick="document.getElementById('override-popover').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px">&times;</button>
+        </div>`;
+      document.body.appendChild(pop);
+      _activePopover = pop;
+      const inp = document.getElementById('ovr-input');
+      if (inp) inp.focus();
+    }
+
+    function applyOverride(skuId, weekIdx) {
+      const inp = document.getElementById('ovr-input');
+      if (!inp) return;
+      const val = parseInt(inp.value, 10);
+      if (isNaN(val) || val < 0) return;
+      saveDemandOverride(skuId, weekIdx, val);
+      if (_activePopover) { _activePopover.remove(); _activePopover = null; }
+      if (typeof openSkuPanel === 'function' && window._currentSkuId) openSkuPanel(window._currentSkuId);
+      if (typeof showToast === 'function') showToast(`Override set: Week ${weekIdx + 1} \u2192 ${val} units`);
+    }
+
+    function clearOverride(skuId, weekIdx) {
+      if (DEMAND_OVERRIDES[skuId]) {
+        delete DEMAND_OVERRIDES[skuId][weekIdx];
+        localStorage.setItem('demandOverrides', JSON.stringify(DEMAND_OVERRIDES));
+      }
+      if (_activePopover) { _activePopover.remove(); _activePopover = null; }
+      if (typeof openSkuPanel === 'function' && window._currentSkuId) openSkuPanel(window._currentSkuId);
+    }
+
+    // Close popover when clicking elsewhere
+    document.addEventListener('click', function(e) {
+      if (_activePopover && !_activePopover.contains(e.target) && !e.target.classList.contains('sparkline-bar')) {
+        _activePopover.remove();
+        _activePopover = null;
+      }
+    });
+
+    // ── Init ───────────────────────────────────────────────────────────────
+    fetchAll();
+    loadInventory();
+  </script>
+
+</body>
+</html>

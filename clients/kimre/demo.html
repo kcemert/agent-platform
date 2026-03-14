@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platform Demo — Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0f1117;
+      --card:        #161b2e;
+      --card-alt:    #1a2035;
+      --border:      #1e293b;
+      --text:        #f1f5f9;
+      --muted:       #64748b;
+      --text-sec:    #94a3b8;
+      --kimre:       #f97316;
+      --kimre-dim:   rgba(249,115,22,0.12);
+      --kimre-glow:  rgba(249,115,22,0.25);
+      --green:       #22c55e;
+      --green-dim:   rgba(34,197,94,0.12);
+      --amber:       #f59e0b;
+      --amber-dim:   rgba(245,158,11,0.12);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── NAV ── */
+    .kimre-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+    .kimre-nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .kimre-nav-brand {
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--kimre);
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+    .kimre-nav-links { display: flex; gap: 4px; }
+    .kimre-nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .kimre-nav-link:hover { color: var(--text); background: var(--border); }
+    .kimre-nav-link.active { color: var(--kimre); background: var(--kimre-dim); }
+
+    /* ── PROGRESS BAR (sticky below nav) ── */
+    .progress-bar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 56px;
+      z-index: 100;
+    }
+    .progress-bar-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    .progress-track {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .progress-dot-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .progress-dot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      border: 2px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .progress-dot:hover {
+      border-color: var(--kimre);
+      color: var(--kimre);
+    }
+    .progress-dot.active {
+      background: var(--kimre);
+      border-color: var(--kimre);
+      color: #fff;
+    }
+    .progress-line {
+      width: 80px;
+      height: 2px;
+      background: var(--border);
+    }
+    .progress-label {
+      display: none;
+    }
+    .progress-dot-wrap:hover .progress-label {
+      display: block;
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sec);
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    /* ── LAYOUT ── */
+    .page { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 80px 0 72px;
+      border-bottom: 1px solid var(--border);
+    }
+    .accent-bar {
+      width: 48px;
+      height: 4px;
+      background: var(--kimre);
+      border-radius: 2px;
+      margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .hero-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-sec);
+      margin-bottom: 20px;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+    .hero-tip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .hero-tip-icon {
+      font-size: 14px;
+    }
+
+    /* ── DEMO STOP ── */
+    .demo-stop {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-stop:last-of-type { border-bottom: none; }
+
+    .stop-number {
+      font-size: 96px;
+      font-weight: 200;
+      color: var(--kimre);
+      line-height: 1;
+      letter-spacing: -4px;
+      margin-bottom: 4px;
+      opacity: 0.9;
+    }
+
+    .stop-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+
+    .stop-context {
+      font-size: 15px;
+      color: var(--text-sec);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 700px;
+    }
+
+    /* What to do / What you're seeing columns */
+    .stop-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stop-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .stop-box-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .stop-box.todo { border-left: 3px solid var(--kimre); }
+    .stop-box.explain { border-left: 3px solid var(--border); background: var(--card-alt); }
+
+    .step-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      background: var(--kimre-dim);
+      border: 1px solid rgba(249,115,22,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--kimre);
+      margin-top: 1px;
+    }
+
+    .step-text {
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.6;
+    }
+
+    .step-text strong { color: var(--text); font-weight: 600; }
+    .step-text code {
+      background: var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      color: var(--kimre);
+    }
+
+    .explain-text {
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.7;
+    }
+
+    /* ── CTA + BADGE ROW ── */
+    .stop-footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--kimre);
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 22px;
+      border-radius: 8px;
+      transition: all 0.15s;
+      letter-spacing: 0.01em;
+    }
+    .cta-btn:hover {
+      background: #ea6c0f;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px var(--kimre-glow);
+    }
+    .cta-btn .arrow { font-style: normal; }
+
+    .agent-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .agent-badge.demo {
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.3);
+      color: var(--amber);
+    }
+    .agent-badge.internal {
+      background: var(--kimre-dim);
+      border: 1px solid rgba(249,115,22,0.3);
+      color: var(--kimre);
+    }
+    .agent-badge.live {
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: var(--green);
+    }
+    .agent-badge.aggregate {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-sec);
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── WRAP SECTION ── */
+    .wrap-section {
+      padding: 80px 0;
+    }
+    .wrap-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 32px;
+    }
+    .wrap-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .wrap-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .wrap-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .recap-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .recap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.5;
+    }
+    .recap-check {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: var(--green);
+      margin-top: 2px;
+    }
+    .contact-card {
+      background: var(--card-alt);
+      border: 1px solid var(--kimre);
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .contact-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--kimre);
+      margin-bottom: 10px;
+    }
+    .contact-heading {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+    .contact-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-sec);
+      margin-bottom: 12px;
+    }
+    .contact-line a {
+      color: var(--text);
+      text-decoration: none;
+    }
+    .contact-line a:hover { color: var(--kimre); }
+    .contact-icon {
+      font-size: 15px;
+    }
+    .contact-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--kimre);
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-top: 8px;
+      transition: background 0.15s;
+    }
+    .contact-cta-btn:hover { background: #ea6c0f; }
+
+    .secondary-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .sec-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .sec-link:hover { color: var(--kimre); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .stop-cols { grid-template-columns: 1fr; }
+      .wrap-cols { grid-template-columns: 1fr; }
+      .kimre-nav-links { gap: 2px; }
+      .kimre-nav-link { padding: 6px 8px; font-size: 12px; }
+      .hero h1 { font-size: 28px; }
+      .stop-number { font-size: 64px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="kimre-nav">
+  <div class="kimre-nav-inner">
+    <a href="./index.html" class="kimre-nav-brand">Kimre Inc.</a>
+    <div class="kimre-nav-links">
+      <a href="./index.html" class="kimre-nav-link">Home</a>
+      <a href="./sales.html" class="kimre-nav-link">Sales</a>
+      <a href="./engineering.html" class="kimre-nav-link">Engineering</a>
+      <a href="./customer-service.html" class="kimre-nav-link">Customer Service</a>
+      <a href="./executive.html" class="kimre-nav-link">Executive</a>
+      <a href="./quality.html" class="kimre-nav-link">Quality</a>
+      <a href="./tools/index.html" class="kimre-nav-link">Tools</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar">
+  <div class="progress-bar-inner">
+    <div class="progress-track">
+      <div class="progress-dot-wrap" style="position:relative;">
+        <a href="#stop-1" class="progress-dot active">1</a>
+        <span class="progress-label">Business Case Calculator</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-dot-wrap" style="position:relative;">
+        <a href="#stop-2" class="progress-dot">2</a>
+        <span class="progress-label">Spec Generator</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-dot-wrap" style="position:relative;">
+        <a href="#stop-3" class="progress-dot">3</a>
+        <span class="progress-label">Engineering Dashboard</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-dot-wrap" style="position:relative;">
+        <a href="#stop-4" class="progress-dot">4</a>
+        <span class="progress-label">Executive Dashboard</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="page">
+  <section class="hero">
+    <div class="accent-bar"></div>
+    <h1>Platform Demo &mdash; Kimre Inc.</h1>
+    <p class="hero-subtitle">A guided walkthrough of your agent platform. Each stop takes 2&ndash;5 minutes.</p>
+    <div class="hero-tip">
+      <span class="hero-tip-icon">&#128161;</span>
+      <span><strong>Tip:</strong> open each tool in a new tab to keep your place.</span>
+    </div>
+  </section>
+</div>
+
+<!-- STOP 1 -->
+<div class="page">
+  <section class="demo-stop" id="stop-1">
+    <div class="stop-number">01</div>
+    <h2 class="stop-title">How much is mist carryover costing you?</h2>
+    <p class="stop-context">
+      Start by quantifying the problem. The Business Case Calculator takes your operating conditions and estimates the annual cost of mist carryover in your process &mdash; and the savings a Kimre mist eliminator would deliver. Use the Sulfuric Acid Absorber scenario to see a live example.
+    </p>
+
+    <div class="stop-cols">
+      <div class="stop-box todo">
+        <div class="stop-box-label">What to do</div>
+        <ol class="step-list">
+          <li class="step-item">
+            <span class="step-num">1</span>
+            <span class="step-text">Click <strong>"Open Calculator"</strong> below to launch the tool in a new tab.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">2</span>
+            <span class="step-text">Select <strong>"Sulfuric Acid (H&#8322;SO&#8324;)"</strong> from the Application dropdown.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">3</span>
+            <span class="step-text">Enter Gas Flow Rate: <code>4500 Nm&#179;/hr</code>, Inlet Mist Loading: <code>850 mg/m&#179;</code>.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">4</span>
+            <span class="step-text">Review the <strong>Annual Savings</strong> and <strong>Payback Period</strong> on the right panel.</span>
+          </li>
+        </ol>
+      </div>
+      <div class="stop-box explain">
+        <div class="stop-box-label">What you're seeing</div>
+        <p class="explain-text">
+          The calculator uses Kimre's application database to auto-fill chemical benchmarks, product recommendations, and efficiency targets. This is the same logic the RFQ-to-Quote Agent uses to size equipment &mdash; shown here as a self-service tool for plant engineers.
+        </p>
+      </div>
+    </div>
+
+    <div class="stop-footer">
+      <a href="./tools/business-case.html" target="_blank" class="cta-btn">
+        Open Business Case Calculator <span class="arrow">&#8594;</span>
+      </a>
+      <span class="agent-badge demo">
+        <span class="badge-dot"></span>
+        RFQ-to-Quote Agent logic (demo mode)
+      </span>
+    </div>
+  </section>
+</div>
+
+<!-- STOP 2 -->
+<div class="page">
+  <section class="demo-stop" id="stop-2">
+    <div class="stop-number">02</div>
+    <h2 class="stop-title">30 seconds from application to spec sheet</h2>
+    <p class="stop-context">
+      This is the tool that changes the quote process. An applications engineer enters operating conditions, and the generator produces a formal Equipment Specification Sheet &mdash; product selected, material confirmed, vessel sized, performance guaranteed. What used to take 2 hours now takes 30 seconds to generate and 15 minutes to review.
+    </p>
+
+    <div class="stop-cols">
+      <div class="stop-box todo">
+        <div class="stop-box-label">What to do</div>
+        <ol class="step-list">
+          <li class="step-item">
+            <span class="step-num">1</span>
+            <span class="step-text">Click <strong>"Open Spec Generator"</strong> below to launch the tool.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">2</span>
+            <span class="step-text">Click the orange <strong>"Load Demo"</strong> button in the top-right corner.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">3</span>
+            <span class="step-text">Watch the spec generate automatically for the <strong>Mosaic Fertilizer H&#8322;SO&#8324;</strong> scenario.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">4</span>
+            <span class="step-text">Review the output: product selection (<strong>B-GON&#174; Mist Eliminator</strong>), material (CPVC/PP), sizing, and performance guarantee.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">5</span>
+            <span class="step-text">Note the <strong>confidence flags</strong> &mdash; amber = review recommended, red = clarification needed.</span>
+          </li>
+        </ol>
+      </div>
+      <div class="stop-box explain">
+        <div class="stop-box-label">What you're seeing</div>
+        <p class="explain-text">
+          The generator applies Kimre's engineering logic: chemical compatibility rules, sizing equations, standard nozzle sizing, and material selection. The output is a print-ready spec sheet that can be issued with a quote.
+        </p>
+      </div>
+    </div>
+
+    <div class="stop-footer">
+      <a href="./tools/spec-gen.html" target="_blank" class="cta-btn">
+        Open Spec Generator <span class="arrow">&#8594;</span>
+      </a>
+      <span class="agent-badge internal">
+        <span class="badge-dot"></span>
+        Spec Generator (internal engineering tool)
+      </span>
+    </div>
+  </section>
+</div>
+
+<!-- STOP 3 -->
+<div class="page">
+  <section class="demo-stop" id="stop-3">
+    <div class="stop-number">03</div>
+    <h2 class="stop-title">Sam's production queue, live</h2>
+    <p class="stop-context">
+      This is Sam Rivera's (Engineering Lead) daily command center. It shows every active fabrication order, material stock levels, shortages, and agent recommendations &mdash; all in one view. The Material Requisition Agent is the live pilot: it scans open orders against material stock and creates purchase requisitions.
+    </p>
+
+    <div class="stop-cols">
+      <div class="stop-box todo">
+        <div class="stop-box-label">What to do</div>
+        <ol class="step-list">
+          <li class="step-item">
+            <span class="step-num">1</span>
+            <span class="step-text">Click <strong>"Open Engineering Dashboard"</strong> below.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">2</span>
+            <span class="step-text">Review the <strong>KPI strip</strong>: orders pending BOM, in fabrication, material alerts.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">3</span>
+            <span class="step-text">Find the <strong>"Material Shortage"</strong> widget &mdash; click <strong>"Approve PR"</strong> on one item.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">4</span>
+            <span class="step-text">Click <strong>"&#9654; Run Material Requisition Agent"</strong> (top-right run button).</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">5</span>
+            <span class="step-text">Watch the agent steps animate and recommendations appear in the queue.</span>
+          </li>
+        </ol>
+      </div>
+      <div class="stop-box explain">
+        <div class="stop-box-label">What you're seeing</div>
+        <p class="explain-text">
+          The agent runs in seconds and surfaces exactly what needs a decision. Sam approves or modifies each recommendation. No email chains, no spreadsheet lookups &mdash; every action is logged automatically.
+        </p>
+      </div>
+    </div>
+
+    <div class="stop-footer">
+      <a href="./engineering.html" target="_blank" class="cta-btn">
+        Open Engineering Dashboard <span class="arrow">&#8594;</span>
+      </a>
+      <span class="agent-badge live">
+        <span class="badge-dot"></span>
+        Material Requisition Agent &mdash; Live Pilot
+      </span>
+    </div>
+  </section>
+</div>
+
+<!-- STOP 4 -->
+<div class="page">
+  <section class="demo-stop" id="stop-4">
+    <div class="stop-number">04</div>
+    <h2 class="stop-title">Mary's view of the entire business</h2>
+    <p class="stop-context">
+      This is what Mary Gaston (President) sees. One page covering: the RFQ pipeline value, active order backlog, on-time delivery rate, agent program ROI, and any decisions waiting for her sign-off. The goal: understand the full state of the business in under 5 minutes.
+    </p>
+
+    <div class="stop-cols">
+      <div class="stop-box todo">
+        <div class="stop-box-label">What to do</div>
+        <ol class="step-list">
+          <li class="step-item">
+            <span class="step-num">1</span>
+            <span class="step-text">Click <strong>"Open Executive Dashboard"</strong> below.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">2</span>
+            <span class="step-text">Review the <strong>Quote-to-Cash funnel</strong> (6 stages from RFQ to Shipped).</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">3</span>
+            <span class="step-text">Check the <strong>Agent Program Scorecard</strong> &mdash; hours saved, cumulative value recovered, payback progress.</span>
+          </li>
+          <li class="step-item">
+            <span class="step-num">4</span>
+            <span class="step-text">Review the <strong>Escalation Queue</strong> &mdash; any decisions routed to Mary for approval.</span>
+          </li>
+        </ol>
+      </div>
+      <div class="stop-box explain">
+        <div class="stop-box-label">What you're seeing</div>
+        <p class="explain-text">
+          Every agent run that exceeds a threshold routes to Mary for approval. She sees the business in aggregate, not in her inbox. The agent ROI scorecard answers the question every executive asks: "Is this worth the investment?"
+        </p>
+      </div>
+    </div>
+
+    <div class="stop-footer">
+      <a href="./executive.html" target="_blank" class="cta-btn">
+        Open Executive Dashboard <span class="arrow">&#8594;</span>
+      </a>
+      <span class="agent-badge aggregate">
+        <span class="badge-dot"></span>
+        5 agents &rarr; 1 executive view
+      </span>
+    </div>
+  </section>
+</div>
+
+<!-- WRAP -->
+<div class="page">
+  <section class="wrap-section">
+    <h2 class="wrap-title">Ready to Talk?</h2>
+
+    <div class="wrap-cols">
+      <!-- Left: recap -->
+      <div class="wrap-card">
+        <div class="wrap-card-title">What you've seen</div>
+        <ul class="recap-list">
+          <li class="recap-item">
+            <span class="recap-check">&#10003;</span>
+            <span><strong>Business Case Calculator</strong> &mdash; instant ROI quantification using Kimre's application database, same logic as the RFQ agent.</span>
+          </li>
+          <li class="recap-item">
+            <span class="recap-check">&#10003;</span>
+            <span><strong>Spec Generator</strong> &mdash; 30-second engineering specs with chemical compatibility rules, material selection, and confidence flags.</span>
+          </li>
+          <li class="recap-item">
+            <span class="recap-check">&#10003;</span>
+            <span><strong>Engineering Dashboard</strong> &mdash; Sam's live production queue with Material Requisition Agent running as a pilot, approvals in-line.</span>
+          </li>
+          <li class="recap-item">
+            <span class="recap-check">&#10003;</span>
+            <span><strong>Executive Dashboard</strong> &mdash; Mary's one-page view of pipeline, backlog, OTD, agent ROI, and escalation queue.</span>
+          </li>
+          <li class="recap-item">
+            <span class="recap-check">&#10003;</span>
+            <span><strong>Agent value</strong> &mdash; every action is logged, every decision is auditable, every threshold triggers the right human.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Right: contact -->
+      <div class="contact-card">
+        <div class="contact-eyebrow">Next Step</div>
+        <div class="contact-heading">Schedule a Discovery Workshop</div>
+        <p style="font-size:13px; color:var(--text-sec); margin-bottom:20px; line-height:1.6;">
+          A 90-minute session with your team to map the highest-value agent opportunities, define the pilot scope, and agree on success metrics.
+        </p>
+        <div class="contact-line">
+          <span class="contact-icon">&#9993;</span>
+          <a href="mailto:info@kimre.com">info@kimre.com</a>
+        </div>
+        <div class="contact-line">
+          <span class="contact-icon">&#9742;</span>
+          <a href="tel:+13059337373">+1 (305) 933-7373</a>
+        </div>
+        <a href="mailto:info@kimre.com?subject=Discovery Workshop Request" class="contact-cta-btn">
+          Request Workshop &#8594;
+        </a>
+      </div>
+    </div>
+
+    <!-- Secondary links -->
+    <div class="secondary-links">
+      <a href="./index.html" class="sec-link">Explore the full portal &#8594;</a>
+      <a href="#" onclick="window.print(); return false;" class="sec-link">Download Business Case PDF</a>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Progress dot scroll activation
+  (function () {
+    var stops = ['stop-1', 'stop-2', 'stop-3', 'stop-4'];
+    var dots = document.querySelectorAll('.progress-dot');
+
+    function setActive(index) {
+      dots.forEach(function (d, i) {
+        d.classList.toggle('active', i === index);
+      });
+    }
+
+    var observers = stops.map(function (id, index) {
+      var el = document.getElementById(id);
+      if (!el) return null;
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            setActive(index);
+          }
+        });
+      }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+      obs.observe(el);
+      return obs;
+    });
+
+    // Smooth scroll for anchor clicks
+    document.querySelectorAll('a[href^="#stop-"]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

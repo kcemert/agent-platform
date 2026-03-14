@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Pipeline — Business Agents Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #1c2128;
+      --card-hover: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+
+      --sandbox: #39d353;
+      --sandbox-dim: #39d35320;
+      --blueprint-col: #8b949e;
+      --blueprint-dim: #8b949e20;
+
+      --low: #3fb950;
+      --low-dim: #3fb95020;
+      --medium: #d29922;
+      --medium-dim: #d2992220;
+      --high: #f85149;
+      --high-dim: #f8514920;
+
+      --cyan: #56d364;
+
+      /* Pipeline stage colors */
+      --stage-blueprint: #64748b;
+      --stage-blueprint-dim: #64748b18;
+      --stage-scaffolded: #6366f1;
+      --stage-scaffolded-dim: #6366f118;
+      --stage-sandbox: #f59e0b;
+      --stage-sandbox-dim: #f59e0b20;
+      --stage-validated: #3b82f6;
+      --stage-validated-dim: #3b82f618;
+      --stage-pilot: #10b981;
+      --stage-pilot-dim: #10b98118;
+      --stage-production: #22c55e;
+      --stage-production-dim: #22c55e18;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Offline Banner ── */
+    #offline-banner {
+      display: none;
+      background: #d2992220;
+      border-bottom: 1px solid #d2992240;
+      padding: 10px 32px;
+      font-size: 0.82rem;
+      color: var(--medium);
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+    }
+
+    .nav-tab:hover {
+      background: rgba(88, 166, 255, 0.08);
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--stage-sandbox);
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .persona-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--stage-sandbox);
+      margin-bottom: 6px;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .persona-name {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .refresh-info {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .refresh-btn {
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      margin-left: 8px;
+      transition: background 120ms;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .refresh-btn:hover { background: rgba(88,166,255,0.08); }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      padding: 28px 40px 40px;
+    }
+
+    .main-inner {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── KPI Bar ── */
+    .kpi-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .kpi-value.amber { color: var(--stage-sandbox); }
+    .kpi-value.green { color: var(--stage-production); }
+    .kpi-value.blue  { color: var(--accent); }
+
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Kanban Board ── */
+    .kanban-wrapper {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .kanban-board {
+      display: flex;
+      gap: 16px;
+      min-width: 960px;
+    }
+
+    .kanban-col {
+      flex: 0 0 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .kanban-col.col-sandbox {
+      flex: 0 0 300px;
+    }
+
+    .kanban-col-header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .col-stage-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      margin-bottom: 2px;
+    }
+
+    .col-stage-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .col-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+    }
+
+    /* Stage color theming */
+    .col-blueprint .col-stage-name { color: var(--stage-blueprint); }
+    .col-blueprint .col-badge { background: var(--stage-blueprint-dim); color: var(--stage-blueprint); }
+    .col-blueprint .kanban-col-header { border-color: #64748b30; }
+
+    .col-scaffolded .col-stage-name { color: var(--stage-scaffolded); }
+    .col-scaffolded .col-badge { background: var(--stage-scaffolded-dim); color: var(--stage-scaffolded); }
+
+    .col-sandbox .col-stage-name { color: var(--stage-sandbox); }
+    .col-sandbox .col-badge { background: var(--stage-sandbox-dim); color: var(--stage-sandbox); }
+    .col-sandbox .kanban-col-header { border-color: #f59e0b40; }
+
+    .col-validated .col-stage-name { color: var(--stage-validated); }
+    .col-validated .col-badge { background: var(--stage-validated-dim); color: var(--stage-validated); }
+
+    .col-pilot .col-stage-name { color: var(--stage-pilot); }
+    .col-pilot .col-badge { background: var(--stage-pilot-dim); color: var(--stage-pilot); }
+
+    .col-production .col-stage-name { color: var(--stage-production); }
+    .col-production .col-badge { background: var(--stage-production-dim); color: var(--stage-production); }
+
+    /* ── Agent Cards ── */
+    .agent-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      transition: background 120ms, border-color 120ms;
+    }
+
+    .agent-card:hover {
+      background: var(--card-hover);
+    }
+
+    .agent-slug {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.73rem;
+      color: var(--text);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      word-break: break-all;
+    }
+
+    .agent-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .advance-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--stage-sandbox);
+      background: var(--stage-sandbox-dim);
+      border: 1px solid #f59e0b30;
+      border-radius: 6px;
+      padding: 5px 11px;
+      cursor: pointer;
+      transition: background 120ms, color 120ms;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .advance-btn:hover:not(:disabled) {
+      background: #f59e0b30;
+    }
+
+    .advance-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    /* ── Blueprint Column Special ── */
+    .blueprint-summary {
+      background: var(--card);
+      border: 1px solid #64748b25;
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .blueprint-summary-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .blueprint-count-pill {
+      display: inline-block;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--stage-blueprint);
+      margin-right: 4px;
+    }
+
+    .blueprint-search {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      color: var(--text);
+      outline: none;
+      margin-bottom: 10px;
+      transition: border-color 120ms;
+    }
+
+    .blueprint-search::placeholder {
+      color: var(--text-muted);
+    }
+
+    .blueprint-search:focus {
+      border-color: var(--stage-blueprint);
+    }
+
+    .blueprint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .blueprint-card {
+      background: #64748b0d;
+      border: 1px solid #64748b20;
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+
+    .blueprint-card .agent-slug {
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+    }
+
+    .show-all-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 6px;
+      background: transparent;
+      border: 1px dashed #64748b40;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      color: var(--stage-blueprint);
+      cursor: pointer;
+      transition: background 120ms;
+    }
+
+    .show-all-btn:hover {
+      background: var(--stage-blueprint-dim);
+    }
+
+    /* Empty column state */
+    .col-empty {
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 24px 16px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Progress Bar ── */
+    .progress-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .progress-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .progress-pct {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .progress-track {
+      height: 8px;
+      background: var(--bg);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--stage-sandbox) 0%, var(--stage-validated) 60%, var(--stage-production) 100%);
+      border-radius: 4px;
+      transition: width 600ms ease;
+    }
+
+    .progress-stages {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-stage-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-align: center;
+      flex: 1;
+    }
+
+    .progress-stage-label.has-agents {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* ── Loading state ── */
+    .loading-msg {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      main { padding: 20px 16px; }
+      .page-header { padding: 20px 16px 16px; }
+      .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* S41-6C: Value Impact Badges */
+    .stage-value-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; background: rgba(99,102,241,0.1); color: #6366f1; margin-top: 4px; display: inline-block; }
+    .stage-col-header { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  </style>
+</head>
+<body>
+
+  <div id="offline-banner">
+    Server offline &mdash; start with: <code>cd dashboards &amp;&amp; python3 server.py</code>
+  </div>
+
+  <nav class="top-nav">
+    <span class="nav-brand">&#9889; Business Agents Platform</span>
+    <div class="nav-personas">
+      <a href="operations.html" class="nav-tab">Operations</a>
+      <a href="finance.html" class="nav-tab">Finance</a>
+      <a href="compliance.html" class="nav-tab">Compliance</a>
+      <a href="it-health.html" class="nav-tab">IT</a>
+      <a href="pipeline.html" class="nav-tab active">Pipeline</a>
+      <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>
+      <a href="eval.html" class="nav-tab">Eval <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>#9650;</a>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <div class="persona-label">Lifecycle View</div>
+        <h1>Agent Pipeline</h1>
+        <p class="persona-name">Lifecycle progression from blueprint to production</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="refresh-info" id="last-updated">Loading...</div>
+        <button class="refresh-btn" onclick="loadPipeline()">&#8635; Refresh</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="main-inner">
+
+      <!-- KPI Bar -->
+      <div class="section-title">Portfolio Overview</div>
+      <div class="kpi-bar" id="kpi-bar">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Blueprints</div>
+          <div class="kpi-value blue" id="kpi-total">40</div>
+          <div class="kpi-sub">Across all lifecycle stages</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">In Development</div>
+          <div class="kpi-value amber" id="kpi-in-dev">3</div>
+          <div class="kpi-sub">Scaffolded, Sandbox, or Validated</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">In Sandbox</div>
+          <div class="kpi-value amber" id="kpi-sandbox">3</div>
+          <div class="kpi-sub">Running against mock systems</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Production</div>
+          <div class="kpi-value green" id="kpi-production">0</div>
+          <div class="kpi-sub">Live in production</div>
+        </div>
+      </div>
+
+      <!-- Kanban Board -->
+      <div class="section-title">Lifecycle Kanban</div>
+      <div class="kanban-wrapper">
+        <div class="kanban-board" id="kanban-board">
+          <div class="loading-msg">Loading pipeline data...</div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="section-title">Portfolio Progress</div>
+      <div class="progress-section">
+        <div class="progress-header">
+          <div class="progress-title">Journey: Blueprint &rarr; Production</div>
+          <div class="progress-pct" id="progress-pct">0%</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="progress-stages">
+          <div class="progress-stage-label" id="lbl-blueprint">Blueprint<br><span id="cnt-blueprint">37</span></div>
+          <div class="progress-stage-label" id="lbl-scaffolded">Scaffolded<br><span id="cnt-scaffolded">0</span></div>
+          <div class="progress-stage-label" id="lbl-sandbox">Sandbox<br><span id="cnt-sandbox">3</span></div>
+          <div class="progress-stage-label" id="lbl-validated">Validated<br><span id="cnt-validated">0</span></div>
+          <div class="progress-stage-label" id="lbl-pilot_ready">Pilot Ready<br><span id="cnt-pilot_ready">0</span></div>
+          <div class="progress-stage-label" id="lbl-production">Production<br><span id="cnt-production">0</span></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="gateOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;align-items:center;justify-content:center">
+    <div style="background:#161b2e;border:1px solid #1e293b;border-radius:12px;padding:28px 32px;max-width:440px;width:90%;position:relative">
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:8px">Stage Advancement Gate</div>
+      <div style="font-size:1rem;font-weight:600;color:#f1f5f9;margin-bottom:6px" id="gateTitle">Advance Agent?</div>
+      <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:16px" id="gateSubtitle"></div>
+      <div style="background:#0f1117;border:1px solid #1e293b;border-radius:8px;padding:14px;margin-bottom:20px">
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:10px">Exit criteria checklist</div>
+        <div id="gateChecklist" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button onclick="confirmAdvance()" style="flex:1;background:#22c55e20;color:#22c55e;border:1px solid #22c55e40;border-radius:6px;padding:10px;font-size:0.85rem;font-weight:600;cursor:pointer">Confirm Advance</button>
+        <button onclick="closeGateModal()" style="flex:1;background:#1e293b;color:#94a3b8;border:1px solid #1e293b;border-radius:6px;padding:10px;font-size:0.85rem;font-weight:600;cursor:pointer">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:8500';
+
+    // Known sandbox agent slugs for offline fallback
+    const KNOWN_SANDBOX = [
+      { slug: 'cg-replenishment-pr-agent', persona: 'operations', name: 'Replenishment PR Agent' },
+      { slug: 'cg-demand-forecast-agent',  persona: 'operations', name: 'Demand Forecast Agent' },
+      { slug: 'cg-quality-capa-agent',     persona: 'compliance', name: 'Quality CAPA Agent' },
+    ];
+
+    // Static blueprint slugs (known from codebase, shown as fallback)
+    const BLUEPRINT_SAMPLE = [
+      'cg-trade-promotion-agent',
+      'cg-customer-churn-agent',
+      'cg-new-product-launch-agent',
+      'cg-pricing-optimization-agent',
+      'cg-supplier-scorecard-agent',
+      'fs-loan-origination-agent',
+      'fs-fraud-detection-agent',
+      'fs-kyc-compliance-agent',
+      'hc-patient-scheduling-agent',
+      'hc-clinical-trial-agent',
+      'mfg-oee-monitoring-agent',
+      'mfg-predictive-maintenance-agent',
+      'ret-inventory-optimization-agent',
+      'ret-customer-segmentation-agent',
+      'log-route-optimization-agent',
+    ];
+
+    const STAGES = [
+      { key: 'blueprint',  label: 'Blueprint',   desc: 'Designed and documented',       color: '#64748b', cls: 'col-blueprint'  },
+      { key: 'scaffolded', label: 'Scaffolded',  desc: 'Code structure created',        color: '#6366f1', cls: 'col-scaffolded' },
+      { key: 'sandbox',    label: 'Sandbox',     desc: 'Running against mock systems',  color: '#f59e0b', cls: 'col-sandbox'    },
+      { key: 'validated',  label: 'Validated',   desc: 'End-to-end tested',             color: '#3b82f6', cls: 'col-validated'  },
+      { key: 'pilot_ready',label: 'Pilot Ready', desc: 'Ready for client integration',  color: '#10b981', cls: 'col-pilot'      },
+      { key: 'production', label: 'Production',  desc: 'Live in production',            color: '#22c55e', cls: 'col-production' },
+    ];
+
+    let blueprintExpanded = false;
+    let blueprintFilter = '';
+    let allBlueprintSlugs = [];
+
+    async function loadPipeline() {
+      try {
+        const [portfolio, agents] = await Promise.all([
+          fetch(`${API}/api/portfolio`, { signal: AbortSignal.timeout(5000) }).then(r => r.json()),
+          fetch(`${API}/api/agents`,    { signal: AbortSignal.timeout(5000) }).then(r => r.json()),
+        ]);
+        document.getElementById('offline-banner').style.display = 'none';
+        renderKPIs(portfolio.lifecycle_dist || {});
+        renderKanban(portfolio.lifecycle_dist || {}, agents || []);
+        renderProgress(portfolio.lifecycle_dist || {});
+        document.getElementById('last-updated').textContent =
+          'Updated ' + new Date().toLocaleTimeString();
+      } catch (err) {
+        showOffline();
+      }
+    }
+
+    function showOffline() {
+      document.getElementById('offline-banner').style.display = 'block';
+      const dist = { blueprint: 37, scaffolded: 0, sandbox: 3, validated: 0, pilot_ready: 0, production: 0 };
+      renderKPIs(dist);
+      renderKanban(dist, KNOWN_SANDBOX);
+      renderProgress(dist);
+      document.getElementById('last-updated').textContent = 'Offline — showing static fallback';
+    }
+
+    function renderKPIs(dist) {
+      const total = Object.values(dist).reduce((a, b) => a + b, 0) || 40;
+      const inDev = (dist.scaffolded || 0) + (dist.sandbox || 0) + (dist.validated || 0) + (dist.pilot_ready || 0);
+      document.getElementById('kpi-total').textContent      = total;
+      document.getElementById('kpi-in-dev').textContent     = inDev;
+      document.getElementById('kpi-sandbox').textContent    = dist.sandbox || 0;
+      document.getElementById('kpi-production').textContent = dist.production || 0;
+    }
+
+    function renderProgress(dist) {
+      // Weight each stage: blueprint=0, scaffolded=1, sandbox=2, validated=3, pilot_ready=4, production=5
+      const weights = { blueprint: 0, scaffolded: 1, sandbox: 2, validated: 3, pilot_ready: 4, production: 5 };
+      const maxWeight = 5;
+      let totalAgents = 0;
+      let totalScore = 0;
+      for (const [stage, count] of Object.entries(dist)) {
+        if (count > 0 && weights[stage] !== undefined) {
+          totalAgents += count;
+          totalScore  += count * weights[stage];
+        }
+      }
+      const pct = totalAgents > 0 ? Math.round((totalScore / (totalAgents * maxWeight)) * 100) : 0;
+      document.getElementById('progress-pct').textContent  = pct + '%';
+      document.getElementById('progress-fill').style.width = pct + '%';
+
+      // Update stage labels
+      for (const key of Object.keys(weights)) {
+        const cnt = dist[key] || 0;
+        const cntEl = document.getElementById('cnt-' + key);
+        const lblEl = document.getElementById('lbl-' + key);
+        if (cntEl) cntEl.textContent = cnt;
+        if (lblEl) {
+          lblEl.classList.toggle('has-agents', cnt > 0);
+        }
+      }
+    }
+
+    function renderKanban(dist, agents) {
+      const board = document.getElementById('kanban-board');
+      board.innerHTML = '';
+
+      // Build a map of slug -> agent for non-blueprint stages
+      const agentMap = {};
+      for (const a of agents) {
+        agentMap[a.slug] = a;
+      }
+
+      for (const stage of STAGES) {
+        const count = dist[stage.key] || 0;
+        const col = document.createElement('div');
+        col.className = 'kanban-col ' + stage.cls;
+        if (stage.key === 'sandbox') col.classList.add('col-sandbox');
+
+        // S41-6C: add data-stage attribute for value badge injection
+        col.setAttribute('data-stage', stage.key);
+
+        // Column header
+        col.innerHTML = `
+          <div class="kanban-col-header" data-stage-header="${stage.key}">
+            <div class="col-stage-name">${stage.label}</div>
+            <div class="col-stage-desc">${stage.desc}</div>
+            <span class="col-badge">${count} agent${count !== 1 ? 's' : ''}</span>
+          </div>
+        `;
+
+        if (stage.key === 'blueprint') {
+          col.appendChild(buildBlueprintColumn(count));
+        } else {
+          // Filter agents belonging to this stage
+          const stageAgents = agents.filter(a => a.lifecycle_stage === stage.key);
+          if (stageAgents.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'col-empty';
+            empty.textContent = 'No agents at this stage';
+            col.appendChild(empty);
+          } else {
+            for (const agent of stageAgents) {
+              col.appendChild(buildAgentCard(agent, stage));
+            }
+          }
+        }
+
+        board.appendChild(col);
+      }
+    }
+
+    function buildBlueprintColumn(count) {
+      const container = document.createElement('div');
+
+      const summary = document.createElement('div');
+      summary.className = 'blueprint-summary';
+
+      const filterInput = document.createElement('input');
+      filterInput.type = 'text';
+      filterInput.className = 'blueprint-search';
+      filterInput.placeholder = 'Filter blueprints...';
+      filterInput.value = blueprintFilter;
+      filterInput.addEventListener('input', e => {
+        blueprintFilter = e.target.value;
+        updateBlueprintList(listEl, showAllBtn, count);
+      });
+
+      const summaryText = document.createElement('div');
+      summaryText.className = 'blueprint-summary-text';
+      summaryText.innerHTML = `<span class="blueprint-count-pill">${count}</span> blueprints ready for development`;
+
+      summary.appendChild(summaryText);
+      summary.appendChild(filterInput);
+
+      const listEl = document.createElement('div');
+      listEl.className = 'blueprint-list';
+
+      const showAllBtn = document.createElement('button');
+      showAllBtn.className = 'show-all-btn';
+      showAllBtn.addEventListener('click', () => {
+        blueprintExpanded = !blueprintExpanded;
+        updateBlueprintList(listEl, showAllBtn, count);
+      });
+
+      summary.appendChild(listEl);
+      summary.appendChild(showAllBtn);
+      container.appendChild(summary);
+
+      updateBlueprintList(listEl, showAllBtn, count);
+      return container;
+    }
+
+    function updateBlueprintList(listEl, showAllBtn, total) {
+      const filtered = BLUEPRINT_SAMPLE.filter(s =>
+        !blueprintFilter || s.toLowerCase().includes(blueprintFilter.toLowerCase())
+      );
+      const visible = blueprintExpanded ? filtered : filtered.slice(0, 5);
+
+      listEl.innerHTML = '';
+      for (const slug of visible) {
+        const card = document.createElement('div');
+        card.className = 'blueprint-card';
+        card.innerHTML = `<div class="agent-slug">${slug}</div>`;
+        listEl.appendChild(card);
+      }
+
+      const hiddenCount = total - visible.length;
+      if (!blueprintExpanded && hiddenCount > 0) {
+        showAllBtn.textContent = `Show all ${total}`;
+        showAllBtn.style.display = 'block';
+      } else if (blueprintExpanded) {
+        showAllBtn.textContent = 'Show fewer';
+        showAllBtn.style.display = filtered.length > 5 ? 'block' : 'none';
+      } else {
+        showAllBtn.style.display = 'none';
+      }
+    }
+
+    function buildAgentCard(agent, stage) {
+      const card = document.createElement('div');
+      card.className = 'agent-card';
+
+      const persona = agent.persona || 'operations';
+      const industry = agent.slug.split('-')[0].toUpperCase();
+      const agentName = agent.title || agent.slug;
+
+      card.innerHTML = `
+        <div class="agent-slug">${agent.slug}</div>
+        <div class="agent-meta">${industry} &middot; ${capitalize(persona)}</div>
+      `;
+
+      // Show advance button for sandbox and higher (not production)
+      const advanceable = ['sandbox', 'validated', 'pilot_ready'];
+      if (advanceable.includes(stage.key)) {
+        const nextStageKeyMap = {
+          sandbox:     'validated',
+          validated:   'pilot_ready',
+          pilot_ready: 'production',
+        };
+        const nextStageLabelMap = {
+          sandbox:     'Validated',
+          validated:   'Pilot Ready',
+          pilot_ready: 'Production',
+        };
+        const targetStage = nextStageKeyMap[stage.key];
+        const btn = document.createElement('button');
+        btn.className = 'advance-btn';
+        btn.textContent = '\u2192 Advance to ' + nextStageLabelMap[stage.key];
+        btn.addEventListener('click', () => openGateModal(agent.slug, agentName, targetStage));
+        card.appendChild(btn);
+      }
+
+      return card;
+    }
+
+    // Stage gate criteria by target stage
+    const STAGE_GATES = {
+      scaffolded: ['Blueprint spec reviewed and approved', 'Agent scaffolding generated from template', 'Business logic implementation started'],
+      sandbox: ['Business logic implemented', 'Unit tests passing', 'Dry-run against mock data succeeds'],
+      validated: ['All sandbox test scenarios pass', 'Business stakeholder has reviewed outputs', 'Authority level confirmed and documented'],
+      pilot_ready: ['Client system access confirmed', 'Pre-production test with real data passed', 'Human-in-the-loop SOP documented', 'Compliance clearance obtained'],
+      production: ['Pilot KPIs met', 'Go-live decision approved by client stakeholder', 'Monitoring and alerting configured', 'Value measurement active']
+    };
+
+    let pendingAdvance = null;
+
+    function openGateModal(slug, agentName, targetStage) {
+      pendingAdvance = { slug, targetStage };
+      document.getElementById('gateTitle').textContent = `Advance "${agentName}" to ${targetStage.replace('_',' ')}`;
+      document.getElementById('gateSubtitle').textContent = `This will move the agent from its current stage to ${targetStage.replace('_',' ')}. All checklist items should be confirmed.`;
+
+      const criteria = STAGE_GATES[targetStage] || ['Confirm advancement is appropriate'];
+      document.getElementById('gateChecklist').innerHTML = criteria.map(c => `
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:#94a3b8">
+          <input type="checkbox" style="accent-color:#22c55e;width:14px;height:14px"> ${c}
+        </label>`).join('');
+
+      const overlay = document.getElementById('gateOverlay');
+      overlay.style.display = 'flex';
+    }
+
+    function closeGateModal() {
+      document.getElementById('gateOverlay').style.display = 'none';
+      pendingAdvance = null;
+    }
+
+    async function confirmAdvance() {
+      if (!pendingAdvance) return;
+      const { slug, targetStage } = pendingAdvance;
+      closeGateModal();
+      try {
+        const res = await fetch(`${API}/api/agents/${slug}/advance`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target_stage: targetStage })
+        });
+        if (res.ok) { loadPipeline && loadPipeline(); }
+      } catch(e) { console.error(e); }
+    }
+
+    function capitalize(s) {
+      return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+    }
+
+    // ── S41-6C: Value Impact Badges ────────────────────────────────────────
+    async function addValueBadges() {
+      let agentsByStage = {};
+      try {
+        const resp = await fetch(`${API}/api/agents`, {signal: AbortSignal.timeout(3000)});
+        if (resp.ok) {
+          const agents = await resp.json();
+          agents.forEach(a => {
+            const stage = a.lifecycle_stage || 'blueprint';
+            if (!agentsByStage[stage]) agentsByStage[stage] = [];
+            agentsByStage[stage].push(a);
+          });
+        }
+      } catch(e) {}
+
+      // Fallback values by stage
+      const stageValues = {
+        blueprint:   {count: 37, value: 890000},
+        scaffolded:  {count: 2,  value: 62000},
+        sandbox:     {count: 3,  value: 74000},
+        validated:   {count: 0,  value: 0},
+        pilot_ready: {count: 0,  value: 0},
+        production:  {count: 0,  value: 0},
+      };
+
+      // If we got real data, compute values from it
+      if (Object.keys(agentsByStage).length > 0) {
+        Object.keys(stageValues).forEach(stage => {
+          const stageAgents = agentsByStage[stage] || [];
+          if (stageAgents.length > 0) {
+            stageValues[stage].count = stageAgents.length;
+            stageValues[stage].value = stageAgents.reduce((sum, a) =>
+              sum + Math.round((a.est_hours_per_week || 2) * 52 * 25), 0);
+          }
+        });
+      }
+
+      // Inject badges into rendered column headers
+      Object.keys(stageValues).forEach(stage => {
+        const v = stageValues[stage];
+        if (v.count === 0) return;
+        const colHeader = document.querySelector(`[data-stage="${stage}"] [data-stage-header="${stage}"]`);
+        if (colHeader) {
+          // Remove existing badge if any (for re-render)
+          const existing = colHeader.querySelector('.stage-value-badge');
+          if (existing) existing.remove();
+          const badge = document.createElement('div');
+          badge.className = 'stage-value-badge';
+          badge.textContent = `${v.count} agent${v.count !== 1 ? 's' : ''} \u00B7 \u00A3${(v.value/1000).toFixed(0)}K/yr value`;
+          colHeader.appendChild(badge);
+        }
+      });
+    }
+
+    // Wrap loadPipeline to also call addValueBadges after render
+    const _origLoadPipeline = loadPipeline;
+    loadPipeline = async function() {
+      await _origLoadPipeline();
+      await addValueBadges();
+    };
+
+    // Initial load
+    loadPipeline();
+  </script>
+
+</body>
+</html>

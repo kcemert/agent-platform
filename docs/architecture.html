@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Agents Platform — Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --accent: #f97316;
+      --accent-dim: rgba(249, 115, 22, 0.15);
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --purple: #a855f7;
+      --nav-width: 220px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Left Nav ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--nav-width);
+      height: 100vh;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 28px 0;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    nav .nav-logo {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    nav .nav-logo span {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    nav .nav-logo h2 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      border-left: 2px solid transparent;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--text);
+      background: rgba(249, 115, 22, 0.08);
+      border-left-color: var(--accent);
+    }
+
+    nav a .num {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Main Content ── */
+    main {
+      margin-left: var(--nav-width);
+      flex: 1;
+      padding: 48px 56px;
+      max-width: 1100px;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header .badge {
+      display: inline-block;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .page-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .page-header p {
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    /* ── Sections ── */
+    section {
+      margin-bottom: 72px;
+      scroll-margin-top: 32px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    section h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    section p {
+      color: #94a3b8;
+      margin-bottom: 16px;
+      max-width: 820px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    /* ── Mermaid ── */
+    .mermaid-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Tables ── */
+    .table-wrap {
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead tr {
+      background: rgba(249, 115, 22, 0.1);
+      border-bottom: 1px solid var(--border);
+    }
+
+    thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody td {
+      padding: 10px 14px;
+      color: #94a3b8;
+      vertical-align: top;
+    }
+
+    tbody td:first-child {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── Code blocks ── */
+    pre {
+      background: #0a0d14;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 22px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #94a3b8;
+    }
+
+    pre .comment { color: var(--muted); }
+    pre .kw { color: #f97316; }
+    pre .str { color: #86efac; }
+    pre .num { color: #60a5fa; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #f1f5f9;
+    }
+
+    /* ── Layer diagram (overview) ── */
+    .layers {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 24px;
+      max-width: 680px;
+    }
+
+    .layer {
+      border: 1px solid var(--border);
+      padding: 18px 24px;
+      text-align: center;
+    }
+
+    .layer:first-child { border-radius: 8px 8px 0 0; }
+    .layer:last-child { border-radius: 0 0 8px 8px; }
+
+    .layer.top { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); }
+    .layer.mid { background: rgba(249,115,22,0.1); border-color: rgba(249,115,22,0.3); }
+    .layer.bot { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); }
+
+    .layer-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .layer.top .layer-title { color: var(--blue); }
+    .layer.mid .layer-title { color: var(--accent); }
+    .layer.bot .layer-title { color: var(--green); }
+
+    .layer-detail {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .layer-arrow {
+      text-align: center;
+      font-size: 18px;
+      color: var(--muted);
+      padding: 4px 0;
+    }
+
+    /* ── Stats strip ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Directory tree ── */
+    .dir-tree {
+      background: #0a0d14;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .dir-tree .dir { color: #60a5fa; font-weight: 500; }
+    .dir-tree .file { color: #94a3b8; }
+    .dir-tree .ann { color: var(--muted); font-style: italic; }
+    .dir-tree .acc { color: #86efac; }
+
+    /* ── JSON schema ── */
+    .schema-block {
+      background: #0a0d14;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .schema-block .key { color: #93c5fd; }
+    .schema-block .val { color: #86efac; }
+    .schema-block .type { color: var(--muted); }
+
+    /* ── Tag chips ── */
+    .chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .chip-low { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .chip-med { background: rgba(249,180,22,0.15); color: #f59e0b; }
+    .chip-high { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+    /* ── Divider ── */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     LEFT NAVIGATION
+     ════════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">
+    <span>Platform Docs</span>
+    <h2>Architecture Reference</h2>
+  </div>
+  <a href="#overview"><span class="num">1</span>Platform Overview</a>
+  <a href="#directory"><span class="num">2</span>Directory Structure</a>
+  <a href="#architecture"><span class="num">3</span>System Architecture</a>
+  <a href="#schema"><span class="num">4</span>Database Schema</a>
+  <a href="#agents"><span class="num">5</span>Agent Architecture</a>
+  <a href="#dataflow"><span class="num">6</span>Data Flow: HITL</a>
+  <a href="#frameworks"><span class="num">7</span>Framework Registry</a>
+  <a href="#quickstart"><span class="num">8</span>Running the Platform</a>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ════════════════════════════════════════════════════════════ -->
+<main>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="badge">Architecture Reference</div>
+    <h1>Business Agents Platform</h1>
+    <p>Visual architecture reference — a new developer or technical stakeholder should be able to understand the full platform in 30 minutes. Last updated: March 2026.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 1 — PLATFORM OVERVIEW
+       ══════════════════════════════════════════════════ -->
+  <section id="overview">
+    <div class="section-label">Section 01</div>
+    <h2>Platform Overview</h2>
+
+    <p>
+      The Business Agents Platform is an AI agent deployment and management system for mid-market industrial manufacturers and specialty businesses. It provides a library of autonomous agents that monitor operations, generate recommendations, and execute approved actions — all with human-in-the-loop oversight. The platform includes a process intelligence database (760 processes, 13 industries, 40 agent blueprints), persona-specific dashboards, client engagement portals, and a Flask server that orchestrates agent runs.
+    </p>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">13</div><div class="stat-label">Industries</div></div>
+      <div class="stat"><div class="stat-value">760</div><div class="stat-label">Processes</div></div>
+      <div class="stat"><div class="stat-value">40</div><div class="stat-label">Blueprints</div></div>
+      <div class="stat"><div class="stat-value">1,755</div><div class="stat-label">Agent Actions</div></div>
+      <div class="stat"><div class="stat-value">131</div><div class="stat-label">Systems</div></div>
+      <div class="stat"><div class="stat-value">3</div><div class="stat-label">Clients</div></div>
+      <div class="stat"><div class="stat-value">21</div><div class="stat-label">Frameworks</div></div>
+      <div class="stat"><div class="stat-value">38</div><div class="stat-label">Platform Tools</div></div>
+    </div>
+    <p style="font-size:12px;color:#475569;margin-top:-12px;margin-bottom:20px">
+      Stats are hardcoded in this file. Run <code>python3 docs/generate.py</code> to refresh
+      <code>docs/status.json</code> with live counts from the DB.
+    </p>
+
+    <p>The platform is organized into three concentric layers:</p>
+
+    <div class="layers">
+      <div class="layer top">
+        <div class="layer-title">Client Layer</div>
+        <div class="layer-detail">Browsers, persona dashboards, client portals, sales tools, built-in HTML/JS apps</div>
+      </div>
+      <div class="layer-arrow">&#8597;</div>
+      <div class="layer mid">
+        <div class="layer-title">Platform Layer</div>
+        <div class="layer-detail">Flask server :8500, agent runner (subprocess), recommendations engine, health check :8080</div>
+      </div>
+      <div class="layer-arrow">&#8597;</div>
+      <div class="layer bot">
+        <div class="layer-title">Data / Integration Layer</div>
+        <div class="layer-detail">SQLite DB (business_agents.db), pilot-agents/ Python scripts, mock SAP :3001, mock MES :3002</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 2 — DIRECTORY STRUCTURE
+       ══════════════════════════════════════════════════ -->
+  <section id="directory">
+    <div class="section-label">Section 02</div>
+    <h2>Directory Structure</h2>
+    <p>Annotated workspace tree. Every sub-folder is a self-contained concern; the root <code>index.html</code> and <code>registry.json</code> act as the unified entry point.</p>
+
+    <div class="dir-tree">
+<span class="dir">Agentic Projects/</span>
+├── <span class="acc">index.html</span>              <span class="ann"># Platform home — 38 tools, 7 categories, badge-counted</span>
+├── <span class="acc">registry.json</span>           <span class="ann"># Machine-readable views registry (29+ entries)</span>
+├── <span class="dir">docs/</span>                   <span class="ann"># ← This file lives here</span>
+│   └── architecture.html
+├── <span class="dir">ralph/</span>                  <span class="ann"># Agent loop orchestration</span>
+│   ├── prd.json            <span class="ann"># Product backlog (stories + epic tracking)</span>
+│   ├── CLAUDE.md           <span class="ann"># Agent instructions for autonomous loop</span>
+│   ├── roadmap.md          <span class="ann"># Epic status (63 epics, 62 complete)</span>
+│   └── frameworks.md       <span class="ann"># 21 canonical frameworks (canonical reference)</span>
+├── <span class="dir">business-agents/</span>        <span class="ann"># Core intelligence layer</span>
+│   ├── business_agents.db  <span class="ann"># SQLite: 13 industries, 760 processes, 40 blueprints</span>
+│   ├── query.py            <span class="ann"># CLI: capabilities, blueprints, features, status, etc.</span>
+│   ├── schema.sql          <span class="ann"># Full DB schema with all table definitions</span>
+│   ├── scaffolding/        <span class="ann"># scaffold_agent.py — generate agent code from blueprint</span>
+│   ├── browser/            <span class="ann"># Process taxonomy browser (310+ processes)</span>
+│   ├── blueprints/         <span class="ann"># Blueprint viewer (40 blueprints, lifecycle badges)</span>
+│   ├── dashboard/          <span class="ann"># Enterprise dashboard (generate.py)</span>
+│   ├── value-chain/        <span class="ann"># Industry value chain heatmap</span>
+│   ├── matrix/             <span class="ann"># Grand Matrix (Function cols × Industry tabs)</span>
+│   ├── value-dashboard/    <span class="ann"># ROI dashboard (value_tracking table)</span>
+│   └── visualizations/     <span class="ann"># quadrant, treemap, feature-network, authority, etc.</span>
+├── <span class="dir">pilot-agents/</span>           <span class="ann"># Working Python agents (the execution tier)</span>
+│   ├── <span class="dir">kimre/</span>              <span class="ann"># 7 Kimre client-specific agents</span>
+│   │   ├── rfq_quote_agent.py
+│   │   ├── quality_compliance_agent.py
+│   │   ├── order_notifier_agent.py
+│   │   ├── retrofit_reorder_agent.py
+│   │   ├── marketing_agent.py
+│   │   ├── research_agent.py
+│   │   └── business_model_agent.py
+│   ├── replenishment_agent.py
+│   ├── demand_forecast_agent.py
+│   ├── quality_capa_agent.py
+│   ├── marketing_agent.py
+│   ├── research_agent.py
+│   ├── business_model_agent.py
+│   ├── mfg-predictive-maintenance-agent.py
+│   ├── ap-invoice-processing.py
+│   └── orchestrator.py     <span class="ann"># Multi-agent subprocess runner (--agents flag)</span>
+├── <span class="dir">dashboards/</span>             <span class="ann"># Persona dashboards + Flask API server</span>
+│   ├── server.py           <span class="ann"># Flask app, port 8500, all API routes</span>
+│   ├── operations.html     <span class="ann"># P1 — Operations Manager (SKU triage, PR approval)</span>
+│   ├── finance.html        <span class="ann"># P2 — Finance Controller (budget gate, ROI chart)</span>
+│   ├── compliance.html     <span class="ann"># P3 — Compliance Officer (CAPA, audit trail export)</span>
+│   ├── it-health.html      <span class="ann"># P4 — IT Lead (health ring, payload inspector)</span>
+│   ├── enterprise.html     <span class="ann"># P5 — C-Suite (portfolio, expansion readiness)</span>
+│   ├── pipeline.html       <span class="ann"># P7 — Lifecycle kanban (6-column, gate modal)</span>
+│   ├── action-queue.html   <span class="ann"># P6 — Unified inbox (all roles, urgency sort)</span>
+│   ├── agent-view.html     <span class="ann"># Per-agent deep view (sparklines, run history)</span>
+│   ├── eval.html           <span class="ann"># Dashboard quality evaluation rubric</span>
+│   └── COMPONENTS.md       <span class="ann"># Component library (13 components with recipes)</span>
+├── <span class="dir">clients/</span>               <span class="ann"># Client engagement portals</span>
+│   ├── index.html          <span class="ann"># Portfolio listing (3 active clients)</span>
+│   ├── seed_clients.py     <span class="ann"># Idempotent DB seeder (clients table)</span>
+│   ├── portal/generate.py  <span class="ann"># Portal generator CLI</span>
+│   ├── <span class="dir">kimre/</span>              <span class="ann"># Full Kimre portal (9 tabs, 7 dashboards, tools)</span>
+│   ├── <span class="dir">precisionparts/</span>     <span class="ann"># MFG/MTS 75-person Tulsa OK portal</span>
+│   └── <span class="dir">meridianbank/</span>       <span class="ann"># FS 200-person Charlotte NC portal</span>
+├── <span class="dir">sandbox-systems/</span>       <span class="ann"># Mock integrations (isolated API layer)</span>
+│   ├── start-all.sh        <span class="ann"># Starts SAP :3001 + MES :3002</span>
+│   ├── sap_mock.py         <span class="ann"># Flask mock for SAP S/4HANA endpoints</span>
+│   └── mes_mock.py         <span class="ann"># Flask mock for MES endpoints</span>
+├── <span class="dir">agent-runtime/</span>         <span class="ann"># Infrastructure: reliability, scheduling</span>
+│   ├── scheduler.py        <span class="ann"># Cron-style agent scheduler</span>
+│   ├── retry.py            <span class="ann"># Exponential backoff + circuit breaker</span>
+│   ├── health_check.py     <span class="ann"># Health endpoint :8080/health</span>
+│   └── notifications.py    <span class="ann"># Alert stubs (email/Slack placeholders)</span>
+├── <span class="dir">office-skills/</span>         <span class="ann"># Sales and pre-sales assets</span>
+│   └── outputs/
+│       ├── partner-pitch/  <span class="ann"># 15-slide reveal.js deck</span>
+│       ├── comm-framework/ <span class="ann"># exec-summary, roi-calculator, technical-overview</span>
+│       ├── engagement-model/ <span class="ann"># 3 tiers, 4 phases, pricing FAQ</span>
+│       ├── productivity-multiplier/ <span class="ann"># 1 person = 5× output; role cards</span>
+│       ├── benefits-realization/ <span class="ann"># KPI framework; 90-day success gates</span>
+│       └── responsible-ai/ <span class="ann"># 6-pillar RAI one-pager HTML</span>
+├── <span class="dir">prioritization/</span>        <span class="ann"># Epic 33: 2×2 opportunity scoring tool</span>
+│   └── index.html          <span class="ann"># Interactive quadrant (?mode=internal)</span>
+└── <span class="dir">client-onboarding/</span>     <span class="ann"># Epic 8: discovery sprint tools</span>
+    ├── questionnaire.html
+    ├── score_client.py
+    └── onboarding-checklist.html
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 3 — SYSTEM ARCHITECTURE
+       ══════════════════════════════════════════════════ -->
+  <section id="architecture">
+    <div class="section-label">Section 03</div>
+    <h2>System Architecture</h2>
+    <p>End-to-end component map showing how browsers, the Flask server, Python agents, and the data layer interconnect.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+flowchart TD
+    subgraph Browser["Browser / Client Layer"]
+        D1["Platform Dashboards\noperations · finance · compliance\ncompliance · it-health · enterprise"]
+        D2["Kimre Persona Dashboards\nsales · engineering · CS · exec\nquality · strategy · marketing"]
+        D3["Client Portals\nclients/kimre · precisionparts · meridianbank"]
+        D4["Tools\nspec-gen · rfq-intake · business-case\nblueprint-viewer · opportunity-quadrant"]
+    end
+
+    subgraph Flask["Flask Server :8500 — dashboards/server.py"]
+        S1["Static File Serving\ndashboards/ + clients/"]
+        S2["/api/run/:slug\nAgent Runner"]
+        S3["/api/recommendations\nHITL Queue"]
+        S4["/api/db-stats\nLive Platform Stats"]
+        S5["/api/health\nHealth Check"]
+    end
+
+    subgraph Agents["Pilot Agents — pilot-agents/ (Python)"]
+        A1["Generic Agents\nreplenishment · demand-forecast\nquality-capa · marketing · research\nbusiness-model · mfg-maintenance · ap-invoice"]
+        A2["Kimre-Specific Agents\nrfq-quote · quality-compliance\norder-notifier · retrofit-reorder\nmarketing · research · business-model"]
+        A3["Orchestrator\norchestrator.py\n--agents flag, combined JSON"]
+    end
+
+    subgraph Data["Data / Integration Layer"]
+        DB[("SQLite DB\nbusiness_agents.db\n13 industries · 760 processes\n40 blueprints · 1,755 actions")]
+        SAP["Mock SAP API\n:3001\nPO · Inventory · Vendor"]
+        MES["Mock MES API\n:3002\nOEE · Work Orders · Quality"]
+    end
+
+    Browser -->|"HTTP fetch / POST"| Flask
+    Flask -->|"subprocess.run(agent.py)"| Agents
+    Agents -->|"reads mock data / DRY_RUN"| Data
+    Flask -->|"reads/writes"| DB
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Server Routes Reference</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Route</th>
+              <th>Method</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/api/run/:slug</code></td><td>POST</td><td>Trigger a named agent by blueprint slug; returns recommendations JSON</td></tr>
+            <tr><td><code>/api/recommendations</code></td><td>GET</td><td>Fetch pending HITL recommendation queue from DB</td></tr>
+            <tr><td><code>/api/recommendations/:id/decide</code></td><td>POST</td><td>Approve or reject a single recommendation; writes to approvals table</td></tr>
+            <tr><td><code>/api/db-stats</code></td><td>GET</td><td>Live counts: industries, processes, blueprints, agents, runs</td></tr>
+            <tr><td><code>/api/pilot-runs</code></td><td>GET</td><td>Recent agent execution history (pilot_runs table)</td></tr>
+            <tr><td><code>/api/health</code></td><td>GET</td><td>Server + DB connectivity check</td></tr>
+            <tr><td><code>/</code></td><td>GET</td><td>Serves static files from dashboards/ and clients/</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 4 — DATABASE SCHEMA
+       ══════════════════════════════════════════════════ -->
+  <section id="schema">
+    <div class="section-label">Section 04</div>
+    <h2>Database Schema</h2>
+    <p>Single SQLite file at <code>business-agents/business_agents.db</code>. All agent data, blueprint specs, run history, and client records live here. A symlink copy exists at <code>dashboards/business_agents.db</code> for the Flask server.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+erDiagram
+    industries ||--o{ industry_processes : "covers"
+    processes ||--o{ industry_processes : "belongs to"
+    processes ||--o{ process_agent_actions : "has actions"
+    functions ||--o{ processes : "groups"
+    agent_blueprints ||--o{ blueprint_features : "uses"
+    features ||--o{ blueprint_features : "referenced by"
+    agent_blueprints ||--o{ agents : "instantiates"
+    agents ||--o{ agent_runs : "produces"
+    agents ||--o{ agent_capabilities : "has"
+    capability_types ||--o{ agent_capabilities : "classifies"
+    pilot_runs ||--o{ recommendations : "generates"
+    recommendations ||--o{ approvals : "triggers"
+    clients ||--o{ pilot_runs : "scoped to"
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Table</th>
+            <th>Purpose</th>
+            <th>Key Columns</th>
+            <th>Rows</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>industries</code></td>
+            <td>13 industry sectors</td>
+            <td>code (CG, MFG, FS...), name, regulatory_score</td>
+            <td>13</td>
+          </tr>
+          <tr>
+            <td><code>functions</code></td>
+            <td>12 APQC Level-1 functions</td>
+            <td>name, scope</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td><code>processes</code></td>
+            <td>APQC-aligned business processes</td>
+            <td>name, function_id, apqc_code, description</td>
+            <td>760</td>
+          </tr>
+          <tr>
+            <td><code>industry_processes</code></td>
+            <td>Many-to-many: industry ↔ process</td>
+            <td>industry_id, process_id, relevance</td>
+            <td>~2,400</td>
+          </tr>
+          <tr>
+            <td><code>agent_blueprints</code></td>
+            <td>Reusable agent specs</td>
+            <td>slug, name, industry_id, authority_level, lifecycle_stage, size_fit</td>
+            <td>40</td>
+          </tr>
+          <tr>
+            <td><code>process_agent_actions</code></td>
+            <td>Agent actions per process</td>
+            <td>process_id, action_type, description, authority_level, trigger_type, integration</td>
+            <td>1,755</td>
+          </tr>
+          <tr>
+            <td><code>features</code></td>
+            <td>18 reusable platform capabilities</td>
+            <td>name, category, description</td>
+            <td>18</td>
+          </tr>
+          <tr>
+            <td><code>blueprint_features</code></td>
+            <td>Blueprint ↔ feature links</td>
+            <td>blueprint_id, feature_id</td>
+            <td>23+</td>
+          </tr>
+          <tr>
+            <td><code>systems</code></td>
+            <td>Enterprise systems (SAP, Salesforce...)</td>
+            <td>name, vendor, integration_tier, industry_id</td>
+            <td>131</td>
+          </tr>
+          <tr>
+            <td><code>capability_types</code></td>
+            <td>6 cognitive work types</td>
+            <td>name (monitor/analyze/generate/execute/coordinate)</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td><code>agents</code></td>
+            <td>Instantiated agent records</td>
+            <td>blueprint_id, name, status</td>
+            <td>live</td>
+          </tr>
+          <tr>
+            <td><code>pilot_runs</code></td>
+            <td>Agent execution log</td>
+            <td>agent_slug, run_at, output_json, status</td>
+            <td>live</td>
+          </tr>
+          <tr>
+            <td><code>recommendations</code></td>
+            <td>HITL recommendation queue</td>
+            <td>run_id, rec_type, item_id, urgency, decision (pending/approved/rejected)</td>
+            <td>live</td>
+          </tr>
+          <tr>
+            <td><code>approvals</code></td>
+            <td>Decision audit trail</td>
+            <td>recommendation_id, decision, decided_at, decided_by</td>
+            <td>live</td>
+          </tr>
+          <tr>
+            <td><code>clients</code></td>
+            <td>Client engagement records</td>
+            <td>slug, name, industry, size_tier, engagement_tier</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td><code>value_tracking</code></td>
+            <td>Before/after ROI metrics</td>
+            <td>agent_slug, kpi_name, baseline_value, current_value, unit</td>
+            <td>live</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Key Schema Notes</h3>
+      <p style="margin-bottom:8px;font-size:13px;color:#94a3b8;">
+        - <code>industry_processes.relevance</code> (not <code>relevance_score</code>)<br>
+        - <code>industries.code</code> (not <code>slug</code>)<br>
+        - <code>agent_blueprints.authority_level</code> stored lowercase: <code>low</code> / <code>medium</code> / <code>high</code><br>
+        - <code>process_agent_actions.action_type</code> values: <code>monitor</code>, <code>analyze</code>, <code>generate</code>, <code>execute</code>, <code>coordinate</code><br>
+        - <code>process_agent_actions.trigger_type</code> values: <code>scheduled</code>, <code>event</code>, <code>threshold</code>, <code>manual</code><br>
+        - <code>process_agent_actions.integration</code> values: <code>read</code>, <code>write</code>, <code>read_write</code><br>
+        - <code>agent_blueprints.lifecycle_stage</code> values: <code>blueprint</code> / <code>scaffolded</code> / <code>sandbox</code> / <code>validated</code> / <code>pilot_ready</code> / <code>production</code><br>
+        - Views available: <code>v_process_full</code>, <code>v_opportunity_matrix</code>, <code>v_capability_matrix</code>, <code>v_blueprint_summary</code>, <code>v_feature_usage</code>, <code>v_run_history</code>
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 5 — AGENT ARCHITECTURE
+       ══════════════════════════════════════════════════ -->
+  <section id="agents">
+    <div class="section-label">Section 05</div>
+    <h2>Agent Architecture</h2>
+    <p>Every agent follows the same two-tier pattern: a generic platform version in <code>pilot-agents/</code>, and an optional client-specific variant in <code>pilot-agents/kimre/</code>. The Flask server maps blueprint slugs to file paths via the <code>AGENT_PATHS</code> registry.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+flowchart LR
+    subgraph Generic["Generic Agent — pilot-agents/"]
+        G1["--dry-run flag\n(safe mode, no writes)"]
+        G2["--client-profile flag\n(optional JSON override)"]
+        G3["DRY_RUN_DATA dict\n(plausible mock records)"]
+        G4["Structured JSON output\nrecommendations array"]
+    end
+
+    subgraph Specific["Client-Specific — pilot-agents/kimre/"]
+        S1["kimre-* slug prefix\nin AGENT_PATHS"]
+        S2["Kimre DRY_RUN_DATA\n(real product/customer names)"]
+        S3["Client context hardcoded\n(RFQ formats, part numbers)"]
+    end
+
+    subgraph Orchestrator["Orchestrator — orchestrator.py"]
+        O1["--agents flag\n(comma-separated slugs)"]
+        O2["subprocess.run() per agent\n(parallel or sequential)"]
+        O3["Combined JSON output\n{agent: ..., results: [...]}"]
+    end
+
+    subgraph Server["server.py — AGENT_PATHS registry"]
+        R1["slug → file path\nmapping dict"]
+        R2["_extract_recommendations()\nparse output JSON"]
+        R3["INSERT recommendations\n(decision=pending)"]
+    end
+
+    Generic -->|"wraps / extends"| Specific
+    Specific -->|"registered in"| Server
+    Generic -->|"registered in"| Server
+    Generic --> Orchestrator
+    Server -->|"POST /api/run/:slug\n→ subprocess"| Generic
+      </div>
+    </div>
+
+    <hr>
+
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;color:var(--text);">Agent Output Schema</h3>
+    <p>Every agent — generic or client-specific — returns this structure on stdout. The server parses it to extract recommendations.</p>
+
+    <div class="schema-block">
+{
+  <span class="key">"agent"</span>: <span class="val">"replenishment-agent"</span>,        <span class="type">// blueprint slug</span>
+  <span class="key">"run_at"</span>: <span class="val">"2026-03-14T21:00:00Z"</span>,         <span class="type">// ISO 8601</span>
+  <span class="key">"dry_run"</span>: <span class="val">true</span>,                          <span class="type">// always true for sandbox</span>
+  <span class="key">"summary"</span>: {
+    <span class="key">"items_processed"</span>: <span class="val">24</span>,
+    <span class="key">"recommendations_generated"</span>: <span class="val">6</span>
+  },
+  <span class="key">"recommendations"</span>: [
+    {
+      <span class="key">"rec_type"</span>: <span class="val">"reorder"</span>,              <span class="type">// reorder | quote_draft | compliance_flag | alert | ...</span>
+      <span class="key">"item_id"</span>: <span class="val">"SKU-4421"</span>,
+      <span class="key">"item_label"</span>: <span class="val">"Polypropylene Resin 25kg"</span>,
+      <span class="key">"urgency"</span>: <span class="val">"critical"</span>,             <span class="type">// critical | high | medium | low</span>
+      <span class="key">"recommended_action"</span>: <span class="val">"Raise PO for 500 units from Supplier A"</span>,
+      <span class="key">"detail"</span>: {
+        <span class="key">"current_stock"</span>: <span class="val">12</span>,
+        <span class="key">"days_cover"</span>: <span class="val">2.4</span>,
+        <span class="key">"reorder_point"</span>: <span class="val">50</span>,
+        <span class="key">"suggested_qty"</span>: <span class="val">500</span>,
+        <span class="key">"estimated_cost"</span>: <span class="val">8750</span>
+      }
+    }
+  ]
+}
+    </div>
+
+    <hr>
+
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;color:var(--text);">Authority Level Model</h3>
+    <p>Every recommendation carries an implicit authority level that governs whether the server auto-approves or queues it for human review.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Level</th><th>Human Role</th><th>Examples</th><th>DB Value</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="chip chip-low">LOW</span></td>
+            <td>Receives alert, acts manually</td>
+            <td>Monitoring alerts, read-only reports, draft documents</td>
+            <td><code>low</code></td>
+          </tr>
+          <tr>
+            <td><span class="chip chip-med">MEDIUM</span></td>
+            <td>Notified, can override</td>
+            <td>Work orders, purchase recommendations, NCRs</td>
+            <td><code>medium</code></td>
+          </tr>
+          <tr>
+            <td><span class="chip chip-high">HIGH</span></td>
+            <td>Must explicitly approve</td>
+            <td>Regulatory submissions, supplier delistings, large POs</td>
+            <td><code>high</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;color:var(--text);">Current Pilot Agents</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>File</th><th>Slug</th><th>Industry</th><th>Lifecycle Stage</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>replenishment_agent.py</code></td><td>cg-replenishment-pr-agent</td><td>CG</td><td><span class="chip chip-med">sandbox</span></td></tr>
+          <tr><td><code>demand_forecast_agent.py</code></td><td>cg-demand-forecast-agent</td><td>CG</td><td><span class="chip chip-med">sandbox</span></td></tr>
+          <tr><td><code>quality_capa_agent.py</code></td><td>cg-quality-capa-agent</td><td>CG</td><td><span class="chip chip-med">sandbox</span></td></tr>
+          <tr><td><code>mfg-predictive-maintenance-agent.py</code></td><td>mfg-predictive-maintenance-agent</td><td>MFG</td><td><span class="chip chip-low">blueprint</span></td></tr>
+          <tr><td><code>ap-invoice-processing.py</code></td><td>ap-invoice-processing</td><td>Cross</td><td><span class="chip chip-low">blueprint</span></td></tr>
+          <tr><td><code>kimre/rfq_quote_agent.py</code></td><td>kimre-rfq-quote</td><td>MFG/Kimre</td><td><span class="chip chip-med">sandbox</span></td></tr>
+          <tr><td><code>kimre/quality_compliance_agent.py</code></td><td>kimre-quality-compliance</td><td>MFG/Kimre</td><td><span class="chip chip-med">sandbox</span></td></tr>
+          <tr><td><code>kimre/order_notifier_agent.py</code></td><td>kimre-order-notifier</td><td>MFG/Kimre</td><td><span class="chip chip-med">sandbox</span></td></tr>
+          <tr><td><code>kimre/retrofit_reorder_agent.py</code></td><td>kimre-retrofit-reorder</td><td>MFG/Kimre</td><td><span class="chip chip-med">sandbox</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 6 — DATA FLOW: HITL
+       ══════════════════════════════════════════════════ -->
+  <section id="dataflow">
+    <div class="section-label">Section 06</div>
+    <h2>Data Flow: Agent Run to HITL Outcome</h2>
+    <p>The human-in-the-loop (HITL) cycle is the core interaction model. A dashboard triggers an agent run; the server captures recommendations; a human decides; the decision is written to the audit log.</p>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+sequenceDiagram
+    participant D as Dashboard (Browser)
+    participant S as Flask Server :8500
+    participant A as Agent (Python subprocess)
+    participant DB as SQLite DB
+
+    D->>S: POST /api/run/{slug}
+    Note over S: Look up agent file path\nfrom AGENT_PATHS registry
+    S->>A: subprocess.run(agent.py --dry-run)
+    A-->>S: stdout: JSON output\n{recommendations: [...]}
+    S->>DB: INSERT INTO pilot_runs\n(slug, run_at, output_json)
+    S->>DB: INSERT INTO recommendations\n(run_id, rec_type, urgency, decision='pending')
+    S-->>D: {outcome: 'success', recommendations: [...]}
+
+    Note over D: Render HITL cards\napprove / reject per item
+
+    D->>S: POST /api/recommendations/{id}/decide\n{decision: 'approved'}
+    S->>DB: UPDATE recommendations\nSET decision='approved', decided_at=NOW()
+    S->>DB: INSERT INTO approvals\n(recommendation_id, decision, decided_at)
+    S-->>D: {decided: true, decision: 'approved'}
+
+    Note over D: Show toast confirmation\nUpdate card state
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Key Implementation Details</h3>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:0;">
+        - All agents currently run with <code>--dry-run</code> flag; no production system writes occur<br>
+        - <code>_extract_recommendations()</code> in server.py parses the agent's stdout JSON and normalizes rec_type/urgency fields<br>
+        - The <code>approvals</code> table provides the full audit trail; every decision is timestamped and immutable<br>
+        - If an agent subprocess fails (exit code != 0), the server returns a 500 with the stderr content and logs the failed run<br>
+        - The orchestrator (<code>orchestrator.py</code>) can run multiple agents in sequence and merge their outputs into one combined JSON response
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 7 — FRAMEWORK REGISTRY
+       ══════════════════════════════════════════════════ -->
+  <section id="frameworks">
+    <div class="section-label">Section 07</div>
+    <h2>Framework Registry</h2>
+    <p>21 canonical frameworks documented in <code>ralph/frameworks.md</code>. Every DB table, blueprint, visualisation, and client deliverable maps back to one or more of these.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Framework</th>
+            <th>One-line purpose</th>
+            <th>Key DB field</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>F1</td><td>APQC PCF</td><td>12-function process backbone; every process maps to an APQC code</td><td><code>functions</code>, <code>processes.apqc_code</code></td></tr>
+          <tr><td>F2</td><td>Industry Verticals</td><td>13 sector codes (CG, MFG, FS, RETAIL, HEALTH, LOGISTICS, ENERGY, TELECOM, AUTO, TECH, CONST, PUBLIC, PHARMA)</td><td><code>industries.code</code></td></tr>
+          <tr><td>F3</td><td>Capability Types</td><td>6 cognitive work types (monitor / analyze / generate / execute / coordinate + manage)</td><td><code>capability_types</code>, <code>agent_capabilities</code></td></tr>
+          <tr><td>F4</td><td>Authority Levels</td><td>LOW / MEDIUM / HIGH governance tiers; drives HITL escalation logic</td><td><code>agent_blueprints.authority_level</code></td></tr>
+          <tr><td>F5</td><td>Company Size Tiers</td><td>SMB / MID / ENT; shapes engagement model, system selection, and agent scope</td><td><code>agent_blueprints.size_fit</code></td></tr>
+          <tr><td>F6</td><td>Feature Library</td><td>18 reusable platform building blocks (data, integration, output, control, governance)</td><td><code>features</code>, <code>blueprint_features</code></td></tr>
+          <tr><td>F7</td><td>Agent Blueprint Framework</td><td>6-section spec (trigger, inputs, processing, outputs, escalation, KPIs); scaffold tool generates code from it</td><td><code>agent_blueprints</code></td></tr>
+          <tr><td>F8</td><td>Engagement Model Tiers</td><td>Discovery $25–40K / Pilot $75–150K / Platform $250–750K+; maps to size tier</td><td><code>clients.engagement_tier</code></td></tr>
+          <tr><td>F9</td><td>Value Measurement</td><td>Before/after KPI structure: time saved, error reduction, cycle time, risk/compliance</td><td><code>value_tracking</code></td></tr>
+          <tr><td>F10</td><td>Agent Maturity Model</td><td>L1 Monitor → L2 Recommend → L3 Execute+Oversight → L4 Autonomous; maps to authority levels</td><td><code>agent_blueprints.authority_level</code></td></tr>
+          <tr><td>F11</td><td>Data Readiness</td><td>5-dimension pre-deployment assessment scored 5–25; predicts agent success</td><td><code>clients</code> profile JSON</td></tr>
+          <tr><td>F12</td><td>Stakeholder Personas</td><td>5 buyer/user personas (Exec Sponsor, Process Owner, IT Lead, Compliance Officer, End User)</td><td>Persona dashboards</td></tr>
+          <tr><td>F13</td><td>ROI Category</td><td>Hard Savings / Soft Savings / Risk Avoidance / Revenue Enablement; maps to buyer persona</td><td><code>value_tracking.roi_category</code></td></tr>
+          <tr><td>F14</td><td>Integration Complexity</td><td>T1 REST (days) → T4 Mainframe (months); drives engagement scoping and timeline</td><td><code>systems.integration_tier</code></td></tr>
+          <tr><td>F15</td><td>Regulatory Complexity</td><td>Industry score 1–5; drives authority level defaults and audit trail requirements</td><td><code>industries.regulatory_score</code></td></tr>
+          <tr><td>F16</td><td>Opportunity Prioritization</td><td>2×2: Value Potential × Execution Effort (4+4 weighted sub-dimensions); generates Quick Wins / Strategic Bets / Defer / Easy Fills</td><td>Prioritization tool</td></tr>
+          <tr><td>F17</td><td>Responsible AI</td><td>6 pillars: Transparency, Oversight, Fairness, Privacy, Accountability, Robustness</td><td>RAI one-pager + enterprise dashboard</td></tr>
+          <tr><td>F18</td><td>Pilot Lifecycle</td><td>6 stages: blueprint → scaffolded → sandbox → validated → pilot_ready → production</td><td><code>agent_blueprints.lifecycle_stage</code></td></tr>
+          <tr><td>F19</td><td>Persona Dashboard Quality</td><td>5-dimension eval rubric (D1–D5, max 20); Jobs-to-be-Done (J1–J5) per persona (P1–P7)</td><td><code>eval.html</code></td></tr>
+          <tr><td>F20</td><td>Client Profile Schema</td><td>8-dimension client profile (size tier, industry, business model, regulatory score, integration tier, data readiness, engagement tier)</td><td><code>clients</code> table + profile.json</td></tr>
+          <tr><td>F21</td><td>Dashboard Specification</td><td>5-artifact system (Persona Brief, JTBDs, Data Contract, Component Palette, Quality Gates) for autonomous dashboard generation</td><td><code>dashboards/COMPONENTS.md</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>How Frameworks Intersect at the Blueprint Level</h3>
+      <pre style="margin:0;font-size:12px;">Blueprint
+ ├── Industry (F2) ─────────────── which vertical
+ ├── APQC Function + Process (F1) ─ where in the value chain
+ ├── Capability Types (F3) ─────── what cognitive work (up to 6)
+ ├── Authority Level (F4) ──────── LOW / MEDIUM / HIGH governance
+ ├── Size Fit (F5) ─────────────── SMB / MID / ENT / ALL
+ ├── Features used (F6) ────────── reusable IP building blocks
+ ├── Systems integrated (F14) ──── integration complexity
+ └── KPIs (F9) ─────────────────── value measurement baseline</pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 8 — QUICK START
+       ══════════════════════════════════════════════════ -->
+  <section id="quickstart">
+    <div class="section-label">Section 08</div>
+    <h2>Running the Platform</h2>
+    <p>All services are independent. Start in whichever order suits your task. The Flask server is the primary entry point for the full demo experience.</p>
+
+    <div class="card">
+      <h3>Step 1 — Start Mock Integration APIs</h3>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Provides fake SAP S/4HANA and MES endpoints that the pilot agents read from during dry runs.</p>
+      <pre><span class="comment"># From workspace root</span>
+cd "<span class="str">/Users/keith_ai/Documents/Agentic Projects/sandbox-systems</span>"
+./start-all.sh
+
+<span class="comment"># SAP mock: http://localhost:3001</span>
+<span class="comment"># MES mock: http://localhost:3002</span></pre>
+    </div>
+
+    <div class="card">
+      <h3>Step 2 — Start the Flask Server</h3>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Serves all dashboards, client portals, and API routes. This is the main app entry point.</p>
+      <pre><span class="comment"># Separate terminal</span>
+cd "<span class="str">/Users/keith_ai/Documents/Agentic Projects/dashboards</span>"
+python3 server.py
+
+<span class="comment"># Platform: http://localhost:8500</span>
+<span class="comment"># API health: http://localhost:8500/api/health</span></pre>
+    </div>
+
+    <div class="card">
+      <h3>Step 3 — Run a Pilot Agent (CLI)</h3>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Agents can also be run directly from the command line for debugging or development.</p>
+      <pre><span class="comment"># Single agent, dry run</span>
+cd "<span class="str">/Users/keith_ai/Documents/Agentic Projects/pilot-agents</span>"
+python3 replenishment_agent.py --dry-run
+
+<span class="comment"># Multi-agent via orchestrator</span>
+python3 orchestrator.py --agents replenishment_agent,demand_forecast_agent --dry-run
+
+<span class="comment"># Kimre-specific agent</span>
+python3 kimre/rfq_quote_agent.py --dry-run</pre>
+    </div>
+
+    <div class="card">
+      <h3>Step 4 — Query the Database</h3>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">The query CLI provides fast access to all platform intelligence without writing SQL.</p>
+      <pre><span class="comment"># From workspace root</span>
+python3 "<span class="str">business-agents/query.py</span>" blueprints
+python3 "<span class="str">business-agents/query.py</span>" blueprints cg-replenishment-pr-agent
+python3 "<span class="str">business-agents/query.py</span>" capabilities
+python3 "<span class="str">business-agents/query.py</span>" features
+python3 "<span class="str">business-agents/query.py</span>" feature-matrix
+python3 "<span class="str">business-agents/query.py</span>" processes
+python3 "<span class="str">business-agents/query.py</span>" opportunities CG
+python3 "<span class="str">business-agents/query.py</span>" status</pre>
+    </div>
+
+    <div class="card">
+      <h3>Step 5 — Open Platform Views</h3>
+      <pre><span class="comment"># Platform home (no server needed — static file)</span>
+open "<span class="str">/Users/keith_ai/Documents/Agentic Projects/index.html</span>"
+
+<span class="comment"># Via Flask server (live API data)</span>
+open http://localhost:8500
+open http://localhost:8500/operations.html
+open http://localhost:8500/finance.html
+open http://localhost:8500/compliance.html
+open http://localhost:8500/enterprise.html
+open http://localhost:8500/pipeline.html
+open http://localhost:8500/action-queue.html
+
+<span class="comment"># Kimre client portal</span>
+open http://localhost:8500/clients/kimre/index.html</pre>
+    </div>
+
+    <div class="card">
+      <h3>Step 6 — Scaffold a New Agent from Blueprint</h3>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">The scaffold tool reads a blueprint from the DB and generates a skeleton Python agent file.</p>
+      <pre><span class="comment"># Generate agent code for a blueprint slug</span>
+python3 "<span class="str">business-agents/scaffolding/scaffold_agent.py</span>" fs-aml-alert-triage
+
+<span class="comment"># Output: pilot-agents/fs-aml-alert-triage.py (with DRY_RUN_DATA, TRIGGER, PROCESSING skeleton)</span></pre>
+    </div>
+
+    <hr>
+
+    <div class="card">
+      <h3>Health Check Endpoints</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Endpoint</th><th>Service</th><th>Returns</th></tr></thead>
+          <tbody>
+            <tr><td><code>http://localhost:8500/api/health</code></td><td>Flask server</td><td>Server + DB connectivity JSON</td></tr>
+            <tr><td><code>http://localhost:8080/health</code></td><td>agent-runtime health check</td><td>Agent runtime + dependency status</td></tr>
+            <tr><td><code>http://localhost:3001/health</code></td><td>Mock SAP API</td><td>200 OK if sandbox running</td></tr>
+            <tr><td><code>http://localhost:3002/health</code></td><td>Mock MES API</td><td>200 OK if sandbox running</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div style="border-top: 1px solid var(--border); padding-top: 24px; margin-top: 40px; color: var(--muted); font-size: 12px;">
+    Business Agents Platform — Architecture Reference &bull; Generated March 2026 &bull; See <code>ralph/frameworks.md</code> for full framework detail
+  </div>
+
+</main>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#161b2e',
+      primaryTextColor: '#f1f5f9',
+      primaryBorderColor: '#1e293b',
+      lineColor: '#f97316',
+      secondaryColor: '#0f1117',
+      tertiaryColor: '#1e293b',
+      background: '#0f1117',
+      mainBkg: '#161b2e',
+      nodeBorder: '#1e293b',
+      clusterBkg: '#0f1117',
+      titleColor: '#f1f5f9',
+      edgeLabelBackground: '#161b2e',
+      nodeTextColor: '#f1f5f9',
+      fontSize: '14px'
+    }
+  });
+
+  // Sticky nav active state on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+
+  function updateActiveNav() {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 80;
+      if (window.scrollY >= sectionTop) {
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+  updateActiveNav();
+
+  // Smooth scroll
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER — manually maintained, stats auto-refreshable via generate.py
+     ════════════════════════════════════════════════════════════ -->
+<footer style="
+  margin-left: 220px;
+  padding: 20px 56px;
+  border-top: 1px solid #1e293b;
+  font-size: 12px;
+  color: #475569;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+">
+  <span>Business Agents Platform &mdash; Architecture Reference &mdash; Last updated: March 2026</span>
+  <span>
+    Stats strip is manually maintained &mdash;
+    run <code style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:11px">python3 docs/generate.py</code>
+    to refresh live counts &mdash;
+    <a href="index.html" style="color:#f97316;text-decoration:none">Docs Hub</a>
+  </span>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise Portfolio Dashboard — Business Agents Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d1117;
+      --card:    #1c2128;
+      --border:  #30363d;
+      --text:    #e6edf3;
+      --muted:   #8b949e;
+      --accent:  #58a6ff;
+      --green:   #3fb950;
+      --amber:   #d29922;
+      --red:     #f85149;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+    }
+    .nav-tab {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-tab:hover { color: var(--text); background: rgba(88,166,255,0.1); }
+    .nav-tab.active {
+      color: var(--accent);
+      background: rgba(88,166,255,0.12);
+      border: 1px solid rgba(88,166,255,0.25);
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .page-header .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── KPI Strip ── */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .kpi-cell {
+      background: var(--card);
+      padding: 24px 32px;
+      text-align: center;
+    }
+    .kpi-number {
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .kpi-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Main content ── */
+    .main { padding: 40px; max-width: 1400px; margin: 0 auto; }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 48px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .section-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      padding-left: 11px;
+    }
+
+    /* ── Card container ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    /* ── Funnel ── */
+    .funnel-caption {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* ── Industry table ── */
+    .ind-table-wrap { overflow-x: auto; }
+    table.ind-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    table.ind-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    table.ind-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      vertical-align: middle;
+    }
+    table.ind-table tr:last-child td { border-bottom: none; }
+    table.ind-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .td-name { font-weight: 500; }
+    .td-code { color: var(--muted); font-family: monospace; font-size: 12px; }
+    .td-num  { text-align: right; color: var(--muted); }
+    .stage-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: capitalize;
+    }
+
+    /* ── Value cards ── */
+    .value-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .value-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .value-metric {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .value-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .value-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ── ROI block ── */
+    .roi-block {
+      background: rgba(88,166,255,0.06);
+      border: 1px solid rgba(88,166,255,0.2);
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+    .roi-line {
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .roi-line strong { color: var(--accent); }
+    .roi-line:last-child { margin-bottom: 0; }
+    .roi-note {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── Heatmap ── */
+    .hm-wrap { overflow-x: auto; }
+    table.hm-table {
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    .hm-fn {
+      padding: 6px 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      font-size: 11px;
+      border-right: 1px solid var(--border);
+      min-width: 130px;
+    }
+    .hm-col {
+      padding: 6px 4px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: 0.03em;
+      border-bottom: 1px solid var(--border);
+      min-width: 52px;
+    }
+    .hm-cell {
+      width: 52px;
+      height: 32px;
+      cursor: default;
+      transition: opacity 0.15s;
+    }
+    .hm-cell:hover { opacity: 0.7; }
+    .hm-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .hm-leg-swatch {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+
+    /* ── RAI pillars ── */
+    .rai-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .rai-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .rai-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .rai-icon {
+      font-size: 16px;
+      font-weight: 700;
+      width: 24px;
+      text-align: center;
+    }
+    .rai-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+    .rai-score {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .rai-bar-track {
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      height: 6px;
+      margin-bottom: 10px;
+    }
+    .rai-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .rai-note {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .rai-link {
+      display: block;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .rai-link:hover { text-decoration: underline; }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .footer a:hover { text-decoration: underline; }
+    .footer-links { display: flex; gap: 24px; align-items: center; }
+
+    /* ── Offline banner ── */
+    .offline-banner {
+      display: none;
+      background: rgba(248,81,73,0.12);
+      border-bottom: 1px solid rgba(248,81,73,0.3);
+      padding: 10px 40px;
+      font-size: 13px;
+      color: #f85149;
+      text-align: center;
+    }
+    .offline-banner.visible { display: block; }
+
+    /* S41-5D: Expansion Readiness */
+    .expansion-readiness { margin-top: 24px; }
+    .readiness-light { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+    .rl-green  { background: #22c55e; box-shadow: 0 0 6px #22c55e40; }
+    .rl-amber  { background: #f59e0b; box-shadow: 0 0 6px #f59e0b40; }
+    .rl-red    { background: #ef4444; box-shadow: 0 0 6px #ef444440; }
+    .advance-readiness-btn { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #6366f1; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .advance-readiness-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    table.agent-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.agent-table th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    table.agent-table td { padding: 10px 14px; border-bottom: 1px solid rgba(48,54,61,0.5); vertical-align: middle; }
+    table.agent-table tr:last-child td { border-bottom: none; }
+    table.agent-table tr:hover td { background: rgba(255,255,255,0.02); }
+  </style>
+</head>
+<body>
+
+<!-- ── Top Nav ── -->
+<nav class="top-nav">
+  <div class="nav-brand">&#9889; Business Agents Platform</div>
+  <div class="nav-personas">
+    <a href="operations.html" class="nav-tab">Operations</a>
+    <a href="finance.html" class="nav-tab">Finance</a>
+    <a href="compliance.html" class="nav-tab">Compliance</a>
+    <a href="it-health.html" class="nav-tab">IT</a>
+    <a href="pipeline.html" class="nav-tab">Pipeline</a>
+    <a href="action-queue.html" class="nav-tab">Action Queue</a>
+    <a href="enterprise.html" class="nav-tab active">Enterprise &#8599;</a>
+  </div>
+</nav>
+
+<!-- ── Offline Banner ── -->
+<div class="offline-banner" id="offline-banner">Server offline &mdash; showing last static data. Live updates unavailable.</div>
+
+<!-- ── Page Header ── -->
+<div class="page-header">
+  <h1>Enterprise Portfolio Dashboard</h1>
+  <div class="subtitle">C-suite rollup &mdash; lifecycle funnel, industry coverage, value realized, and responsible AI coverage across all 40 blueprints</div>
+</div>
+
+<!-- ── KPI Strip ── -->
+<div class="kpi-strip">
+  <div class="kpi-cell">
+    <div class="kpi-number" id="kpi-blueprints">40</div>
+    <div class="kpi-label">Total Blueprints</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="kpi-number" id="kpi-industries">13</div>
+    <div class="kpi-label">Industries Covered</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="kpi-number" id="kpi-functions">12</div>
+    <div class="kpi-label">Functions Covered</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="kpi-number" id="kpi-actions">1,755</div>
+    <div class="kpi-label">Agent Actions</div>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<main class="main">
+
+  <!-- ── Section 1: Lifecycle Funnel ── -->
+  <section class="section">
+    <div class="section-title">Platform Lifecycle Funnel</div>
+    <div class="section-sub">Blueprint maturity progression &mdash; 40 blueprints across 6 stages</div>
+    <div class="card">
+      <svg viewBox="0 0 900 110" width="100%" height="110px" style="overflow:visible">
+      
+        <g>
+          <rect id="funnel-rect-blueprint" x="4" y="10" width="142" height="80"
+                fill="#6e7681" rx="4" opacity="1.0"/>
+          <text id="funnel-count-blueprint" x="75" y="5" text-anchor="middle"
+                font-size="13" font-weight="700" fill="#6e7681"
+                opacity="1.0">37</text>
+          <text x="75" y="106" text-anchor="middle"
+                font-size="10" fill="#8b949e">Blueprint</text>
+        </g>
+        <g>
+          <rect id="funnel-rect-scaffolded" x="154" y="86" width="142" height="4"
+                fill="#388bfd" rx="4" opacity="0.25"/>
+          <text id="funnel-count-scaffolded" x="225" y="81" text-anchor="middle"
+                font-size="13" font-weight="700" fill="#388bfd"
+                opacity="0.25">0</text>
+          <text x="225" y="106" text-anchor="middle"
+                font-size="10" fill="#8b949e">Scaffolded</text>
+        </g>
+        <g>
+          <rect id="funnel-rect-sandbox" x="304" y="82" width="142" height="8"
+                fill="#56d364" rx="4" opacity="1.0"/>
+          <text id="funnel-count-sandbox" x="375" y="77" text-anchor="middle"
+                font-size="13" font-weight="700" fill="#56d364"
+                opacity="1.0">3</text>
+          <text x="375" y="106" text-anchor="middle"
+                font-size="10" fill="#8b949e">Sandbox</text>
+        </g>
+        <g>
+          <rect id="funnel-rect-validated" x="454" y="86" width="142" height="4"
+                fill="#d29922" rx="4" opacity="0.25"/>
+          <text id="funnel-count-validated" x="525" y="81" text-anchor="middle"
+                font-size="13" font-weight="700" fill="#d29922"
+                opacity="0.25">0</text>
+          <text x="525" y="106" text-anchor="middle"
+                font-size="10" fill="#8b949e">Validated</text>
+        </g>
+        <g>
+          <rect id="funnel-rect-pilot_ready" x="604" y="86" width="142" height="4"
+                fill="#3fb950" rx="4" opacity="0.25"/>
+          <text id="funnel-count-pilot_ready" x="675" y="81" text-anchor="middle"
+                font-size="13" font-weight="700" fill="#3fb950"
+                opacity="0.25">0</text>
+          <text x="675" y="106" text-anchor="middle"
+                font-size="10" fill="#8b949e">Pilot-Ready</text>
+        </g>
+        <g>
+          <rect id="funnel-rect-production" x="754" y="86" width="142" height="4"
+                fill="#26a641" rx="4" opacity="0.25"/>
+          <text id="funnel-count-production" x="825" y="81" text-anchor="middle"
+                font-size="13" font-weight="700" fill="#26a641"
+                opacity="0.25">0</text>
+          <text x="825" y="106" text-anchor="middle"
+                font-size="10" fill="#8b949e">Production</text>
+        </g>
+    </svg>
+      <div class="funnel-caption">
+        Platform is at early sandbox stage. Target: 5 agents at pilot-ready by Q3 2026.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Section 2: Industry Coverage Table ── -->
+  <section class="section">
+    <div class="section-title">Industry Coverage</div>
+    <div class="section-sub">13 industries &mdash; blueprint count, process coverage, and deployment status</div>
+    <div class="card ind-table-wrap">
+      <table class="ind-table">
+        <thead>
+          <tr>
+            <th>Industry</th>
+            <th>Code</th>
+            <th style="text-align:right">Blueprints</th>
+            <th style="text-align:right">Processes</th>
+            <th style="text-align:right">Est. Hrs Saved/wk</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="industry-tbody">
+
+          <tr>
+            <td class="td-name">Automotive</td>
+            <td class="td-code">AUTO</td>
+            <td class="td-num">3</td>
+            <td class="td-num">55</td>
+            <td class="td-num">38</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Construction & Engineering</td>
+            <td class="td-code">CONST</td>
+            <td class="td-num">3</td>
+            <td class="td-num">55</td>
+            <td class="td-num">34</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Consumer Goods</td>
+            <td class="td-code">CG</td>
+            <td class="td-num">3</td>
+            <td class="td-num">64</td>
+            <td class="td-num">14</td>
+            <td><span class="stage-badge" style="background:#56d36420;color:#56d364;border:1px solid #56d36440">Sandbox</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Energy & Utilities</td>
+            <td class="td-code">ENERGY</td>
+            <td class="td-num">3</td>
+            <td class="td-num">55</td>
+            <td class="td-num">52</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Financial Services</td>
+            <td class="td-code">FS</td>
+            <td class="td-num">3</td>
+            <td class="td-num">71</td>
+            <td class="td-num">54</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Healthcare</td>
+            <td class="td-code">HEALTH</td>
+            <td class="td-num">3</td>
+            <td class="td-num">53</td>
+            <td class="td-num">50</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Industrial Manufacturing</td>
+            <td class="td-code">MFG</td>
+            <td class="td-num">3</td>
+            <td class="td-num">61</td>
+            <td class="td-num">38</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Logistics & Transportation</td>
+            <td class="td-code">LOGISTICS</td>
+            <td class="td-num">3</td>
+            <td class="td-num">54</td>
+            <td class="td-num">46</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Pharmaceuticals</td>
+            <td class="td-code">PHARMA</td>
+            <td class="td-num">0</td>
+            <td class="td-num">52</td>
+            <td class="td-num">—</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Public Sector / Government</td>
+            <td class="td-code">PUBLIC</td>
+            <td class="td-num">3</td>
+            <td class="td-num">45</td>
+            <td class="td-num">42</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Retail</td>
+            <td class="td-code">RETAIL</td>
+            <td class="td-num">3</td>
+            <td class="td-num">57</td>
+            <td class="td-num">33</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Technology / SaaS</td>
+            <td class="td-code">TECH</td>
+            <td class="td-num">3</td>
+            <td class="td-num">57</td>
+            <td class="td-num">34</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+          <tr>
+            <td class="td-name">Telecommunications</td>
+            <td class="td-code">TELECOM</td>
+            <td class="td-num">3</td>
+            <td class="td-num">53</td>
+            <td class="td-num">56</td>
+            <td><span class="stage-badge" style="background:#6e768120;color:#8b949e;border:1px solid #8b949e40">Blueprint</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── Section 3: Value Realized ── -->
+  <section class="section">
+    <div class="section-title">Value Realized</div>
+    <div class="section-sub">Live tracking from 3 sandbox agents &mdash; Consumer Goods pilot (10-week run)</div>
+
+    <div class="value-cards" id="value-cards">
+      <div class="value-card">
+        <div class="value-metric" id="val-hours">170.6<span style="font-size:20px;color:var(--muted)"> hrs</span></div>
+        <div class="value-label">Hours Saved</div>
+        <div class="value-note">Across 3 sandbox agents, 10-week pilot</div>
+      </div>
+      <div class="value-card">
+        <div class="value-metric" id="val-prs">76<span style="font-size:20px;color:var(--muted)"> PRs</span></div>
+        <div class="value-label">Purchase Requisitions Created</div>
+        <div class="value-note">Automated purchase requisitions, replenishment agent</div>
+      </div>
+      <div class="value-card">
+        <div class="value-metric" id="val-exceptions">36<span style="font-size:20px;color:var(--muted)"> alerts</span></div>
+        <div class="value-label">Exceptions Caught</div>
+        <div class="value-note">Quality deviations detected, CAPA agent</div>
+      </div>
+    </div>
+
+    <div class="roi-block">
+      <div class="roi-line" id="roi-line-realized"><strong>170.6 hours</strong> &times; $85/hr = <strong>$14,501</strong> value realized <span id="value-trend" style="font-size:12px;color:#22c55e;margin-left:8px">&#9650; +12% vs last month</span></div>
+      <div class="roi-line">Projected at 10 agents: <strong>$48,337/year</strong></div>
+      <div class="roi-line">Projected at full platform (40 agents): <strong>$193,347/year</strong></div>
+      <div class="roi-note">(Value tracking active for CG pilot agents. Expand to all deployed agents in future iterations.)</div>
+    </div>
+  </section>
+
+  <!-- ── Section 4: Function Coverage Heatmap ── -->
+  <section class="section">
+    <div class="section-title">Function &times; Industry Coverage Heatmap</div>
+    <div class="section-sub">12 functions &times; 13 industries &mdash; cell intensity = agent action count at intersection</div>
+    <div class="card hm-wrap">
+      <table class="hm-table">
+        <thead>
+          <tr>
+            <th class="hm-fn" style="border-bottom:1px solid var(--border)"></th>
+            <th class="hm-col">AUTO</th><th class="hm-col">CG</th><th class="hm-col">CONST</th><th class="hm-col">ENERGY</th><th class="hm-col">FS</th><th class="hm-col">HEALTH</th><th class="hm-col">LOGISTICS</th><th class="hm-col">MFG</th><th class="hm-col">PHARMA</th><th class="hm-col">PUBLIC</th><th class="hm-col">RETAIL</th><th class="hm-col">TECH</th><th class="hm-col">TELECOM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="hm-fn">Vision & Strategy</td><td class="hm-cell" title="Develop Vision and Strategy × AUTO: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × CG: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × CONST: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × ENERGY: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × FS: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × HEALTH: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × LOGISTICS: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × MFG: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × PHARMA: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × PUBLIC: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × RETAIL: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × TECH: 38 actions" style="background:#0e4429"></td><td class="hm-cell" title="Develop Vision and Strategy × TELECOM: 38 actions" style="background:#0e4429"></td></tr><tr><td class="hm-fn">Products & Services</td><td class="hm-cell" title="Develop and Manage Products and Services × AUTO: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × CG: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × CONST: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × ENERGY: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × FS: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × HEALTH: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × LOGISTICS: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × MFG: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × PHARMA: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × PUBLIC: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × RETAIL: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × TECH: 179 actions" style="background:#26a641"></td><td class="hm-cell" title="Develop and Manage Products and Services × TELECOM: 179 actions" style="background:#26a641"></td></tr><tr><td class="hm-fn">Market & Sell</td><td class="hm-cell" title="Market and Sell Products and Services × AUTO: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × CG: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × CONST: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × ENERGY: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × FS: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × HEALTH: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × LOGISTICS: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × MFG: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × PHARMA: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × PUBLIC: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × RETAIL: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × TECH: 167 actions" style="background:#26a641"></td><td class="hm-cell" title="Market and Sell Products and Services × TELECOM: 167 actions" style="background:#26a641"></td></tr><tr><td class="hm-fn">Deliver Products</td><td class="hm-cell" title="Deliver Physical Products × AUTO: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × CG: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × CONST: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × ENERGY: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × FS: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × HEALTH: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × LOGISTICS: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × MFG: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × PHARMA: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × PUBLIC: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × RETAIL: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × TECH: 265 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Physical Products × TELECOM: 265 actions" style="background:#26a641"></td></tr><tr><td class="hm-fn">Deliver Services</td><td class="hm-cell" title="Deliver Services × AUTO: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × CG: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × CONST: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × ENERGY: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × FS: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × HEALTH: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × LOGISTICS: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × MFG: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × PHARMA: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × PUBLIC: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × RETAIL: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × TECH: 186 actions" style="background:#26a641"></td><td class="hm-cell" title="Deliver Services × TELECOM: 186 actions" style="background:#26a641"></td></tr><tr><td class="hm-fn">Customer Service</td><td class="hm-cell" title="Manage Customer Service × AUTO: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × CG: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × CONST: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × ENERGY: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × FS: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × HEALTH: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × LOGISTICS: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × MFG: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × PHARMA: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × PUBLIC: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × RETAIL: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × TECH: 173 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Customer Service × TELECOM: 173 actions" style="background:#26a641"></td></tr><tr><td class="hm-fn">Human Capital</td><td class="hm-cell" title="Develop and Manage Human Capital × AUTO: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × CG: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × CONST: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × ENERGY: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × FS: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × HEALTH: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × LOGISTICS: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × MFG: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × PHARMA: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × PUBLIC: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × RETAIL: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × TECH: 100 actions" style="background:#006d32"></td><td class="hm-cell" title="Develop and Manage Human Capital × TELECOM: 100 actions" style="background:#006d32"></td></tr><tr><td class="hm-fn">IT Management</td><td class="hm-cell" title="Manage Information Technology × AUTO: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × CG: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × CONST: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × ENERGY: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × FS: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × HEALTH: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × LOGISTICS: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × MFG: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × PHARMA: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × PUBLIC: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × RETAIL: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × TECH: 72 actions" style="background:#006d32"></td><td class="hm-cell" title="Manage Information Technology × TELECOM: 72 actions" style="background:#006d32"></td></tr><tr><td class="hm-fn">Finance</td><td class="hm-cell" title="Manage Financial Resources × AUTO: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × CG: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × CONST: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × ENERGY: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × FS: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × HEALTH: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × LOGISTICS: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × MFG: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × PHARMA: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × PUBLIC: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × RETAIL: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × TECH: 227 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Financial Resources × TELECOM: 227 actions" style="background:#26a641"></td></tr><tr><td class="hm-fn">Assets</td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × AUTO: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × CG: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × CONST: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × ENERGY: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × FS: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × HEALTH: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × LOGISTICS: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × MFG: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × PHARMA: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × PUBLIC: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × RETAIL: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × TECH: 68 actions" style="background:#006d32"></td><td class="hm-cell" title="Acquire, Construct, and Manage Assets × TELECOM: 68 actions" style="background:#006d32"></td></tr><tr><td class="hm-fn">Risk & Compliance</td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × AUTO: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × CG: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × CONST: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × ENERGY: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × FS: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × HEALTH: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × LOGISTICS: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × MFG: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × PHARMA: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × PUBLIC: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × RETAIL: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × TECH: 203 actions" style="background:#26a641"></td><td class="hm-cell" title="Manage Enterprise Risk, Compliance, and Resiliency × TELECOM: 203 actions" style="background:#26a641"></td></tr><tr><td class="hm-fn">External Rel.</td><td class="hm-cell" title="Manage External Relationships × AUTO: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × CG: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × CONST: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × ENERGY: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × FS: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × HEALTH: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × LOGISTICS: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × MFG: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × PHARMA: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × PUBLIC: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × RETAIL: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × TECH: 32 actions" style="background:#0e4429"></td><td class="hm-cell" title="Manage External Relationships × TELECOM: 32 actions" style="background:#0e4429"></td></tr>
+        </tbody>
+      </table>
+      <div class="hm-legend">
+        <span><span class="hm-leg-swatch" style="background:#161b22"></span>0</span>
+        <span><span class="hm-leg-swatch" style="background:#0e4429"></span>1&ndash;50</span>
+        <span><span class="hm-leg-swatch" style="background:#006d32"></span>51&ndash;100</span>
+        <span><span class="hm-leg-swatch" style="background:#26a641"></span>101+</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Section 5A: Agent Decisions — Month to Date ── -->
+  <section class="section">
+    <div class="section-header" style="margin-bottom:16px">
+      <h2 style="font-size:16px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px"><span style="display:inline-block;width:3px;height:16px;background:var(--accent);border-radius:2px"></span>Agent Decisions &mdash; Month to Date</h2>
+    </div>
+    <div class="kpi-row" id="decisionOversightRow" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:12px">
+      <div class="kpi-card" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px">
+        <div class="kpi-label" style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:8px">Total Recommendations</div>
+        <div class="kpi-value" id="recTotal" style="font-size:2rem;font-weight:700;color:var(--text)">&#8212;</div>
+      </div>
+      <div class="kpi-card" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px">
+        <div class="kpi-label" style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:8px">Approved</div>
+        <div class="kpi-value" id="recApproved" style="font-size:2rem;font-weight:700;color:#22c55e">&#8212;</div>
+      </div>
+      <div class="kpi-card" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px">
+        <div class="kpi-label" style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:8px">Rejected</div>
+        <div class="kpi-value" id="recRejected" style="font-size:2rem;font-weight:700;color:#ef4444">&#8212;</div>
+      </div>
+      <div class="kpi-card" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px">
+        <div class="kpi-label" style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:8px">Pending</div>
+        <div class="kpi-value" id="recPending" style="font-size:2rem;font-weight:700;color:#f97316">&#8212;</div>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <a href="action-queue.html" style="font-size:0.82rem;color:#6366f1;text-decoration:none">View Action Queue &rarr;</a>
+    </div>
+  </section>
+
+  <!-- ── Section 6: Responsible AI Coverage ── -->
+  <section class="section">
+    <div class="section-title">Responsible AI Coverage</div>
+    <div class="section-sub">Six-pillar RAI framework coverage across 3 deployed sandbox agents</div>
+    <div class="rai-grid">
+      
+          <div class="rai-card">
+            <div class="rai-header">
+              <span class="rai-icon" style="color:#3fb950">&#10003;</span>
+              <span class="rai-name">Transparency</span>
+              <span class="rai-score" style="color:#3fb950">3/3</span>
+            </div>
+            <div class="rai-bar-track">
+              <div class="rai-bar-fill" style="width:100%;background:#3fb950"></div>
+            </div>
+            <div class="rai-note">All sandbox agents log full reasoning to agent_runs</div>
+          </div>
+          <div class="rai-card">
+            <div class="rai-header">
+              <span class="rai-icon" style="color:#3fb950">&#10003;</span>
+              <span class="rai-name">Oversight</span>
+              <span class="rai-score" style="color:#3fb950">3/3</span>
+            </div>
+            <div class="rai-bar-track">
+              <div class="rai-bar-fill" style="width:100%;background:#3fb950"></div>
+            </div>
+            <div class="rai-note">Approval workflow for MEDIUM/HIGH authority actions</div>
+          </div>
+          <div class="rai-card">
+            <div class="rai-header">
+              <span class="rai-icon" style="color:#f85149">&#10007;</span>
+              <span class="rai-name">Fairness</span>
+              <span class="rai-score" style="color:#f85149">0/3</span>
+            </div>
+            <div class="rai-bar-track">
+              <div class="rai-bar-fill" style="width:0%;background:#f85149"></div>
+            </div>
+            <div class="rai-note">No fairness metrics yet — planned for Epic 38+</div>
+          </div>
+          <div class="rai-card">
+            <div class="rai-header">
+              <span class="rai-icon" style="color:#d29922">&#9651;</span>
+              <span class="rai-name">Privacy</span>
+              <span class="rai-score" style="color:#d29922">2/3</span>
+            </div>
+            <div class="rai-bar-track">
+              <div class="rai-bar-fill" style="width:66%;background:#d29922"></div>
+            </div>
+            <div class="rai-note">Replenishment + CAPA use PII-free data; forecast uses sales data</div>
+          </div>
+          <div class="rai-card">
+            <div class="rai-header">
+              <span class="rai-icon" style="color:#3fb950">&#10003;</span>
+              <span class="rai-name">Accountability</span>
+              <span class="rai-score" style="color:#3fb950">3/3</span>
+            </div>
+            <div class="rai-bar-track">
+              <div class="rai-bar-fill" style="width:100%;background:#3fb950"></div>
+            </div>
+            <div class="rai-note">All runs logged with full audit trail in agent_runs</div>
+          </div>
+          <div class="rai-card">
+            <div class="rai-header">
+              <span class="rai-icon" style="color:#d29922">&#9651;</span>
+              <span class="rai-name">Robustness</span>
+              <span class="rai-score" style="color:#d29922">2/3</span>
+            </div>
+            <div class="rai-bar-track">
+              <div class="rai-bar-fill" style="width:66%;background:#d29922"></div>
+            </div>
+            <div class="rai-note">Retry / circuit-breaker in replenishment + CAPA agents</div>
+          </div>
+    </div>
+    <a href="../office-skills/outputs/responsible-ai/index.html" class="rai-link">
+      View Full Responsible AI Framework &#8594;
+    </a>
+  </section>
+
+  <!-- ── Section 7: S41-5D Expansion Readiness ── -->
+  <section class="section expansion-readiness">
+    <div class="section-title">Expansion Readiness</div>
+    <div class="section-sub">Agents ready to advance &mdash; 4-criteria assessment</div>
+    <div class="card">
+      <table class="agent-table" id="readinessTable">
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Stage</th>
+            <th title="Business stakeholder has signed off on decision rules">Business Sign-off</th>
+            <th title="Connected to real system (even read-only)">System Access</th>
+            <th title="Real data validated, outputs make business sense">Data Validated</th>
+            <th title="SOP documented, escalation path clear">Oversight SOP</th>
+            <th>Advance</th>
+          </tr>
+        </thead>
+        <tbody id="readinessBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <div class="footer-links">
+    <a href="operations.html">&larr; Back to Operations Dashboard</a>
+    <a href="../index.html">View Platform Index &rarr;</a>
+  </div>
+  <div>Generated: March 13, 2026 at 18:09 &nbsp;|&nbsp; Business Agents Platform &mdash; Internal use only</div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  const API = 'http://localhost:8500';
+
+  // ── Funnel stage config ──────────────────────────────────────────────────
+  const FUNNEL_STAGES = [
+    { key: 'blueprint',  maxH: 80, baseY: 10,  col: '#6e7681', dimOp: false },
+    { key: 'scaffolded', maxH: 80, baseY: 10,  col: '#388bfd', dimOp: true  },
+    { key: 'sandbox',    maxH: 80, baseY: 10,  col: '#56d364', dimOp: false },
+    { key: 'validated',  maxH: 80, baseY: 10,  col: '#d29922', dimOp: true  },
+    { key: 'pilot_ready',maxH: 80, baseY: 10,  col: '#3fb950', dimOp: true  },
+    { key: 'production', maxH: 80, baseY: 10,  col: '#26a641', dimOp: true  },
+  ];
+
+  // ── Stage badge markup helper ────────────────────────────────────────────
+  function stageBadge(stage) {
+    const stageMap = {
+      sandbox:     'background:#56d36420;color:#56d364;border:1px solid #56d36440',
+      validated:   'background:#d2992220;color:#d29922;border:1px solid #d2992240',
+      pilot_ready: 'background:#3fb95020;color:#3fb950;border:1px solid #3fb95040',
+      production:  'background:#26a64120;color:#26a641;border:1px solid #26a64140',
+    };
+    const style = stageMap[stage] || 'background:#6e768120;color:#8b949e;border:1px solid #8b949e40';
+    const label = stage.replace('_', '-').replace(/^\w/, c => c.toUpperCase());
+    return `<span class="stage-badge" style="${style}">${label}</span>`;
+  }
+
+  // ── Update funnel bar for a single stage ────────────────────────────────
+  function updateFunnelStage(key, count, maxCount) {
+    const rect = document.getElementById('funnel-rect-' + key);
+    const text = document.getElementById('funnel-count-' + key);
+    if (!rect || !text) return;
+
+    const hasItems = count > 0;
+    const MIN_H = 4;
+    const MAX_H = 80;
+    // Height proportional to max, min 4px
+    const h = hasItems ? Math.max(MIN_H, Math.round((count / maxCount) * MAX_H)) : MIN_H;
+    const opacity = hasItems ? '1.0' : '0.25';
+
+    // Y so the bar sits at bottom of the 90px viewport (bottom = y90)
+    const y = 90 - h;
+    rect.setAttribute('y', y);
+    rect.setAttribute('height', h);
+    rect.setAttribute('opacity', opacity);
+
+    // text y sits 5px above the rect
+    text.setAttribute('y', y - 5);
+    text.setAttribute('opacity', opacity);
+    text.textContent = count;
+  }
+
+  // ── Render industry table ────────────────────────────────────────────────
+  function renderIndustryTable(industries) {
+    const tbody = document.getElementById('industry-tbody');
+    if (!tbody || !industries || !industries.length) return;
+
+    tbody.innerHTML = industries.map(ind => {
+      const hrs = ind.est_hours_saved != null ? ind.est_hours_saved : (ind.process_count ? '—' : '—');
+      const bpCount = ind.bp_count || 0;
+      const procCount = ind.process_count || 0;
+      return `<tr>
+        <td class="td-name">${escHtml(ind.name)}</td>
+        <td class="td-code">${escHtml(ind.code)}</td>
+        <td class="td-num">${bpCount}</td>
+        <td class="td-num">${procCount}</td>
+        <td class="td-num">—</td>
+        <td>${stageBadge(ind.top_lifecycle || 'blueprint')}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Update value cards & ROI block ──────────────────────────────────────
+  function renderValueSection(valueTotals) {
+    if (!valueTotals) return;
+
+    const hrs     = valueTotals['hours_saved']            || 0;
+    const prs     = valueTotals['purchase_requisitions']  || 0;
+    const exc     = valueTotals['exceptions_detected']    || 0;
+
+    const valHrsEl  = document.getElementById('val-hours');
+    const valPrsEl  = document.getElementById('val-prs');
+    const valExcEl  = document.getElementById('val-exceptions');
+    const roiLineEl = document.getElementById('roi-line-realized');
+
+    if (valHrsEl) {
+      valHrsEl.innerHTML = (hrs ? hrs.toFixed(1) : '—') +
+        '<span style="font-size:20px;color:var(--muted)"> hrs</span>';
+    }
+    if (valPrsEl) {
+      valPrsEl.innerHTML = (prs || '—') +
+        '<span style="font-size:20px;color:var(--muted)"> PRs</span>';
+    }
+    if (valExcEl) {
+      valExcEl.innerHTML = (exc || '—') +
+        '<span style="font-size:20px;color:var(--muted)"> alerts</span>';
+    }
+    if (roiLineEl && hrs) {
+      const realized = Math.round(hrs * 85);
+      roiLineEl.innerHTML = `<strong>${hrs.toFixed(1)} hours</strong> &times; $85/hr = <strong>$${realized.toLocaleString()}</strong> value realized`;
+    }
+  }
+
+  // ── HTML escape helper ───────────────────────────────────────────────────
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── S41-5A: fetchPortfolio — live portfolio data ─────────────────────────
+  async function fetchPortfolio() {
+    try {
+      const resp = await fetch(API + '/api/portfolio', { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+
+      // KPI strip
+      const kpi = data.kpi || {};
+      const bpEl   = document.getElementById('kpi-blueprints');
+      const indEl  = document.getElementById('kpi-industries');
+      const fnEl   = document.getElementById('kpi-functions');
+      const actEl  = document.getElementById('kpi-actions');
+      if (bpEl  && kpi.blueprints != null)    bpEl.textContent  = kpi.blueprints.toLocaleString();
+      if (indEl && kpi.industries != null)    indEl.textContent = kpi.industries.toLocaleString();
+      if (fnEl  && kpi.functions  != null)    fnEl.textContent  = kpi.functions.toLocaleString();
+      if (actEl && kpi.agent_actions != null) actEl.textContent = kpi.agent_actions.toLocaleString();
+
+      // Lifecycle funnel — update distribution counts
+      const dist = data.lifecycle_dist || {};
+      const maxCount = Math.max(1, ...Object.values(dist).map(Number));
+      FUNNEL_STAGES.forEach(s => {
+        updateFunnelStage(s.key, dist[s.key] || 0, maxCount);
+      });
+
+      // Industry table
+      renderIndustryTable(data.industries);
+
+      // Value section — S41-5C: show value_realized with trend indicator
+      renderValueSection(data.value_totals);
+      const trendEl = document.getElementById('value-trend');
+      if (trendEl && data.value_totals && data.value_totals.hours_saved) {
+        trendEl.style.display = 'inline';
+      }
+
+      return data;
+    } catch (err) {
+      console.warn('[enterprise] Portfolio fetch failed:', err.message);
+      const banner = document.getElementById('offline-banner');
+      if (banner) banner.classList.add('visible');
+      return null;
+    }
+  }
+
+  // Keep loadPortfolio as alias for backward compatibility
+  const loadPortfolio = fetchPortfolio;
+
+  // ── S41-5B: fetchDecisionOversight — Agent Decisions Month to Date ────────
+  async function fetchDecisionOversight() {
+    try {
+      const resp = await fetch(API + '/api/recommendations/pending', { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const pending = await resp.json();
+      const pendingCount = Array.isArray(pending) ? pending.length : 0;
+
+      const pendingEl = document.getElementById('recPending');
+      if (pendingEl) pendingEl.textContent = pendingCount;
+
+      // For total/approved/rejected: show pending count; show dashes for others
+      // with a note since we don't have month-to-date aggregate endpoint
+      const totalEl    = document.getElementById('recTotal');
+      const approvedEl = document.getElementById('recApproved');
+      const rejectedEl = document.getElementById('recRejected');
+
+      if (totalEl)    totalEl.textContent    = pendingCount > 0 ? pendingCount + '+' : '0';
+      if (approvedEl) approvedEl.textContent = '\u2014';
+      if (rejectedEl) rejectedEl.textContent = '\u2014';
+
+    } catch (err) {
+      console.warn('[enterprise] Decision oversight fetch failed:', err.message);
+      // Leave as dashes if fetch fails
+    }
+  }
+
+  // ── S41-5D: Expansion Readiness Table ───────────────────────────────────
+  function buildReadinessTable() {
+    const agents = [
+      {name: 'CG Replenishment PR Agent', stage: 'sandbox', slug: 'cg-replenishment-pr-agent',
+       criteria: {business_signoff: 'green', system_access: 'green', data_validated: 'green', oversight_sop: 'amber'}},
+      {name: 'CG Demand Forecast Agent', stage: 'sandbox', slug: 'cg-demand-forecast-agent',
+       criteria: {business_signoff: 'green', system_access: 'green', data_validated: 'amber', oversight_sop: 'red'}},
+      {name: 'CG Quality CAPA Agent', stage: 'sandbox', slug: 'cg-quality-capa-agent',
+       criteria: {business_signoff: 'amber', system_access: 'green', data_validated: 'green', oversight_sop: 'amber'}},
+      {name: 'MFG Predictive Maintenance', stage: 'scaffolded', slug: 'mfg-predictive-maintenance-agent',
+       criteria: {business_signoff: 'amber', system_access: 'red', data_validated: 'amber', oversight_sop: 'red'}},
+      {name: 'AP Invoice Processing', stage: 'scaffolded', slug: 'ap-invoice-processing',
+       criteria: {business_signoff: 'green', system_access: 'amber', data_validated: 'amber', oversight_sop: 'red'}},
+    ];
+
+    const tbody = document.getElementById('readinessBody');
+    if (!tbody) return;
+
+    const stageColors = {sandbox: '#22c55e', scaffolded: '#6366f1', validated: '#f97316', pilot_ready: '#06b6d4'};
+
+    tbody.innerHTML = agents.map(a => {
+      const c = a.criteria;
+      const allGreen = Object.values(c).every(v => v === 'green');
+      const anyRed = Object.values(c).some(v => v === 'red');
+      const readyToAdvance = allGreen || (!anyRed && Object.values(c).filter(v => v === 'amber').length <= 1);
+
+      return `<tr>
+        <td style="font-weight:600">${escHtml(a.name)}</td>
+        <td><span style="background:${stageColors[a.stage] || '#64748b'}22;color:${stageColors[a.stage] || '#64748b'};padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${a.stage}</span></td>
+        <td style="text-align:center"><span class="readiness-light rl-${c.business_signoff}" title="Business sign-off: ${c.business_signoff}"></span></td>
+        <td style="text-align:center"><span class="readiness-light rl-${c.system_access}" title="System access: ${c.system_access}"></span></td>
+        <td style="text-align:center"><span class="readiness-light rl-${c.data_validated}" title="Data validated: ${c.data_validated}"></span></td>
+        <td style="text-align:center"><span class="readiness-light rl-${c.oversight_sop}" title="Oversight SOP: ${c.oversight_sop}"></span></td>
+        <td><button class="advance-readiness-btn" ${readyToAdvance ? '' : 'disabled'} onclick="advanceFromReadiness('${a.slug}')">
+          ${readyToAdvance ? '&rarr; Advance' : 'Not Ready'}
+        </button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function advanceFromReadiness(slug) {
+    if (confirm(`Advance ${slug} to next lifecycle stage?`)) {
+      fetch(`${API}/api/agents/${slug}/advance`, {method:'POST'})
+        .then(r => r.json())
+        .then(d => {
+          const msg = d.to_stage ? `${slug} advanced to ${d.to_stage}` : `${slug} advance requested`;
+          const banner = document.createElement('div');
+          banner.textContent = '\u2705 ' + msg;
+          banner.style.cssText = 'position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:12px 20px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+          document.body.appendChild(banner);
+          setTimeout(() => banner.remove(), 2500);
+          buildReadinessTable();
+        })
+        .catch(() => {
+          const banner = document.createElement('div');
+          banner.textContent = 'Could not connect to API';
+          banner.style.cssText = 'position:fixed;top:20px;right:20px;background:#f85149;color:white;padding:12px 20px;border-radius:8px;font-weight:600;z-index:9999;';
+          document.body.appendChild(banner);
+          setTimeout(() => banner.remove(), 2500);
+        });
+    }
+  }
+
+  // Run on load
+  document.addEventListener('DOMContentLoaded', function () {
+    fetchPortfolio();
+    fetchDecisionOversight();
+    buildReadinessTable();
+  });
+})();
+</script>
+
+</body>
+</html>

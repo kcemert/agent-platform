@@ -7,5 +7,198 @@ Started: 2026-03-13
 - party-invites: Has a skills directory and Excel reference file. Has its own git.
 - Workspace root: /Users/keith_ai/Documents/Agentic Projects — now has a git repo for ralph coordination.
 - Ralph loop: run with ./ralph/ralph.sh --tool claude [max_iterations]
+- business-agents: SQLite DB at business-agents/business_agents.db. Use python3 directly against DB for bulk inserts; query.py for reads/verification. capability_types has 6 slugs: monitor, root_cause, idea_gen, evaluate, execute, manage.
+- office-skills: outputs/ dir is gitignored. To track a specific deliverable, use `outputs/*` + `!outputs/partner-pitch` negation in .gitignore. The partner-pitch dir is now tracked.
+- reveal.js: Load via CDN (cdn.jsdelivr.net/npm/reveal.js@5.1.0). No build step. Use dark theme + Inter font via Google Fonts. slideNumber: 'c/t' shows slide counter. center: false + text-align:left for left-aligned slides.
+- Capability matrix: 3 functions in DB (3.0 Sales, 4.0 Supply Chain, 9.0 Finance), all 6 cap types filled. authority_level values: 'low', 'medium', 'high' (not abbreviated).
+- log_run JSON: avoid backslash escapes in strings passed via shell — use Python subprocess instead for safety.
 
+---
+
+## 2026-03-13 - E2-S0 - business-agents
+- Added 6 Finance (9.0) capabilities covering all 6 capability types: AP/AR monitoring, budget variance RCA, FP&A commentary gen, spend anomaly scoring, journal entry generation (HIGH auth), finance KPI dashboard
+- Added 6 Sales/Marketing (3.0) capabilities: pricing anomaly monitoring, trade promo analysis, sales forecast gen, account profitability scoring, order anomaly routing (MED auth), trade spend tracking
+- Total capabilities: 28 across 3 functions
+- Files changed: business_agents.db, query.py (capabilities command), schema.sql
+- Commit: e4053ee
+- **Learnings:**
+  - All 6 capability_type slugs already seeded: monitor, root_cause, idea_gen, evaluate, execute, manage
+  - Finance fn_id=9, Sales fn_id=3 (via SELECT id FROM functions WHERE apqc_code=?)
+  - INSERT directly via python3 script — query.py capabilities command already existed
+---
+
+## 2026-03-13 - E2-S1 - office-skills
+- Created outputs/partner-pitch/outline.md with 12-slide narrative structure
+- Each slide has title, 1-sentence key message, and 3-5 supporting bullets
+- Narrative: Title → Problem (Scale) → Problem (Fails) → Vision → How It Works → Agent Loop → Capability Matrix → Systems → First Pilot → Business Model → Why Us → Next Steps
+- Files changed: outputs/partner-pitch/outline.md, .gitignore
+- Commit: 7bd64c8
+- **Learnings:**
+  - outputs/ is fully gitignored. Pattern: change `outputs/` to `outputs/*` then add `!outputs/partner-pitch` negation
+  - git add on negation-excepted files works fine after .gitignore update
+---
+
+## 2026-03-13 - E2-S2 through E2-S7 - office-skills
+- Built complete 12-slide reveal.js partner pitch deck in outputs/partner-pitch/index.html
+- Design system: Inter font, #0f1117 bg, #6366f1 accent, green/yellow/orange authority colors
+- Slides implemented:
+  1. Title (center, hero typography)
+  2. Problem: Scale (4 stat blocks with big numbers)
+  3. Problem: Automation Fails (5-column comparison table RPA vs AI vs Agent)
+  4. Vision (4-step arc with numbered steps)
+  5. How It Works (4 approach steps)
+  6. Agent Loop (emoji icon loop + RPA/chatbot comparison cards)
+  7. Capability Matrix (3 function rows x 6 type columns, color-coded, real DB data)
+  8. Systems We Connect (pill badges by category)
+  9. First Pilot (horizontal flow diagram + value grid + what-agent-does list)
+  10. Business Model (3 phase cards with top border colors)
+  11. Why Us (4 differentiator cards + positioning vs competitors)
+  12. Next Steps (3-step CTA + contact placeholder)
+- Files changed: outputs/partner-pitch/index.html
+- Commit: 0c06f51
+- **Learnings:**
+  - Capability matrix data queried via `SELECT * FROM v_capability_matrix ORDER BY function_code, sort_order`
+  - All 3 functions (3.0, 4.0, 9.0) have all 6 capability types populated — no empty cells needed
+  - reveal.js: set `center: false` to avoid vertically centering slides; use `text-align: left` on sections
+  - slideNumber: 'c/t' shows "current/total" counter
+  - For the matrix, Supply Chain (4.0) has multiple caps per cell — stack with margin-bottom
+  - Phase cards: use `border-top: 3px solid var(--color)` for phase color differentiation
+---
+
+## 2026-03-13 - E3-S1 - business-agents
+- Built static APQC process taxonomy browser: browser/generate.py + browser/index.html
+- generate.py reads DB, builds nested function/process tree, embeds as JSON in HTML
+- index.html: dark theme (#0f1117 bg, #6366f1 accent), Inter font via CDN, expandable tree
+  - Click function card to expand; click process group to expand children
+  - Color-coded by function type: blue bar/badge = operating, grey = management_support
+  - Opportunity dots: green (score >= 9), yellow (score >= 7), grey (< 7) next to each process
+  - Search box: live filter with highlight + auto-expand matching nodes
+  - Stats bar: shows total functions / processes / processes with opportunity data
+- Files changed: browser/generate.py, browser/index.html
+- Commit: 6fae9f5
+- **Learnings:**
+  - Static HTML browser pattern: Python reads DB, embeds JSON in script tag, pure JS renders tree
+  - For search in expandable trees: hide non-matching nodes, show ancestors, auto-open parent nodes
+  - Opportunity score from MAX(feasibility+value) per process, grouped by process_id
+---
+
+## 2026-03-13 - E3-S2 - business-agents
+- Added 57 pharma-specific processes across functions 1.0, 2.0, 4.0 via seed_pharma.py
+- Under 1.0 Strategy: pipeline prioritization, patent lifecycle management, BD&L (3 processes)
+- Under 2.0 Products: drug formulation (3 activities), clinical trial operations (4 processes),
+  regulatory submissions (4 processes), post-market surveillance (2 processes) — 22 total
+- Under 4.0 Deliver: sterile batch mfg (4), non-sterile (3), tech transfer (3),
+  GMP/batch record review (3), QC testing (4), deviation/CAPA (4), stability testing (3),
+  serialization/track&trace (3), cold chain (3) — 32 total
+- 52 industry_processes links to PHARMA industry (relevance 5 for core, 4 for supporting)
+- 35 process_agent_actions entries covering monitor/analyze/generate/execute/coordinate
+- Regenerated browser/index.html — now shows 127 processes, 33 with opportunity data
+- Files changed: seed_pharma.py, business_agents.db, browser/index.html
+- Commit: d369e06
+- **Learnings:**
+  - Use namespaced APQC codes (4.5.x, 4.6.x, 4.7.x) for pharma-specific groups under 4.0
+  - is_universal=0 for industry-specific processes; relevance in industry_processes = importance
+  - process_agent_actions UNIQUE(process_id, industry_id, action_type) — one row per action type
+---
+
+## 2026-03-13 - E3-S3 - office-skills
+- Generated process-taxonomy-v1.xlsx with 3 sheets using openpyxl
+- Sheet 1 "All Processes": 127 processes, columns: APQC Code, Level, Level Label, Function,
+  Function Type, Parent Process, Process Name, Universal. Level-1 rows bolded.
+  Level column colour-coded (lavender L1, purple L2, green L3, yellow L4).
+- Sheet 2 "CG Opportunities": 20 rows from v_opportunity_matrix.
+  Priority score colour-coded: green >= 9, yellow >= 7, grey < 7.
+- Sheet 3 "Pharma Processes": 52 pharma processes (relevance >= 4) with descriptions.
+  Relevance column colour-coded: green = 5 (core), yellow = 4 (high).
+- All sheets: frozen header row, auto-sized columns (max 55 chars), alternating row colours
+- Files changed: outputs/process-taxonomy/build_taxonomy_excel.py,
+  outputs/process-taxonomy/process-taxonomy-v1.xlsx, .gitignore
+- Commit: c7f7cdb
+- **Learnings:**
+  - openpyxl: PatternFill(fill_type="solid", fgColor=hex) — hex without # prefix
+  - Auto-size: ws.column_dimensions[col_letter].width = min(max(len+2, min_w), max_w)
+  - Freeze panes: ws.freeze_panes = "A2" freezes row 1 as header
+  - gitignore pattern for tracking specific outputs subdirs: outputs/* + !outputs/process-taxonomy
+---
+
+## 2026-03-13 - Epic 9 (S9-1, S9-2, S9-3) - sandbox-systems
+
+### S9-1: Mock SAP API
+- Node.js/Express server at `sandbox-systems/sap/server.js`, port 3001
+- 20 Consumer Goods SKUs: beverages (CG-BEV-xxx), snacks (CG-SNK-xxx), packaged foods (CG-PCF-xxx), personal care (CG-PC-xxx)
+- 4 materials pre-loaded below reorder point (CG-BEV-003, CG-SNK-002, CG-PCF-004, CG-PC-003) — agent triggers
+- Endpoints: GET /api/inventory, GET /api/inventory/:id, GET /api/purchase-orders, POST /api/purchase-requisitions, GET /api/production-orders, GET /api/sales-orders, GET /api/demand-history/:id
+- In-memory PR array simulates SAP write; numbered PR-10001+
+
+### S9-2: Mock MES API
+- Node.js/Express server at `sandbox-systems/mes/server.js`, port 3002
+- 5 production lines; LINE-02 (~62% OEE) and LINE-04 (~49% OEE) fire `alert: true`
+- 3 open quality events including high-severity capping sensor failure on LINE-04
+- Endpoints: GET /api/oee, GET /api/oee/history/:line_id, GET /api/work-orders, POST /api/work-orders, GET /api/quality-events, GET /api/downtime, POST /api/maintenance-requests
+- OEE history uses relative timestamps from server startup (iso() helper with minute offset)
+
+### S9-3: DB + README + git
+- `sandbox_systems` table created in business_agents.db; linked to systems.id=1 (SAP S/4HANA) and systems.id=4 (SAP ME / MII)
+- README.md with full endpoint reference, curl examples, data scenario guide
+- start-all.sh starts both servers in background
+- git init in sandbox-systems/, committed as single feat commit (hash: 90d2617)
+- sandbox-systems/.git/ added to workspace root .gitignore
+
+- Files changed: sandbox-systems/sap/server.js, sandbox-systems/sap/package.json, sandbox-systems/mes/server.js, sandbox-systems/mes/package.json, sandbox-systems/README.md, sandbox-systems/start-all.sh, sandbox-systems/.gitignore, business-agents/business_agents.db, .gitignore
+- Commit: 90d2617
+
+- **Learnings:**
+  - Express 5 is installed by npm (^5.x) — body-parser is included, express.json() works without extra install
+  - Shell curl with single-quoted JSON body fails on macOS due to quote escaping; use Python urllib for POST tests in bash scripts
+  - OEE formula: availability * performance * quality * 100 — precompute and store as oee_pct in data array
+  - iso() helper (offsetMins from startup) is clean pattern for relative MES timestamps
+  - sandbox_systems table references systems(id) for FK integrity — SAP S/4HANA = id 1, SAP ME/MII = id 4
+  - npm init -y sets "main": "index.js" by default — update to "server.js" in package.json
+---
+
+## 2026-03-13 - E2-LANDSCAPE + S3-CAPS - office-skills + business-agents
+- Seeded 54 illustrative capabilities (9 missing functions × 6 capability types) into agent_capabilities:
+  - 1.0 Strategy, 2.0 Products & Services, 5.0 Deliver Services, 6.0 Customer Service
+  - 7.0 Human Capital, 8.0 IT, 10.0 Assets, 11.0 Risk & Compliance, 12.0 External Relationships
+- Each capability has: name, description, authority_level, authority_notes, data_inputs, data_outputs,
+  readiness='opportunity', feasibility=3|4, value=3|4
+- Total capabilities grew from 28 → 82; all 12 APQC functions now fully populated
+- Regenerated THE AGENTIC OPPORTUNITY LANDSCAPE slide HTML from DB query programmatically:
+  - All 72 cells (12 functions × 6 types) now show colored authority dots
+  - Green (#22c55e)=low, Yellow (#eab308)=medium, Orange (#f97316)=high
+  - Dot sizes scale with count: 18px (1 cap), 14px (2-3 caps), 10px (4+ caps)
+  - Supply Chain (4.0) execute cell still shows 6 dots (all original caps preserved)
+  - Title updated: font-size 0.55em, color #6366f1, letter-spacing 0.15em
+  - Function label column widened from 96px to 140px for longer names
+- Files changed: business-agents/business_agents.db, office-skills/outputs/partner-pitch/index.html
+- Commits: business-agents/2ceb284, office-skills/3a520ea
+- **Learnings:**
+  - The capabilities table is named `agent_capabilities` not `capabilities`
+  - v_capability_matrix view joins agent_capabilities, functions, capability_types, industries, processes
+  - Build HTML from DB programmatically using Python string generation, then write with open()+str.replace pattern
+  - Find section boundaries by locating comment markers + next section comment for clean replacement
+  - Supply Chain 4.0 has 16 caps spread across 6 types (not 1-per-cell) — the matrix view returns all rows
+---
+
+## 2026-03-13 - Epic 4 (S4-1, S4-2, S4-3) - business-agents
+- S4-1: Added `agent_blueprints` table (23 columns covering identity, trigger, data I/O, decision logic, authority, value, test scenario) and `v_blueprint_summary` view to DB and schema.sql
+- S4-2: Created `blueprints/seed_blueprints.py` inserting 3 agent blueprints:
+  - `cg-replenishment-pr-agent` (threshold/SAP, low authority, 3.5 hrs/wk)
+  - `cg-quality-capa-agent` (event/MES, medium authority, 6.0 hrs/wk)
+  - `cg-demand-forecast-agent` (scheduled weekly, low authority, 5.0 hrs/wk)
+- S4-2: Wrote 3 readable Markdown blueprint files in `blueprints/` covering: Overview, Trigger, Data Connections, Decision Logic, Authority, Business Value, Test Scenario with sandbox curl commands
+- S4-2: Added `blueprints [slug]` command to query.py — list view shows all blueprints in formatted table; detail view shows full spec for one blueprint
+- S4-3: Created `blueprints/generate.py` (reads DB, serializes JSON, embeds in HTML) and `blueprints/index.html`
+  - Dark theme (#0f1117 bg, #6366f1 accent, Inter font) matching pitch deck
+  - Cards layout: status badge, trigger type icon, authority level (color-coded green/yellow/orange), business value, time saved/week, KPI tags
+  - Click card to expand full detail: trigger spec, data I/O tables, decision logic, decision rules list, escalation block, authority block, sandbox test section with curl command
+  - Stats bar shows blueprint count and total hrs/week saved (14.5)
+- Files changed: schema.sql, business_agents.db, blueprints/seed_blueprints.py, blueprints/cg-replenishment-pr-agent.md, blueprints/cg-quality-capa-agent.md, blueprints/cg-demand-forecast-agent.md, blueprints/generate.py, blueprints/index.html, query.py
+- Commits: S4-1=64818b3, S4-2=a44358a, S4-3=cab33cd
+- **Learnings:**
+  - agent_blueprints table: all JSON fields (trigger_spec, data_inputs, data_outputs, decision_rules, kpis, sandbox_trigger) stored as TEXT/JSON strings in SQLite
+  - v_blueprint_summary view: LEFT JOINs back to agents, industries, processes, functions — agent_id can be NULL since blueprints can stand alone
+  - generate.py pattern: serialize_blueprints() parses JSON strings before embedding; JSON.stringify works for pretty-printing rule objects in JS
+  - Auth badge color scheme: low=green, medium=yellow, high=orange (consistent with pitch deck authority dots)
+  - Detail panel: grid-template-columns 1fr 1fr with detail-full class spanning both columns for data connections + test scenario
 ---

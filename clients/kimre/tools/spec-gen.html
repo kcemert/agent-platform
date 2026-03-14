@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engineering Spec Generator | Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0f1117;
+      --card:         #161b2e;
+      --card-alt:     #1a2035;
+      --border:       #1e293b;
+      --border-light: #253047;
+      --text:         #f1f5f9;
+      --text-sec:     #94a3b8;
+      --muted:        #64748b;
+      --kimre:        #f97316;
+      --orange:       #f97316;
+      --orange-dim:   rgba(249,115,22,0.12);
+      --orange-glow:  rgba(249,115,22,0.25);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.12);
+      --amber:        #f59e0b;
+      --amber-dim:    rgba(245,158,11,0.12);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.12);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── Nav ── */
+    .kimre-nav {
+      background: var(--card);
+      border-bottom: 1px solid #1e293b;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .kimre-nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .kimre-nav-brand {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .kimre-nav-links {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .kimre-nav-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .kimre-nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .kimre-nav-link.active { color: var(--orange); background: var(--orange-dim); }
+
+    /* ── Layout ── */
+    .page-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Two Column Grid ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    .input-column { display: flex; flex-direction: column; gap: 16px; }
+
+    .sticky-right {
+      position: sticky;
+      top: 68px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    /* ── Section Headers ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .section-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── Form Fields ── */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .field label .req { color: var(--orange); margin-left: 2px; }
+    .field input,
+    .field select,
+    .field textarea {
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      padding: 8px 11px;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+    .field select option { background: #161b2e; }
+    .field textarea { resize: vertical; }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .field-hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .auto-filled {
+      border-color: rgba(249,115,22,0.4) !important;
+    }
+
+    /* ── Hidden fields ── */
+    .hidden { display: none !important; }
+
+    /* ── Generate Button ── */
+    .btn-generate {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 24px;
+      width: 100%;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-generate:hover { background: #ea6c0a; transform: translateY(-1px); }
+    .btn-generate:active { transform: translateY(0); }
+
+    /* ── Confidence Flags ── */
+    .flags-card {
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .flags-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+    .flags-list { display: flex; flex-direction: column; gap: 6px; }
+    .flag-pill {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: #fbbf24;
+      line-height: 1.4;
+    }
+    .flag-pill.flag-red { color: #f87171; }
+    .flag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .flag-dot.red { background: var(--red); }
+
+    /* ── Placeholder ── */
+    .spec-placeholder {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 60px 24px;
+      text-align: center;
+    }
+    .spec-placeholder-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+    .spec-placeholder p {
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    /* ── Action Buttons ── */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      flex: 1;
+      min-width: 130px;
+      background: var(--card-alt);
+      border: 1px solid var(--border-light);
+      border-radius: 7px;
+      color: var(--text-sec);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .btn-action:hover { background: var(--border); color: var(--text); border-color: var(--muted); }
+
+    /* ═══════════════════════════════════════
+       SPEC SHEET (white/light — print-ready)
+    ═══════════════════════════════════════ */
+    .spec-sheet-card {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+    }
+
+    .spec-header {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .spec-brand {
+      font-size: 20px;
+      font-weight: 800;
+      color: #f97316;
+      letter-spacing: -0.02em;
+    }
+    .spec-brand-sub {
+      font-size: 10px;
+      color: #94a3b8;
+      margin-top: 2px;
+      letter-spacing: 0.05em;
+    }
+    .spec-doc-title {
+      text-align: right;
+    }
+    .spec-doc-title h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .spec-doc-title p {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* Identity block */
+    .spec-identity {
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 24px;
+    }
+    .spec-id-row {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      align-items: baseline;
+    }
+    .spec-id-label {
+      color: #64748b;
+      font-weight: 600;
+      white-space: nowrap;
+      min-width: 90px;
+    }
+    .spec-id-value {
+      color: #0f172a;
+      font-weight: 500;
+    }
+
+    /* Section blocks */
+    .spec-section {
+      padding: 14px 24px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .spec-section:last-child { border-bottom: none; }
+    .spec-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f97316;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 10px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #fed7aa;
+    }
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .spec-table tr:nth-child(even) td { background: #f8fafc; }
+    .spec-table td {
+      padding: 5px 8px;
+      font-size: 12px;
+      color: #1e293b;
+      vertical-align: top;
+    }
+    .spec-table td:first-child {
+      color: #475569;
+      font-weight: 600;
+      width: 48%;
+      white-space: nowrap;
+    }
+    .spec-table td:last-child { color: #0f172a; }
+
+    .spec-note {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .spec-flag-inline {
+      font-size: 11px;
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 4px;
+      padding: 3px 7px;
+      margin-top: 4px;
+      display: block;
+    }
+    .spec-flag-inline.red {
+      color: #991b1b;
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
+    .spec-user-note {
+      font-size: 12px;
+      color: #1e293b;
+      background: #f0f9ff;
+      border-left: 3px solid #38bdf8;
+      padding: 8px 10px;
+      margin-top: 8px;
+      border-radius: 0 4px 4px 0;
+      white-space: pre-wrap;
+    }
+
+    /* Exclusions */
+    .spec-exclusions-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .spec-exclusions-list li {
+      font-size: 12px;
+      color: #475569;
+      padding: 3px 0;
+      padding-left: 14px;
+      position: relative;
+    }
+    .spec-exclusions-list li::before {
+      content: '\2022';
+      position: absolute;
+      left: 0;
+      color: #94a3b8;
+    }
+
+    /* Footer */
+    .spec-footer {
+      background: #f1f5f9;
+      border-top: 1px solid #e2e8f0;
+      padding: 12px 24px;
+      font-size: 10px;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .spec-footer strong { color: #374151; }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white !important; }
+      .kimre-nav,
+      .input-column,
+      .action-buttons,
+      .flags-card,
+      h1,
+      .page-subtitle,
+      .page-header,
+      .spec-placeholder { display: none !important; }
+      .two-col { grid-template-columns: 1fr !important; }
+      .sticky-right { position: static !important; }
+      .spec-sheet-card {
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        border-radius: 0 !important;
+      }
+      .spec-sheet-card * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .btn-action { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="kimre-nav">
+  <div class="kimre-nav-inner">
+    <a href="../index.html" class="kimre-nav-brand">Kimre Inc.</a>
+    <div class="kimre-nav-links">
+      <a href="../sales.html" class="kimre-nav-link">Sales</a>
+      <a href="../engineering.html" class="kimre-nav-link">Engineering</a>
+      <a href="../customer-service.html" class="kimre-nav-link">Customer Service</a>
+      <a href="../executive.html" class="kimre-nav-link">Executive</a>
+      <a href="../quality.html" class="kimre-nav-link">Quality</a>
+      <a href="./index.html" class="kimre-nav-link active">Tools</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>Engineering Spec Generator</h1>
+    <p class="page-subtitle">Internal tool — Alex Torres / Sam Rivera. Input process conditions to generate a formal Equipment Specification Sheet.</p>
+  </div>
+
+  <div class="two-col">
+
+    <!-- ════ LEFT — Inputs ════ -->
+    <div class="input-column">
+
+      <!-- Section A: Project Info -->
+      <div class="card">
+        <div class="section-header">
+          <div class="section-num">A</div>
+          <div class="section-title">Project Information</div>
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <label>Customer Name</label>
+            <input type="text" id="f-customer" placeholder="e.g. Mosaic Fertilizer Co.">
+          </div>
+          <div class="field">
+            <label>Equipment Tag / Service Description</label>
+            <input type="text" id="f-tag" placeholder="e.g. V-101 — Acid Mist Absorber Outlet ME">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Project Reference</label>
+              <input type="text" id="f-projref" placeholder="e.g. PRJ-2025-042">
+            </div>
+            <div class="field">
+              <label>Revision</label>
+              <input type="text" id="f-rev" value="A">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Prepared By</label>
+              <input type="text" id="f-prepby" value="Alex Torres">
+            </div>
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="f-date">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section B: Application & Chemistry -->
+      <div class="card">
+        <div class="section-header">
+          <div class="section-num">B</div>
+          <div class="section-title">Application &amp; Chemistry</div>
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <label>Application Type <span class="req">*</span></label>
+            <select id="f-apptype" onchange="onAppTypeChange()">
+              <option value="">-- Select Application --</option>
+              <option value="h2so4">Sulfuric Acid Processing (H&#8322;SO&#8324;)</option>
+              <option value="hno3">Fertilizer / HNO&#8323; Processing</option>
+              <option value="hcl">Steel Pickling / HCl Recovery</option>
+              <option value="cooling">Cooling Tower Drift Control</option>
+              <option value="petrochem">Petrochemical / Hydrocarbon</option>
+              <option value="fgd">Power Generation (FGD / Flue Gas)</option>
+              <option value="custom">Other / Custom</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Primary Chemical</label>
+              <input type="text" id="f-chem" placeholder="Auto-filled from application">
+            </div>
+            <div class="field">
+              <label>Concentration</label>
+              <input type="text" id="f-conc" placeholder="e.g. 93-98 wt%">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Operating Temperature (&#176;C)</label>
+              <input type="number" id="f-temp" placeholder="e.g. 65" min="0" max="250">
+            </div>
+            <div class="field">
+              <label>Secondary Chemicals</label>
+              <input type="text" id="f-secondary" placeholder="e.g. SO&#8323;, SO&#8322;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section C: Operating Conditions -->
+      <div class="card">
+        <div class="section-header">
+          <div class="section-num">C</div>
+          <div class="section-title">Operating Conditions</div>
+        </div>
+        <div class="field-group">
+          <div class="field-row">
+            <div class="field">
+              <label>Gas Flow Rate (Nm&#179;/hr) <span class="req">*</span></label>
+              <input type="number" id="f-flow" placeholder="e.g. 5000" min="1">
+            </div>
+            <div class="field">
+              <label>Operating Pressure (bar(a))</label>
+              <input type="number" id="f-pressure" value="1.013" step="0.001" min="0.1">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Est. Mist Loading (g/Nm&#179;)</label>
+              <input type="number" id="f-loading" placeholder="Auto-filled" step="0.01" min="0">
+            </div>
+            <div class="field">
+              <label>Required Outlet Efficiency (%)</label>
+              <input type="number" id="f-efficiency" placeholder="Auto-filled" step="0.1" min="0" max="100">
+            </div>
+          </div>
+          <div class="field">
+            <label>Max Allowable Pressure Drop (mbar)</label>
+            <input type="number" id="f-maxpd" value="50" min="1" max="500">
+            <div class="field-hint">Spec sheet will flag if calculated pressure drop exceeds this value</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section D: Physical Constraints -->
+      <div class="card">
+        <div class="section-header">
+          <div class="section-num">D</div>
+          <div class="section-title">Physical Constraints</div>
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <label>Vessel Type</label>
+            <select id="f-vesseltype" onchange="onVesselTypeChange()">
+              <option value="new">New vessel (Kimre to size)</option>
+              <option value="retrofit">Retrofit — existing vessel</option>
+              <option value="canister">Canister internal</option>
+            </select>
+          </div>
+          <div class="field hidden" id="retrofit-id-field">
+            <label>Existing Vessel I.D. (mm)</label>
+            <input type="number" id="f-existid" placeholder="e.g. 1200" min="100" max="5000">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Available Height for Element (m)</label>
+              <input type="number" id="f-height" placeholder="Optional" step="0.1" min="0.1">
+            </div>
+            <div class="field">
+              <label>Inlet/Outlet Orientation</label>
+              <select id="f-orientation">
+                <option value="vtop">Vertical (top-to-bottom gas flow)</option>
+                <option value="vbot">Vertical (bottom-to-top)</option>
+                <option value="horiz">Horizontal</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section E: Engineering Notes -->
+      <div class="card">
+        <div class="section-header">
+          <div class="section-num">E</div>
+          <div class="section-title">Engineering Notes</div>
+        </div>
+        <div class="field">
+          <label>Special Requirements / Constraints / Notes</label>
+          <textarea id="f-notes" rows="4" placeholder="Any special requirements, customer constraints, or notes to include in spec..."></textarea>
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <button class="btn-generate" onclick="generateSpec()" style="flex:1;min-width:200px;">Generate Spec Sheet</button>
+        <button onclick="loadDemo()" style="background:transparent;border:1px solid var(--border);color:var(--text-sec);font-family:inherit;font-size:13px;font-weight:500;padding:12px 18px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:border-color 0.2s,color 0.2s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-sec)'">&#9654; Load Demo</button>
+      </div>
+
+    </div>
+    <!-- ════ END LEFT ════ -->
+
+    <!-- ════ RIGHT — Output ════ -->
+    <div class="sticky-right" id="right-panel">
+
+      <!-- Placeholder (before generate) -->
+      <div class="spec-placeholder" id="spec-placeholder">
+        <div class="spec-placeholder-icon">&#128196;</div>
+        <p>Complete inputs and click <strong>Generate Spec Sheet</strong> to render the specification.</p>
+      </div>
+
+      <!-- Confidence flags (hidden until needed) -->
+      <div class="flags-card hidden" id="flags-container">
+        <div class="flags-title">Engineering Flags — Review Before Issuing</div>
+        <div class="flags-list" id="flags-list"></div>
+      </div>
+
+      <!-- Spec Sheet (hidden until generated) -->
+      <div class="spec-sheet-card hidden" id="spec-sheet">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Action Buttons (hidden until generated) -->
+      <div class="action-buttons hidden" id="action-buttons">
+        <button class="btn-action" onclick="window.print()">&#128424; Print Spec Sheet</button>
+        <button class="btn-action" onclick="copySpec()">&#128203; Copy as Text</button>
+        <button class="btn-action" id="btn-email" onclick="emailSpec()">&#9993; Send to Engineering</button>
+      </div>
+
+    </div>
+    <!-- ════ END RIGHT ════ -->
+
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── Set default date ──
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2,'0');
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var yyyy = today.getFullYear();
+  document.getElementById('f-date').value = yyyy + '-' + mm + '-' + dd;
+
+  // ── Application Data ──
+  var APP_DATA = {
+    h2so4: {
+      chemical: 'Sulfuric Acid (H\u2082SO\u2084)', concentration: '93\u201398 wt%',
+      loading: 0.15, efficiency: 99.5,
+      product: 'Kimre\u00ae Fiber Bed Filter', model: 'KFB',
+      service: 'Sulfuric Acid Mist Recovery',
+      velocity: { min: 0.10, max: 0.30, design: 0.20 },
+      shell_material: 'Polypropylene (PP)',
+      fiber: 'Borosilicate glass fiber, PP binder',
+      frame: 'FRP / PP', nozzle_mat: 'PP flanged',
+      pressure_drop_base: 25, epa_flag: true,
+      mat_note: 'PP recommended up to 80\u00b0C. Above 80\u00b0C consult engineering.',
+      standards: { shell: 'To client specification', material: 'ASTM D4101 (PP)', fiber_std: 'ASTM C547', flanges: 'ANSI B16.5 or DIN PN10' }
+    },
+    hno3: {
+      chemical: 'Nitric Acid (HNO\u2083) / Ammonia (NH\u2083)', concentration: 'up to 65 wt%',
+      loading: 0.08, efficiency: 99.0,
+      product: 'B-GON\u00ae Mist Eliminator', model: 'KBG-PP',
+      service: 'Nitric Acid / Fertilizer Mist Elimination',
+      velocity: { min: 0.8, max: 2.5, design: 1.5 },
+      shell_material: 'Polypropylene (PP)',
+      fiber: 'PP mesh, 99.6% void fraction',
+      frame: 'PP / FRP', nozzle_mat: 'PP flanged',
+      pressure_drop_base: 12, epa_flag: true,
+      mat_note: 'PP suitable to 65\u00b0C for HNO\u2083 service. Verify NH\u2083 concentration separately.',
+      standards: { shell: 'To client specification', material: 'ASTM D4101 (PP)', fiber_std: 'ASTM D2230', flanges: 'ANSI B16.5 or DIN PN10' }
+    },
+    hcl: {
+      chemical: 'Hydrochloric Acid (HCl)', concentration: 'up to 35 wt%',
+      loading: 0.06, efficiency: 99.0,
+      product: 'B-GON\u00ae CPVC Mist Eliminator', model: 'KBG-CPVC',
+      service: 'HCl / Steel Pickling Mist Recovery',
+      velocity: { min: 0.8, max: 2.0, design: 1.2 },
+      shell_material: 'CPVC (Chlorinated PVC)',
+      fiber: 'CPVC mesh, 98.4% void fraction',
+      frame: 'CPVC / FRP', nozzle_mat: 'CPVC flanged',
+      pressure_drop_base: 10, epa_flag: true,
+      mat_note: 'CPVC preferred over PP for HCl above 50\u00b0C. Avoid SS in HCl service.',
+      standards: { shell: 'To client specification', material: 'ASTM D1784 (CPVC)', fiber_std: 'ASTM D2230', flanges: 'ANSI B16.5 or DIN PN10' }
+    },
+    cooling: {
+      chemical: 'Water / Treatment Chemicals', concentration: 'N/A',
+      loading: 0.20, efficiency: 99.9,
+      product: 'DRIFTOR\u00ae Drift Eliminator', model: 'KDE',
+      service: 'Cooling Tower Drift Control',
+      velocity: { min: 1.5, max: 4.0, design: 2.5 },
+      shell_material: 'Polypropylene (PP)',
+      fiber: 'PP blade / chevron media',
+      frame: 'PP', nozzle_mat: 'PP flanged',
+      pressure_drop_base: 8, epa_flag: false,
+      mat_note: 'Standard PP suitable for cooling tower service.',
+      standards: { shell: 'CTI STD 136', material: 'ASTM D4101 (PP)', fiber_std: 'CTI ATC-128', flanges: 'ANSI B16.5' }
+    },
+    petrochem: {
+      chemical: 'Hydrocarbons / Process Liquids', concentration: 'varies',
+      loading: 0.05, efficiency: 98.5,
+      product: 'LIQUI-NOMIX\u00ae Coalescer', model: 'KLM',
+      service: 'Hydrocarbon / Liquid Coalescing',
+      velocity: { min: 0.10, max: 0.50, design: 0.25 },
+      shell_material: 'SS 316L (or PP per fluid compatibility)',
+      fiber: 'PP/glass fiber coalescer media',
+      frame: 'SS 316L / PP', nozzle_mat: 'SS 316L or PP flanged',
+      pressure_drop_base: 20, epa_flag: false,
+      mat_note: 'Material selection depends on hydrocarbon type and temperature. Consult engineering.',
+      standards: { shell: 'ASME VIII Div.1 (if SS)', material: 'ASTM A240 (SS316L) / ASTM D4101 (PP)', fiber_std: 'Kimre proprietary', flanges: 'ANSI B16.5' }
+    },
+    fgd: {
+      chemical: 'SO\u2082 / Dilute H\u2082SO\u2084 Mist', concentration: 'dilute',
+      loading: 0.10, efficiency: 99.0,
+      product: 'B-GON\u00ae Mist Eliminator (PP)', model: 'KBG-PP-HV',
+      service: 'FGD Scrubber Outlet Mist Elimination',
+      velocity: { min: 2.5, max: 4.0, design: 3.0 },
+      shell_material: 'Polypropylene (PP)',
+      fiber: 'PP mesh, high-velocity grade',
+      frame: 'PP / FRP', nozzle_mat: 'PP flanged',
+      pressure_drop_base: 15, epa_flag: true,
+      mat_note: 'High-velocity grade mesh for FGD scrubber outlet. Check SO\u2083 content for material compatibility.',
+      standards: { shell: 'To client specification', material: 'ASTM D4101 (PP)', fiber_std: 'EPA Method 5', flanges: 'ANSI B16.5 or DIN PN10' }
+    }
+  };
+
+  var STANDARD_SIZES = [150, 300, 450, 600, 750, 900, 1050, 1200, 1350, 1500, 1650, 1800, 2100, 2400, 2700, 3000];
+  var NOZZLE_SIZES = [50, 80, 100, 150, 200, 250, 300, 350, 400];
+
+  // ── Demo autopopulate ──
+  window.loadDemo = function() {
+    // Project info
+    document.getElementById('f-customer').value = 'Mosaic Fertilizer, LLC';
+    document.getElementById('f-tag').value = 'ME-201 — Sulfuric Acid Absorber Outlet Mist Eliminator';
+    document.getElementById('f-projref').value = 'P-2024-0847';
+    document.getElementById('f-rev').value = 'A';
+    document.getElementById('f-prepby').value = 'Alex Torres';
+    // Date stays as today
+
+    // Application & chemistry
+    var appSel = document.getElementById('f-apptype');
+    appSel.value = 'h2so4';
+    onAppTypeChange(); // triggers auto-fill for chem/conc/loading/efficiency
+    document.getElementById('f-temp').value = '65';
+    document.getElementById('f-secondary').value = 'SO\u2083, SO\u2082 traces';
+
+    // Operating conditions
+    document.getElementById('f-flow').value = '4500';
+    document.getElementById('f-pressure').value = '1.05';
+    // loading + efficiency already auto-filled by onAppTypeChange
+    document.getElementById('f-maxpd').value = '50';
+
+    // Physical constraints
+    document.getElementById('f-vesseltype').value = 'new';
+    onVesselTypeChange();
+    document.getElementById('f-height').value = '2.5';
+    document.getElementById('f-orientation').value = document.getElementById('f-orientation').options[0].value;
+
+    // Notes
+    document.getElementById('f-notes').value = 'Customer requires performance test witnessed by Kimre engineer. Unit to be shipped to site within 14 weeks from order confirmation. Nozzle flanges to ANSI B16.5 150# RF.';
+
+    // Auto-generate
+    generateSpec();
+
+    // Scroll to spec output
+    var out = document.getElementById('spec-sheet') || document.getElementById('spec-placeholder');
+    if (out) out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // ── Auto-fill on app type change ──
+  window.onAppTypeChange = function() {
+    var key = document.getElementById('f-apptype').value;
+    var chemEl = document.getElementById('f-chem');
+    var concEl = document.getElementById('f-conc');
+    var loadEl = document.getElementById('f-loading');
+    var effEl  = document.getElementById('f-efficiency');
+
+    if (key && APP_DATA[key]) {
+      var d = APP_DATA[key];
+      chemEl.value = d.chemical;
+      concEl.value = d.concentration;
+      loadEl.value = d.loading;
+      effEl.value  = d.efficiency;
+      [chemEl, concEl, loadEl, effEl].forEach(function(el) { el.classList.add('auto-filled'); });
+    } else {
+      chemEl.value = ''; concEl.value = ''; loadEl.value = ''; effEl.value = '';
+      [chemEl, concEl, loadEl, effEl].forEach(function(el) { el.classList.remove('auto-filled'); });
+    }
+  };
+
+  window.onVesselTypeChange = function() {
+    var val = document.getElementById('f-vesseltype').value;
+    var retrofitField = document.getElementById('retrofit-id-field');
+    if (val === 'retrofit') {
+      retrofitField.classList.remove('hidden');
+    } else {
+      retrofitField.classList.add('hidden');
+    }
+  };
+
+  // ── Sizing ──
+  function calcSizing(gasFlowNm3hr, designVelocity) {
+    var flowM3s = gasFlowNm3hr / 3600;
+    var area = flowM3s / designVelocity;
+    var calcDiam = Math.sqrt(4 * area / Math.PI);
+    var calcDiamMm = calcDiam * 1000;
+    var selectedDiam = STANDARD_SIZES.find(function(s) { return s >= calcDiamMm; }) || calcDiamMm;
+    var selectedArea = Math.PI * Math.pow(selectedDiam / 1000, 2) / 4;
+    var actualVelocity = flowM3s / selectedArea;
+    return {
+      calcDiamMm: Math.round(calcDiamMm),
+      selectedDiam: selectedDiam,
+      selectedArea: selectedArea.toFixed(3),
+      actualVelocity: actualVelocity.toFixed(3)
+    };
+  }
+
+  function calcNozzle(gasFlowNm3hr) {
+    var flowM3s = gasFlowNm3hr / 3600;
+    var rawMm = Math.sqrt(4 * flowM3s / 12 / Math.PI) * 1000;
+    return NOZZLE_SIZES.find(function(s) { return s >= rawMm; }) || NOZZLE_SIZES[NOZZLE_SIZES.length - 1];
+  }
+
+  function roundPDTo5(val) { return Math.round(val / 5) * 5; }
+
+  function fmtNum(n, dec) {
+    if (dec === undefined) dec = 0;
+    return parseFloat(n).toLocaleString('en-GB', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  }
+
+  function fmtDate(dateStr) {
+    if (!dateStr) return '';
+    var parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
+  }
+
+  function orientLabel(val) {
+    var map = { vtop: 'Vertical — top-to-bottom gas flow', vbot: 'Vertical — bottom-to-top', horiz: 'Horizontal', other: 'Other (see notes)' };
+    return map[val] || val;
+  }
+
+  // ── Confidence flags ──
+  function buildFlags(key, appData, sizing, temp, maxPd, actualPD) {
+    var flags = [];
+    if (sizing.selectedDiam > 2400) {
+      flags.push({ level: 'red', msg: 'OVERSIZED — exceeds standard range (' + sizing.selectedDiam + ' mm). Custom sizing required. Contact engineering.' });
+    }
+    var av = parseFloat(sizing.actualVelocity);
+    if (av > appData.velocity.max * 1.1) {
+      flags.push({ level: 'amber', msg: 'VELOCITY WARNING — actual face velocity (' + sizing.actualVelocity + ' m/s) exceeds recommended maximum (' + appData.velocity.max + ' m/s). Review flow rate or select larger vessel.' });
+    }
+    if (av < appData.velocity.min * 0.9) {
+      flags.push({ level: 'amber', msg: 'UNDERSIZING WARNING — actual face velocity (' + sizing.actualVelocity + ' m/s) is below recommended minimum (' + appData.velocity.min + ' m/s). Consider smaller standard diameter.' });
+    }
+    if (key === 'petrochem') {
+      flags.push({ level: 'amber', msg: 'MATERIAL CONFIRMATION REQUIRED — hydrocarbon service requires detailed chemical compatibility review before issuing.' });
+    }
+    if (temp && key === 'h2so4' && parseFloat(temp) > 80) {
+      flags.push({ level: 'red', msg: 'TEMPERATURE ALERT — PP limited to 80\u00b0C in H\u2082SO\u2084 service. Engineering review required for material selection at ' + temp + '\u00b0C.' });
+    }
+    if (actualPD > maxPd) {
+      flags.push({ level: 'amber', msg: 'PRESSURE DROP ADVISORY — estimated pressure drop (' + actualPD + ' mbar) exceeds max allowable (' + maxPd + ' mbar). Review element type or sizing.' });
+    }
+    if (appData.epa_flag) {
+      flags.push({ level: 'amber', msg: 'EPA COMPLIANCE NOTE — this application may be subject to EPA Method 5 or equivalent stack testing requirements. Confirm with customer.' });
+    }
+    return flags;
+  }
+
+  // ── Plain text spec for clipboard / email ──
+  function buildPlainText(spec) {
+    var lines = [];
+    lines.push('KIMRE INC. — EQUIPMENT SPECIFICATION SHEET');
+    lines.push('==========================================');
+    lines.push('');
+    lines.push('Equipment Tag: ' + spec.tag + '   Rev: ' + spec.rev);
+    lines.push('Customer: ' + spec.customer);
+    lines.push('Project Ref: ' + spec.projref);
+    lines.push('Prepared By: ' + spec.prepby + '   Date: ' + spec.dateStr);
+    lines.push('');
+    lines.push('1. DESIGN BASIS');
+    lines.push('   Gas Flow Rate:     ' + fmtNum(spec.flow) + ' Nm\u00b3/hr');
+    if (spec.temp) lines.push('   Temperature:       ' + spec.temp + '\u00b0C');
+    lines.push('   Pressure:          ' + spec.pressure + ' bar(a)');
+    lines.push('   Mist Loading:      ' + spec.loading + ' g/Nm\u00b3 (estimated)');
+    lines.push('   Primary Chemical:  ' + spec.chemical + ' ' + spec.concentration);
+    if (spec.secondary) lines.push('   Secondary Chem:    ' + spec.secondary);
+    lines.push('');
+    lines.push('2. SELECTED EQUIPMENT');
+    lines.push('   Product Family:    ' + spec.product);
+    lines.push('   Model:             ' + spec.model);
+    lines.push('   Service:           ' + spec.service);
+    lines.push('');
+    lines.push('3. CONSTRUCTION');
+    lines.push('   Vessel I.D.:       ' + fmtNum(spec.sizing.selectedDiam) + ' mm (nominal)');
+    lines.push('   Shell Material:    ' + spec.shell_material);
+    lines.push('   Fiber Media:       ' + spec.fiber);
+    lines.push('   Frame / Supports:  ' + spec.frame);
+    lines.push('   Nozzles:           ' + spec.nozzle_mat);
+    lines.push('   Inlet Nozzle:      DN' + spec.nozzleDN);
+    lines.push('   Outlet Nozzle:     DN' + spec.nozzleDN);
+    lines.push('   Drain Nozzle:      DN50 (minimum)');
+    lines.push('');
+    lines.push('4. SIZING & PERFORMANCE');
+    lines.push('   Calculated I.D.:   ' + fmtNum(spec.sizing.calcDiamMm) + ' mm');
+    lines.push('   Selected I.D.:     ' + fmtNum(spec.sizing.selectedDiam) + ' mm (standard)');
+    lines.push('   Face Area:         ' + spec.sizing.selectedArea + ' m\u00b2');
+    lines.push('   Design Velocity:   ' + spec.designVelocity + ' m/s');
+    lines.push('   Actual Velocity:   ' + spec.sizing.actualVelocity + ' m/s');
+    lines.push('   Est. Pressure Drop: ~' + spec.actualPD + ' mbar');
+    lines.push('');
+    lines.push('5. PERFORMANCE GUARANTEE');
+    lines.push('   Outlet Efficiency: \u2265 ' + spec.efficiency + '% (droplets >3\u03bcm)');
+    lines.push('   Max Pressure Drop: ' + spec.maxPd + ' mbar');
+    lines.push('');
+    lines.push('6. APPLICABLE STANDARDS');
+    lines.push('   Shell Design:     ' + spec.standards.shell);
+    lines.push('   Material:         ' + spec.standards.material);
+    lines.push('   Fiber:            ' + spec.standards.fiber_std);
+    lines.push('   Flanges:          ' + spec.standards.flanges);
+    lines.push('');
+    lines.push('7. ENGINEERING NOTES');
+    lines.push('   ' + spec.mat_note);
+    if (spec.userNotes) lines.push('   ' + spec.userNotes);
+    lines.push('');
+    lines.push('8. SCOPE EXCLUSIONS');
+    lines.push('   \u2022 Structural support / foundation');
+    lines.push('   \u2022 Inlet distributor / liquid drain piping');
+    lines.push('   \u2022 Instrumentation and controls');
+    lines.push('   \u2022 Installation and commissioning');
+    lines.push('');
+    lines.push('This specification is indicative only and subject to detailed engineering review.');
+    lines.push('Kimre Inc. | applications@kimre.com | www.kimre.com');
+    return lines.join('\n');
+  }
+
+  // ── Render spec sheet HTML ──
+  function renderSpec(spec, flags) {
+    var flagsHtml = '';
+    if (flags.length > 0) {
+      var pills = flags.map(function(f) {
+        return '<div class="flag-pill' + (f.level === 'red' ? ' flag-red' : '') + '"><div class="flag-dot' + (f.level === 'red' ? ' red' : '') + '"></div><span>' + f.msg + '</span></div>';
+      }).join('');
+      document.getElementById('flags-list').innerHTML = pills;
+      document.getElementById('flags-container').classList.remove('hidden');
+    } else {
+      document.getElementById('flags-container').classList.add('hidden');
+    }
+
+    // Build flags for notes section
+    var flagNoteHtml = flags.map(function(f) {
+      return '<span class="spec-flag-inline' + (f.level === 'red' ? ' red' : '') + '">\u26a0 ' + f.msg + '</span>';
+    }).join('');
+
+    var html = '';
+    // Header
+    html += '<div class="spec-header">';
+    html += '<div><div class="spec-brand">KIMRE</div><div class="spec-brand-sub">KIMRE INC. \u2014 MIAMI, FL USA</div></div>';
+    html += '<div class="spec-doc-title"><h2>Equipment Specification Sheet</h2><p>Document No: KES-' + (spec.tag ? spec.tag.split(' ')[0].replace(/[^A-Z0-9]/gi,'') : 'DRAFT') + '-' + spec.rev + '</p></div>';
+    html += '</div>';
+
+    // Identity
+    html += '<div class="spec-identity">';
+    html += '<div class="spec-id-row"><span class="spec-id-label">Equipment Tag:</span><span class="spec-id-value">' + (spec.tag || '—') + '</span></div>';
+    html += '<div class="spec-id-row"><span class="spec-id-label">Revision:</span><span class="spec-id-value">' + spec.rev + '</span></div>';
+    html += '<div class="spec-id-row"><span class="spec-id-label">Customer:</span><span class="spec-id-value">' + (spec.customer || '—') + '</span></div>';
+    html += '<div class="spec-id-row"><span class="spec-id-label">Project Ref:</span><span class="spec-id-value">' + (spec.projref || '—') + '</span></div>';
+    html += '<div class="spec-id-row"><span class="spec-id-label">Prepared By:</span><span class="spec-id-value">' + spec.prepby + '</span></div>';
+    html += '<div class="spec-id-row"><span class="spec-id-label">Date:</span><span class="spec-id-value">' + spec.dateStr + '</span></div>';
+    html += '</div>';
+
+    // 1. Design Basis
+    html += '<div class="spec-section">';
+    html += '<div class="spec-section-title">1. Design Basis</div>';
+    html += '<table class="spec-table">';
+    html += '<tr><td>Gas Flow Rate</td><td>' + fmtNum(spec.flow) + ' Nm\u00b3/hr</td></tr>';
+    if (spec.temp) html += '<tr><td>Operating Temperature</td><td>' + spec.temp + '\u00b0C</td></tr>';
+    html += '<tr><td>Operating Pressure</td><td>' + spec.pressure + ' bar(a)</td></tr>';
+    html += '<tr><td>Mist Loading (estimated)</td><td>' + spec.loading + ' g/Nm\u00b3</td></tr>';
+    html += '<tr><td>Primary Chemical</td><td>' + spec.chemical + ' \u2014 ' + spec.concentration + '</td></tr>';
+    if (spec.secondary) html += '<tr><td>Secondary Chemicals Present</td><td>' + spec.secondary + '</td></tr>';
+    html += '<tr><td>Vessel Type</td><td>' + spec.vesselTypeLabel + '</td></tr>';
+    if (spec.existingId) html += '<tr><td>Existing Vessel I.D.</td><td>' + fmtNum(spec.existingId) + ' mm (as measured)</td></tr>';
+    html += '<tr><td>Inlet / Outlet Orientation</td><td>' + spec.orientLabel + '</td></tr>';
+    html += '</table>';
+    html += '</div>';
+
+    // 2. Selected Equipment
+    html += '<div class="spec-section">';
+    html += '<div class="spec-section-title">2. Selected Equipment</div>';
+    html += '<table class="spec-table">';
+    html += '<tr><td>Product Family</td><td>' + spec.product + '</td></tr>';
+    html += '<tr><td>Model / Type</td><td>' + spec.model + '</td></tr>';
+    html += '<tr><td>Service</td><td>' + spec.service + '</td></tr>';
+    if (spec.appData.epa_flag) html += '<tr><td>Regulatory</td><td>EPA-applicable service \u2014 confirm stack test requirements</td></tr>';
+    html += '</table>';
+    html += '</div>';
+
+    // 3. Construction
+    html += '<div class="spec-section">';
+    html += '<div class="spec-section-title">3. Construction</div>';
+    html += '<table class="spec-table">';
+    html += '<tr><td>Vessel Nominal I.D.</td><td>' + fmtNum(spec.sizing.selectedDiam) + ' mm</td></tr>';
+    html += '<tr><td>Shell Material</td><td>' + spec.shell_material + '</td></tr>';
+    html += '<tr><td>Fiber / Filter Media</td><td>' + spec.fiber + '</td></tr>';
+    html += '<tr><td>Frame / Internal Supports</td><td>' + spec.frame + '</td></tr>';
+    html += '<tr><td>Nozzle Material / Type</td><td>' + spec.nozzle_mat + '</td></tr>';
+    html += '<tr><td>Inlet Nozzle</td><td>DN' + spec.nozzleDN + '</td></tr>';
+    html += '<tr><td>Outlet Nozzle</td><td>DN' + spec.nozzleDN + '</td></tr>';
+    html += '<tr><td>Drain Nozzle</td><td>DN50 (minimum)</td></tr>';
+    if (spec.height) html += '<tr><td>Available Element Height</td><td>' + spec.height + ' m (constraint noted)</td></tr>';
+    html += '</table>';
+    html += '</div>';
+
+    // 4. Sizing & Performance
+    html += '<div class="spec-section">';
+    html += '<div class="spec-section-title">4. Sizing &amp; Performance</div>';
+    html += '<table class="spec-table">';
+    html += '<tr><td>Calculated Required I.D.</td><td>' + fmtNum(spec.sizing.calcDiamMm) + ' mm</td></tr>';
+    html += '<tr><td>Selected Nominal I.D.</td><td>' + fmtNum(spec.sizing.selectedDiam) + ' mm (standard)</td></tr>';
+    html += '<tr><td>Cross-Sectional Face Area</td><td>' + spec.sizing.selectedArea + ' m\u00b2</td></tr>';
+    html += '<tr><td>Design Face Velocity</td><td>' + spec.designVelocity + ' m/s (recommended)</td></tr>';
+    html += '<tr><td>Actual Face Velocity</td><td>' + spec.sizing.actualVelocity + ' m/s (at design conditions)</td></tr>';
+    html += '<tr><td>Velocity Range (min / max)</td><td>' + spec.appData.velocity.min + ' / ' + spec.appData.velocity.max + ' m/s</td></tr>';
+    html += '<tr><td>Estimated Pressure Drop</td><td>~' + spec.actualPD + ' mbar</td></tr>';
+    html += '</table>';
+    html += '</div>';
+
+    // 5. Performance Guarantee
+    html += '<div class="spec-section">';
+    html += '<div class="spec-section-title">5. Performance Guarantee</div>';
+    html += '<table class="spec-table">';
+    html += '<tr><td>Outlet Efficiency</td><td>\u2265 ' + spec.efficiency + '% collection efficiency (droplets &gt;3\u03bcm)</td></tr>';
+    html += '<tr><td>Max Allowable Pressure Drop</td><td>' + spec.maxPd + ' mbar (at design conditions)</td></tr>';
+    html += '<tr><td>Basis</td><td>Performance at stated design basis conditions only</td></tr>';
+    html += '</table>';
+    html += '</div>';
+
+    // 6. Applicable Standards
+    html += '<div class="spec-section">';
+    html += '<div class="spec-section-title">6. Applicable Standards</div>';
+    html += '<table class="spec-table">';
+    html += '<tr><td>Shell Design</td><td>' + spec.standards.shell + '</td></tr>';
+    html += '<tr><td>Shell / Element Material</td><td>' + spec.standards.material + '</td></tr>';
+    html += '<tr><td>Fiber / Filter Media</td><td>' + spec.standards.fiber_std + '</td></tr>';
+    html += '<tr><td>Flanges</td><td>' + spec.standards.flanges + '</td></tr>';
+    html += '</table>';
+    html += '</div>';
+
+    // 7. Engineering Notes
+    html += '<div class="spec-section">';
+    html += '<div class="spec-section-title">7. Engineering Notes</div>';
+    html += '<p class="spec-note">' + spec.mat_note + '</p>';
+    if (flagNoteHtml) html += flagNoteHtml;
+    if (spec.userNotes && spec.userNotes.trim()) {
+      html += '<div class="spec-user-note"><strong>Additional Notes:</strong>\n' + spec.userNotes + '</div>';
+    }
+    html += '</div>';
+
+    // 8. Scope Exclusions
+    html += '<div class="spec-section">';
+    html += '<div class="spec-section-title">8. Scope Exclusions</div>';
+    html += '<ul class="spec-exclusions-list">';
+    html += '<li>Structural support / foundation design</li>';
+    html += '<li>Inlet gas distributor / liquid drain piping beyond nozzle face</li>';
+    html += '<li>Instrumentation, controls, and electrical</li>';
+    html += '<li>Installation and commissioning services</li>';
+    html += '<li>Upstream / downstream process equipment</li>';
+    html += '</ul>';
+    html += '</div>';
+
+    // Footer
+    html += '<div class="spec-footer">';
+    html += '<span>This specification is <strong>indicative only</strong> and subject to detailed engineering review prior to order. Data subject to change without notice.</span>';
+    html += '<span><strong>Kimre Inc.</strong> | applications@kimre.com | www.kimre.com</span>';
+    html += '</div>';
+
+    document.getElementById('spec-sheet').innerHTML = html;
+  }
+
+  // ── Main generate function ──
+  window.generateSpec = function() {
+    var appKey = document.getElementById('f-apptype').value;
+    var flow   = parseFloat(document.getElementById('f-flow').value);
+
+    if (!appKey) { alert('Please select an Application Type (Section B) before generating.'); return; }
+    if (!flow || flow <= 0) { alert('Please enter a Gas Flow Rate (Section C) before generating.'); return; }
+
+    var appData = APP_DATA[appKey] || null;
+    if (!appData) {
+      alert('Custom / Other application selected — please fill all fields manually. Auto-sizing not available for Other/Custom.'); return;
+    }
+
+    // Collect inputs
+    var customer   = document.getElementById('f-customer').value.trim() || '—';
+    var tag        = document.getElementById('f-tag').value.trim() || 'UNTAGGED';
+    var projref    = document.getElementById('f-projref').value.trim() || '—';
+    var rev        = document.getElementById('f-rev').value.trim() || 'A';
+    var prepby     = document.getElementById('f-prepby').value.trim() || 'Alex Torres';
+    var dateVal    = document.getElementById('f-date').value;
+    var chemical   = document.getElementById('f-chem').value.trim() || appData.chemical;
+    var conc       = document.getElementById('f-conc').value.trim() || appData.concentration;
+    var temp       = document.getElementById('f-temp').value.trim();
+    var secondary  = document.getElementById('f-secondary').value.trim();
+    var pressure   = document.getElementById('f-pressure').value || '1.013';
+    var loading    = parseFloat(document.getElementById('f-loading').value) || appData.loading;
+    var efficiency = parseFloat(document.getElementById('f-efficiency').value) || appData.efficiency;
+    var maxPd      = parseFloat(document.getElementById('f-maxpd').value) || 50;
+    var vesselType = document.getElementById('f-vesseltype').value;
+    var existingId = document.getElementById('f-existid').value.trim();
+    var height     = document.getElementById('f-height').value.trim();
+    var orient     = document.getElementById('f-orientation').value;
+    var userNotes  = document.getElementById('f-notes').value.trim();
+
+    var vesselTypeLabels = { new: 'New vessel (Kimre to size)', retrofit: 'Retrofit \u2014 existing vessel', canister: 'Canister internal' };
+
+    // Size
+    var sizing = calcSizing(flow, appData.velocity.design);
+    var nozzleDN = calcNozzle(flow);
+
+    // If retrofit, override selectedDiam with existing ID (no re-sizing)
+    if (vesselType === 'retrofit' && existingId && parseFloat(existingId) > 0) {
+      var existDiam = parseFloat(existingId);
+      var existArea = Math.PI * Math.pow(existDiam / 1000, 2) / 4;
+      sizing.selectedDiam = existDiam;
+      sizing.selectedArea = existArea.toFixed(3);
+      sizing.actualVelocity = ((flow / 3600) / existArea).toFixed(3);
+    }
+
+    // Pressure drop
+    var av = parseFloat(sizing.actualVelocity);
+    var rawPD = appData.pressure_drop_base * Math.pow(av / appData.velocity.design, 2);
+    var actualPD = roundPDTo5(rawPD) || 5;
+
+    // Flags
+    var flags = buildFlags(appKey, appData, sizing, temp, maxPd, actualPD);
+
+    var spec = {
+      customer: customer, tag: tag, projref: projref, rev: rev, prepby: prepby,
+      dateStr: fmtDate(dateVal), chemical: chemical, concentration: conc,
+      temp: temp, secondary: secondary, pressure: pressure, loading: loading,
+      efficiency: efficiency, maxPd: maxPd, flow: flow,
+      product: appData.product, model: appData.model, service: appData.service,
+      shell_material: appData.shell_material, fiber: appData.fiber,
+      frame: appData.frame, nozzle_mat: appData.nozzle_mat,
+      designVelocity: appData.velocity.design, sizing: sizing,
+      nozzleDN: nozzleDN, actualPD: actualPD,
+      mat_note: appData.mat_note, standards: appData.standards,
+      vesselTypeLabel: vesselTypeLabels[vesselType] || vesselType,
+      existingId: vesselType === 'retrofit' ? existingId : null,
+      height: height, orientLabel: orientLabel(orient),
+      userNotes: userNotes, appData: appData
+    };
+
+    // Store for clipboard/email
+    window._lastSpec = spec;
+    window._lastFlags = flags;
+    window._lastPlainText = buildPlainText(spec);
+
+    // Render
+    renderSpec(spec, flags);
+
+    // Show spec sheet
+    document.getElementById('spec-placeholder').classList.add('hidden');
+    document.getElementById('spec-sheet').classList.remove('hidden');
+    document.getElementById('action-buttons').classList.remove('hidden');
+
+    // Update email button
+    var emailSubj = 'Spec Sheet \u2014 ' + tag + ' \u2014 ' + customer;
+    window._emailSubj = emailSubj;
+
+    // Scroll to spec on mobile
+    if (window.innerWidth < 1024) {
+      document.getElementById('spec-sheet').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  window.copySpec = function() {
+    if (!window._lastPlainText) { alert('Generate a spec sheet first.'); return; }
+    navigator.clipboard.writeText(window._lastPlainText).then(function() {
+      var btn = document.querySelectorAll('.btn-action')[1];
+      btn.textContent = '\u2713 Copied!';
+      setTimeout(function() { btn.textContent = '\uD83D\uDCCB Copy as Text'; }, 2000);
+    }).catch(function() {
+      prompt('Copy the spec text below:', window._lastPlainText);
+    });
+  };
+
+  window.emailSpec = function() {
+    if (!window._lastPlainText) { alert('Generate a spec sheet first.'); return; }
+    var subj = encodeURIComponent(window._emailSubj || 'Equipment Specification Sheet');
+    var body = encodeURIComponent(window._lastPlainText);
+    window.location.href = 'mailto:engineering@kimre.com?subject=' + subj + '&body=' + body;
+  };
+
+})();
+</script>
+</body>
+</html>

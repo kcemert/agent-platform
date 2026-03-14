@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IT System Health — Business Agents Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #1c2128;
+      --card-hover: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+
+      --sandbox: #39d353;
+      --sandbox-dim: #39d35320;
+      --blueprint-col: #8b949e;
+      --blueprint-dim: #8b949e20;
+
+      --low: #3fb950;
+      --low-dim: #3fb95020;
+      --medium: #d29922;
+      --medium-dim: #d2992220;
+      --high: #f85149;
+      --high-dim: #f8514920;
+
+      --cyan: #56d364;
+      --it: #3dcfcf;
+      --it-dim: #3dcfcf18;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Offline Banner ── */
+    #offline-banner {
+      display: none;
+      background: #d2992220;
+      border-bottom: 1px solid #d2992240;
+      padding: 10px 32px;
+      font-size: 0.82rem;
+      color: var(--medium);
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+    }
+
+    .nav-tab:hover {
+      background: rgba(88, 166, 255, 0.08);
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: rgba(88, 166, 255, 0.12);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .persona-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--it);
+      margin-bottom: 6px;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .persona-name {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .refresh-info {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .refresh-btn {
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      margin-left: 8px;
+      transition: background 120ms;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .refresh-btn:hover { background: rgba(88,166,255,0.08); }
+
+    /* ── KPI Bar ── */
+    .kpi-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 28px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .kpi-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kpi-value {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .kpi-value.accent { color: var(--accent); }
+    .kpi-value.green { color: var(--low); }
+    .kpi-value.it { color: var(--it); }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      padding: 32px 40px;
+    }
+
+    .main-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .kpi-section {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .col-left {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .col-right {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ── Cards / Panels ── */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── System Connections ── */
+    .connection-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .connection-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .connection-row:last-child { border-bottom: none; }
+
+    .connection-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .connection-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .connection-port {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+    }
+
+    .connection-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .conn-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .conn-status.connected { color: var(--low); }
+    .conn-status.offline { color: var(--text-muted); }
+    .conn-status.checking { color: var(--medium); }
+
+    .conn-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .conn-dot.green { background: var(--low); box-shadow: 0 0 6px rgba(63,185,80,0.5); }
+    .conn-dot.gray { background: var(--text-muted); }
+    .conn-dot.amber { background: var(--medium); }
+
+    .connection-meta {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 16px;
+    }
+
+    .connection-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* ── Activity Log Table ── */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    thead th {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 10px 10px 0;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 100ms;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(88,166,255,0.04); }
+
+    tbody td {
+      padding: 9px 10px 9px 0;
+      color: var(--text-secondary);
+      vertical-align: middle;
+    }
+
+    td.agent-col {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    td.outcome-col { white-space: nowrap; }
+
+    .outcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .outcome-badge.success {
+      background: var(--low-dim);
+      color: var(--low);
+      border: 1px solid rgba(63,185,80,0.25);
+    }
+
+    .outcome-badge.partial {
+      background: var(--medium-dim);
+      color: var(--medium);
+      border: 1px solid rgba(210,153,34,0.25);
+    }
+
+    .outcome-badge.failed {
+      background: var(--high-dim);
+      color: var(--high);
+      border: 1px solid rgba(248,81,73,0.25);
+    }
+
+    .outcome-badge.unknown {
+      background: rgba(110,118,129,0.1);
+      color: var(--text-muted);
+      border: 1px solid rgba(110,118,129,0.2);
+    }
+
+    /* ── Recommendation Decisions table ── */
+    .rec-row.pending td {
+      background: rgba(61,207,207,0.03);
+    }
+
+    .rec-row.pending td.agent-col {
+      color: var(--it);
+    }
+
+    .rec-row.decided {
+      opacity: 0.55;
+    }
+
+    .decision-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .decision-badge.approved {
+      background: var(--low-dim);
+      color: var(--low);
+      border: 1px solid rgba(63,185,80,0.25);
+    }
+
+    .decision-badge.rejected {
+      background: var(--high-dim);
+      color: var(--high);
+      border: 1px solid rgba(248,81,73,0.25);
+    }
+
+    .decision-badge.pending {
+      background: var(--it-dim);
+      color: var(--it);
+      border: 1px solid rgba(61,207,207,0.25);
+    }
+
+    /* ── API Metrics per agent ── */
+    .agent-metrics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .agent-metric-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .agent-metric-row:last-child { border-bottom: none; }
+
+    .agent-metric-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .agent-metric-slug {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+    }
+
+    .agent-metric-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .metric-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .metric-stat-val {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .metric-stat-val.green { color: var(--low); }
+    .metric-stat-val.it { color: var(--it); }
+
+    .metric-stat-lbl {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 16px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .two-col { grid-template-columns: 1fr; }
+      .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .page-header, main { padding-left: 20px; padding-right: 20px; }
+      .top-nav { padding: 0 16px; }
+      .kpi-bar { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* S41-4A: Auto-Refresh Countdown Ring */
+    .refresh-ring-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; cursor: pointer; }
+    .refresh-ring-wrap span { position: absolute; }
+
+    /* S41-4B: Payload Inspector */
+    .payload-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none; }
+    .payload-overlay.show { display:block; }
+    .payload-panel { position:fixed;right:0;top:0;bottom:0;width:520px;background:var(--card);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform 0.25s ease;display:flex;flex-direction:column; }
+    .payload-panel.show { transform:translateX(0); }
+    .payload-header { display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border); }
+    .payload-tabs { display:flex;gap:4px;padding:12px 16px;border-bottom:1px solid var(--border); }
+    .ptab { background:none;border:1px solid var(--border);color:var(--text-muted);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px; }
+    .ptab.active { background:#6366f1;color:#fff;border-color:transparent; }
+    .payload-code { flex:1;overflow:auto;padding:16px;font-family:monospace;font-size:12px;line-height:1.6;color:#94a3b8;white-space:pre-wrap;word-break:break-all; }
+    .payload-code .tok-key { color:#6366f1; }
+    .payload-code .tok-str { color:#22c55e; }
+    .payload-code .tok-num { color:#f97316; }
+    .payload-code .tok-bool { color:#f59e0b; }
+
+    /* S41-4C: Latency Card */
+    .latency-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .latency-card .panel-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Offline Banner ── -->
+  <div id="offline-banner">
+    &#9888; Server offline &mdash; showing static fallback data. Start with: <code style="font-family:monospace;background:#d2992215;padding:1px 6px;border-radius:3px;">cd dashboards &amp;&amp; python3 server.py</code>
+  </div>
+
+  <!-- ── Top Nav ── -->
+  <nav class="top-nav">
+    <span class="nav-brand">&#9889; Business Agents Platform</span>
+    <div class="nav-personas">
+      <a href="operations.html" class="nav-tab">Operations</a>
+      <a href="finance.html" class="nav-tab">Finance</a>
+      <a href="compliance.html" class="nav-tab">Compliance</a>
+      <a href="it-health.html" class="nav-tab active">IT</a>
+      <a href="pipeline.html" class="nav-tab">Pipeline</a>
+      <a href="action-queue.html" class="nav-tab">Action Queue</a>
+      <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>
+      <a href="eval.html" class="nav-tab">Eval <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>#9650;</a>
+    </div>
+  </nav>
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <div class="persona-label">IT Technical Lead</div>
+        <h1>IT System Health</h1>
+        <div class="persona-name">Integration monitoring &amp; agent audit</div>
+      </div>
+      <div style="text-align:right;display:flex;align-items:center;gap:16px;">
+        <!-- S41-4A: Auto-Refresh Countdown Ring -->
+        <div class="refresh-ring-wrap" title="Auto-refreshes every 30s">
+          <svg width="36" height="36" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="15" fill="none" stroke="#1e293b" stroke-width="3"/>
+            <circle id="refreshRing" cx="18" cy="18" r="15" fill="none" stroke="#6366f1" stroke-width="3"
+              stroke-dasharray="94.25" stroke-dashoffset="0" stroke-linecap="round"
+              transform="rotate(-90 18 18)" style="transition:stroke-dashoffset 1s linear"/>
+          </svg>
+          <span id="refreshSecs" style="position:absolute;font-size:10px;font-weight:700;color:#6366f1">30</span>
+        </div>
+        <div>
+          <div class="refresh-info">
+            Last refreshed: <span id="last-refreshed">&#8212;</span>
+            <button class="refresh-btn" onclick="loadAll()">&#8635; Refresh</button>
+          </div>
+          <div id="header-status" style="margin-top:8px; font-size:0.75rem; color:var(--text-muted);">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <main>
+    <div class="main-inner">
+
+      <!-- KPI Bar -->
+      <div class="kpi-section">
+        <div class="section-title">System Overview</div>
+        <div class="kpi-bar">
+          <div class="kpi-item">
+            <div class="kpi-value it" id="kpi-uptime">99.8%</div>
+            <div class="kpi-label">System Uptime</div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-value accent" id="kpi-api-calls">&#8212;</div>
+            <div class="kpi-label">API Calls (24h)</div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-value green" id="kpi-success-rate">&#8212;</div>
+            <div class="kpi-label">Success Rate</div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-value" id="kpi-avg-duration">&#8212;</div>
+            <div class="kpi-label">Avg Duration</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column content -->
+      <div class="two-col">
+
+        <!-- LEFT: System Connections + Activity Log -->
+        <div class="col-left">
+
+          <!-- System Connections -->
+          <div class="panel">
+            <div class="panel-title">System Connections</div>
+            <div class="connection-list" id="connection-list">
+              <!-- Rendered by JS -->
+              <div style="color:var(--text-muted);font-size:0.82rem;padding:8px 0;">Checking connections...</div>
+            </div>
+          </div>
+
+          <!-- S41-4C: Latency Trend -->
+          <div class="latency-card">
+            <div class="panel-title">Run Latency — Last 14 Runs</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:0.75rem;color:var(--text-muted);" id="avgLatencyLabel">Avg: &mdash;</span>
+            </div>
+            <svg id="latencyChart" width="100%" height="120" viewBox="0 0 420 120" preserveAspectRatio="none" style="display:block"></svg>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px">
+              <span style="display:inline-block;width:10px;height:10px;background:#6366f1;border-radius:2px;margin-right:4px"></span>Normal
+              <span style="display:inline-block;width:10px;height:10px;background:#ef4444;border-radius:2px;margin-left:12px;margin-right:4px"></span>&gt; 5s threshold
+            </div>
+          </div>
+
+          <!-- Agent Activity Log -->
+          <div class="panel">
+            <div class="panel-title">Agent Activity Log</div>
+            <!-- S41-4D: Failed Run Filter -->
+            <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
+              <button id="filterFailedBtn" onclick="toggleFailedFilter()" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Show Failed Only</button>
+              <span id="failedCount" style="font-size:12px;color:var(--text-muted)"></span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Agent</th>
+                    <th>Timestamp</th>
+                    <th>Duration</th>
+                    <th>Outcome</th>
+                    <th>Recs Generated</th>
+                    <th>Inspect</th>
+                  </tr>
+                </thead>
+                <tbody id="activity-tbody">
+                  <tr><td colspan="6" style="color:var(--text-muted);padding:12px 0;">Loading activity...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Recommendation Decisions + API Metrics -->
+        <div class="col-right">
+
+          <!-- Recommendation Decisions -->
+          <div class="panel">
+            <div class="panel-title">Recommendation Decisions</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Action</th>
+                    <th>Decision</th>
+                    <th>By</th>
+                    <th>When</th>
+                  </tr>
+                </thead>
+                <tbody id="recs-tbody">
+                  <tr><td colspan="5" style="color:var(--text-muted);padding:12px 0;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- API Metrics per agent -->
+          <div class="panel">
+            <div class="panel-title">API Metrics (per agent)</div>
+            <div class="agent-metrics-list" id="agent-metrics-list">
+              <div style="color:var(--text-muted);font-size:0.82rem;padding:8px 0;">Loading metrics...</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span>IT Technical Lead &mdash; Consumer Goods Pilot</span>
+    <span>
+      <a href="enterprise.html">Enterprise Dashboard &#8599;</a>
+      &nbsp;&middot;&nbsp;
+      <a href="#" onclick="loadAll(); return false;">&#8635; Refresh Data</a>
+    </span>
+  </footer>
+
+  <!-- S41-4B: Payload Inspector -->
+  <div class="payload-overlay" id="payloadOverlay" onclick="closePayload()"></div>
+  <div class="payload-panel" id="payloadPanel">
+    <div class="payload-header">
+      <h3 id="payloadTitle" style="font-size:0.9rem;font-weight:700;color:var(--text);">Payload Inspector</h3>
+      <button onclick="closePayload()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px">&#x2715;</button>
+    </div>
+    <div class="payload-tabs">
+      <button class="ptab active" onclick="switchPayloadTab('input', this)">Input</button>
+      <button class="ptab" onclick="switchPayloadTab('output', this)">Output</button>
+      <button class="ptab" onclick="switchPayloadTab('meta', this)">Metadata</button>
+    </div>
+    <pre id="payloadContent" class="payload-code"></pre>
+  </div>
+
+  <script>
+    const API = 'http://localhost:8500';
+
+    // ── Agent display names ────────────────────────────────────────────────
+    const AGENT_META = {
+      'cg-replenishment-pr-agent':  { name: 'CG Replenishment PR Agent',   short: 'Replenishment' },
+      'cg-demand-forecast-agent':   { name: 'CG Demand Forecast Agent',     short: 'Demand Forecast' },
+      'cg-quality-capa-agent':      { name: 'CG Quality CAPA Agent',        short: 'Quality CAPA' }
+    };
+
+    // ── Fallback static data ───────────────────────────────────────────────
+    const FALLBACK_CONNECTIONS = [
+      { name: 'SAP ERP (Mock)', port: 3001, status: 'offline', lastCall: null, responseMs: null, note: 'Server not running' },
+      { name: 'MES Platform',   port: 3002, status: 'offline', lastCall: null, responseMs: null, note: 'Server not running' },
+      { name: 'Business DB',    port: null, status: 'connected', lastCall: null, responseMs: null, note: 'SQLite \u2022 Local' }
+    ];
+
+    const FALLBACK_ACTIVITY = [
+      { agent: 'cg-replenishment-pr-agent', run_at: null, duration_secs: null, outcome: 'unknown', rec_count: 0 },
+      { agent: 'cg-demand-forecast-agent',  run_at: null, duration_secs: null, outcome: 'unknown', rec_count: 0 },
+      { agent: 'cg-quality-capa-agent',     run_at: null, duration_secs: null, outcome: 'unknown', rec_count: 0 }
+    ];
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+    function esc(str) {
+      return String(str === null || str === undefined ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function timeAgo(isoStr) {
+      if (!isoStr) return '&#8212;';
+      const raw = String(isoStr);
+      const then = new Date(raw.replace(' ', 'T') + (raw.includes('T') ? '' : 'Z'));
+      const diff = Math.floor((Date.now() - then) / 1000);
+      if (isNaN(diff)) return esc(isoStr);
+      if (diff < 60)   return diff + 's ago';
+      if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+      return Math.floor(diff / 86400) + 'd ago';
+    }
+
+    function fmtDuration(secs) {
+      if (secs === null || secs === undefined) return '&#8212;';
+      const s = parseFloat(secs);
+      if (isNaN(s)) return '&#8212;';
+      return s.toFixed(1) + 's';
+    }
+
+    function outcomeBadge(outcome) {
+      const o = (outcome || 'unknown').toLowerCase();
+      const labels = { success: 'Success', partial: 'Partial', failed: 'Failed', unknown: 'Unknown' };
+      const cls = ['success','partial','failed'].includes(o) ? o : 'unknown';
+      return `<span class="outcome-badge ${esc(cls)}">${esc(labels[cls] || o)}</span>`;
+    }
+
+    function decisionBadge(decision) {
+      if (!decision) return `<span class="decision-badge pending">Pending</span>`;
+      const d = String(decision).toLowerCase();
+      if (d === 'approved') return `<span class="decision-badge approved">Approved</span>`;
+      if (d === 'rejected') return `<span class="decision-badge rejected">Rejected</span>`;
+      return `<span class="decision-badge pending">${esc(decision)}</span>`;
+    }
+
+    function agentShortName(slug) {
+      return (AGENT_META[slug] && AGENT_META[slug].short) || slug;
+    }
+
+    function agentFullName(slug) {
+      return (AGENT_META[slug] && AGENT_META[slug].name) || slug;
+    }
+
+    // ── Render: System Connections ─────────────────────────────────────────
+    function renderConnections(connections) {
+      const el = document.getElementById('connection-list');
+      if (!connections || connections.length === 0) {
+        el.innerHTML = '<div style="color:var(--text-muted);font-size:0.82rem;padding:8px 0;">No connection data.</div>';
+        return;
+      }
+
+      el.innerHTML = connections.map(c => {
+        const isConnected = c.status === 'connected';
+        const dotCls = isConnected ? 'green' : (c.status === 'checking' ? 'amber' : 'gray');
+        const statusCls = isConnected ? 'connected' : (c.status === 'checking' ? 'checking' : 'offline');
+        const statusText = isConnected ? 'Connected' : (c.status === 'checking' ? 'Checking...' : 'Offline');
+        const meta1 = c.lastCall ? `Last call: ${timeAgo(c.lastCall)}` : (c.note || '');
+        const meta2 = c.responseMs !== null && c.responseMs !== undefined
+          ? `Response: ${c.responseMs}ms`
+          : (c.responseMs === null && isConnected ? '' : '');
+
+        return `<div class="connection-row">
+          <div class="connection-top">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="connection-name">${esc(c.name)}</div>
+              ${c.port ? `<span class="connection-port">:${esc(c.port)}</span>` : ''}
+            </div>
+            <div class="connection-right">
+              <div class="conn-status ${statusCls}">
+                <span class="conn-dot ${dotCls}"></span>
+                ${esc(statusText)}
+              </div>
+            </div>
+          </div>
+          <div class="connection-meta">
+            ${meta1 ? `<span>${esc(meta1)}</span>` : ''}
+            ${meta2 ? `<span>${esc(meta2)}</span>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── Render: Activity Log ───────────────────────────────────────────────
+    function renderActivityLog(allRuns) {
+      // Flatten and attach agent slug
+      const flat = [];
+      for (const [slug, runs] of Object.entries(allRuns)) {
+        for (const r of (runs || [])) {
+          flat.push({ agent: slug, ...r });
+        }
+      }
+
+      // Sort by run_at DESC
+      flat.sort((a, b) => {
+        const ta = String(a.run_at || '');
+        const tb = String(b.run_at || '');
+        return tb.localeCompare(ta);
+      });
+
+      // Cache for S41-4D filter
+      _allRunsCache = flat.slice(0, 15);
+
+      // Use S41-4D renderRunHistory to render (supports filter + drilldown + inspect)
+      renderRunHistory(_allRunsCache);
+    }
+
+    // ── Render: Recommendation Decisions ──────────────────────────────────
+    function renderPendingRecs(pending) {
+      const tbody = document.getElementById('recs-tbody');
+      const items = Array.isArray(pending) ? pending : [];
+
+      if (items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted);padding:12px 0;">No pending recommendations.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = items.map(r => {
+        const hasDec = r.decision && r.decision !== 'pending';
+        const rowCls = hasDec ? 'rec-row decided' : 'rec-row pending';
+        const item = r.item || r.sku || r.material || r.id || '&#8212;';
+        const action = r.action || r.recommendation_type || '&#8212;';
+        const decidedBy = r.decided_by || r.approved_by || (hasDec ? 'System' : '&#8212;');
+        const when = r.decided_at || r.approved_at || (hasDec ? r.updated_at : null);
+
+        return `<tr class="${rowCls}">
+          <td class="agent-col" title="${esc(item)}" style="max-width:100px;">${esc(String(item).slice(0,18))}</td>
+          <td style="font-size:0.75rem;">${esc(String(action).slice(0,20))}</td>
+          <td>${decisionBadge(hasDec ? r.decision : null)}</td>
+          <td style="font-size:0.73rem;color:var(--text-secondary);">${esc(String(decidedBy).slice(0,12))}</td>
+          <td style="font-size:0.73rem;white-space:nowrap;">${when ? timeAgo(when) : '&#8212;'}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ── Render: API Metrics per agent ──────────────────────────────────────
+    function renderMetrics(allRuns) {
+      const el = document.getElementById('agent-metrics-list');
+      const slugs = Object.keys(AGENT_META);
+
+      el.innerHTML = slugs.map(slug => {
+        const runs = allRuns[slug] || [];
+        const total = runs.length;
+        const successCount = runs.filter(r => r.outcome === 'success').length;
+        const successPct = total > 0 ? Math.round((successCount / total) * 100) : null;
+
+        const durations = runs.map(r => parseFloat(r.duration_secs)).filter(n => !isNaN(n));
+        const avgDur = durations.length > 0
+          ? (durations.reduce((a, b) => a + b, 0) / durations.length).toFixed(1)
+          : null;
+
+        return `<div class="agent-metric-row">
+          <div>
+            <div class="agent-metric-name">${esc(agentFullName(slug))}</div>
+            <div class="agent-metric-slug">${esc(slug)}</div>
+          </div>
+          <div class="agent-metric-stats">
+            <div class="metric-stat">
+              <div class="metric-stat-val it">${total}</div>
+              <div class="metric-stat-lbl">Runs</div>
+            </div>
+            <div class="metric-stat">
+              <div class="metric-stat-val green">${successPct !== null ? successPct + '%' : '&#8212;'}</div>
+              <div class="metric-stat-lbl">Success</div>
+            </div>
+            <div class="metric-stat">
+              <div class="metric-stat-val">${avgDur !== null ? avgDur + 's' : '&#8212;'}</div>
+              <div class="metric-stat-lbl">Avg Duration</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── Render: KPI Bar ────────────────────────────────────────────────────
+    function renderKPIs(allRuns) {
+      // Total API calls (all runs across all agents)
+      let total = 0;
+      let successCount = 0;
+      let durTotal = 0;
+      let durCount = 0;
+
+      const cutoff24h = Date.now() - 24 * 3600 * 1000;
+      let calls24h = 0;
+
+      for (const runs of Object.values(allRuns)) {
+        for (const r of (runs || [])) {
+          total++;
+          if (r.outcome === 'success') successCount++;
+          const d = parseFloat(r.duration_secs);
+          if (!isNaN(d)) { durTotal += d; durCount++; }
+          const ts = new Date((String(r.run_at || '')).replace(' ', 'T') + 'Z');
+          if (!isNaN(ts.getTime()) && ts.getTime() > cutoff24h) calls24h++;
+        }
+      }
+
+      document.getElementById('kpi-api-calls').textContent = calls24h;
+      document.getElementById('kpi-success-rate').textContent =
+        total > 0 ? Math.round((successCount / total) * 100) + '%' : '\u2014';
+      document.getElementById('kpi-avg-duration').textContent =
+        durCount > 0 ? (durTotal / durCount).toFixed(1) + 's' : '\u2014';
+    }
+
+    // ── Check SAP / MES connectivity ──────────────────────────────────────
+    async function checkExternalService(port) {
+      try {
+        const start = Date.now();
+        const resp = await fetch(`http://localhost:${port}/health`, {
+          signal: AbortSignal.timeout(2000)
+        });
+        const ms = Date.now() - start;
+        if (resp.ok) return { status: 'connected', responseMs: ms };
+        return { status: 'offline', responseMs: null };
+      } catch (e) {
+        return { status: 'offline', responseMs: null };
+      }
+    }
+
+    // ── Render health into connections panel ───────────────────────────────
+    async function renderHealth(health) {
+      const dbConnected = health && health.db === 'connected';
+
+      // Check SAP and MES in parallel
+      const [sapResult, mesResult] = await Promise.all([
+        checkExternalService(3001),
+        checkExternalService(3002)
+      ]);
+
+      const connections = [
+        {
+          name: 'SAP ERP (Mock)',
+          port: 3001,
+          status: sapResult.status,
+          lastCall: null,
+          responseMs: sapResult.responseMs,
+          note: sapResult.status === 'connected' ? '' : 'Server may be stopped'
+        },
+        {
+          name: 'MES Platform',
+          port: 3002,
+          status: mesResult.status,
+          lastCall: null,
+          responseMs: mesResult.responseMs,
+          note: mesResult.status === 'connected' ? '' : 'Server may be stopped'
+        },
+        {
+          name: 'Business DB',
+          port: null,
+          status: dbConnected ? 'connected' : 'offline',
+          lastCall: null,
+          responseMs: null,
+          note: 'SQLite \u2022 Local'
+        }
+      ];
+
+      renderConnections(connections);
+    }
+
+    // ── Main load ──────────────────────────────────────────────────────────
+    async function loadAll() {
+      document.getElementById('last-refreshed').textContent = 'Loading...';
+      document.getElementById('header-status').textContent = 'Fetching data...';
+
+      try {
+        const [health, repRuns, demRuns, qualRuns, pending] = await Promise.all([
+          fetch(`${API}/api/health`).then(r => {
+            if (!r.ok) throw new Error('Server error');
+            return r.json();
+          }),
+          fetch(`${API}/api/runs/cg-replenishment-pr-agent`).then(r => r.json()).catch(() => []),
+          fetch(`${API}/api/runs/cg-demand-forecast-agent`).then(r => r.json()).catch(() => []),
+          fetch(`${API}/api/runs/cg-quality-capa-agent`).then(r => r.json()).catch(() => []),
+          fetch(`${API}/api/recommendations/pending`).then(r => r.json()).catch(() => [])
+        ]);
+
+        document.getElementById('offline-banner').style.display = 'none';
+
+        const allRuns = {
+          'cg-replenishment-pr-agent': Array.isArray(repRuns) ? repRuns : [],
+          'cg-demand-forecast-agent':  Array.isArray(demRuns) ? demRuns : [],
+          'cg-quality-capa-agent':     Array.isArray(qualRuns) ? qualRuns : []
+        };
+
+        renderHealth(health);
+        renderActivityLog(allRuns);
+        renderMetrics(allRuns);
+        renderKPIs(allRuns);
+        renderPendingRecs(pending);
+
+        // S41-4C: Build latency chart from all flattened runs
+        const allFlatRuns = Object.values(allRuns).flat();
+        buildLatencyChart(allFlatRuns);
+
+        // S41-4A: Reset refresh countdown after successful load
+        startRefreshCountdown();
+
+        const totalRuns = Object.values(allRuns).reduce((s, arr) => s + arr.length, 0);
+        document.getElementById('header-status').textContent =
+          `3 agents monitored \u00b7 ${totalRuns} total runs`;
+        document.getElementById('last-refreshed').textContent = new Date().toLocaleTimeString();
+
+      } catch (e) {
+        document.getElementById('offline-banner').style.display = 'block';
+        document.getElementById('header-status').textContent = 'Server offline \u2014 showing fallback data';
+        document.getElementById('last-refreshed').textContent = 'Offline';
+        renderFallback();
+      }
+    }
+
+    // ── Fallback (offline) ─────────────────────────────────────────────────
+    function renderFallback() {
+      renderConnections(FALLBACK_CONNECTIONS);
+
+      // Activity log: placeholder rows
+      const tbody = document.getElementById('activity-tbody');
+      tbody.innerHTML = `
+        <tr><td colspan="6" style="color:var(--text-muted);padding:12px 0;font-style:italic;">No runs recorded yet &mdash; server offline.</td></tr>
+      `;
+      buildLatencyChart(null);  // S41-4C: show demo data when offline
+
+      // Recs: empty
+      document.getElementById('recs-tbody').innerHTML =
+        `<tr><td colspan="5" style="color:var(--text-muted);padding:12px 0;">No data available offline.</td></tr>`;
+
+      // Metrics: zeros
+      const el = document.getElementById('agent-metrics-list');
+      el.innerHTML = Object.keys(AGENT_META).map(slug => `
+        <div class="agent-metric-row">
+          <div>
+            <div class="agent-metric-name">${esc(agentFullName(slug))}</div>
+            <div class="agent-metric-slug">${esc(slug)}</div>
+          </div>
+          <div class="agent-metric-stats">
+            <div class="metric-stat">
+              <div class="metric-stat-val it">0</div>
+              <div class="metric-stat-lbl">Runs</div>
+            </div>
+            <div class="metric-stat">
+              <div class="metric-stat-val green">&#8212;</div>
+              <div class="metric-stat-lbl">Success</div>
+            </div>
+            <div class="metric-stat">
+              <div class="metric-stat-val">&#8212;</div>
+              <div class="metric-stat-lbl">Avg Duration</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // KPIs
+      document.getElementById('kpi-api-calls').textContent = '0';
+      document.getElementById('kpi-success-rate').textContent = '\u2014';
+      document.getElementById('kpi-avg-duration').textContent = '\u2014';
+    }
+
+    // ── S41-4A: Auto-Refresh Countdown ────────────────────────────────────
+    let _refreshTimer = null;
+    let _refreshSecsLeft = 30;
+    const CIRCUMFERENCE = 94.25;
+
+    function startRefreshCountdown() {
+      clearInterval(_refreshTimer);
+      _refreshSecsLeft = 30;
+      updateRing();
+      _refreshTimer = setInterval(() => {
+        _refreshSecsLeft--;
+        updateRing();
+        if (_refreshSecsLeft <= 0) {
+          _refreshSecsLeft = 30;
+          loadAll();  // existing data refresh function
+        }
+      }, 1000);
+    }
+
+    function updateRing() {
+      const ring = document.getElementById('refreshRing');
+      const label = document.getElementById('refreshSecs');
+      if (!ring || !label) return;
+      const offset = CIRCUMFERENCE * (1 - _refreshSecsLeft / 30);
+      ring.style.strokeDashoffset = offset;
+      label.textContent = _refreshSecsLeft;
+    }
+
+    // ── S41-4B: Payload Inspector ──────────────────────────────────────────
+    let _currentPayload = {input: null, output: null, meta: null};
+
+    function openPayload(runData) {
+      _currentPayload = {
+        input: {slug: runData.agent, dry_run: false, triggered_at: runData.run_at},
+        output: runData.output_json
+          ? (() => { try { return JSON.parse(runData.output_json); } catch(e) { return {message: 'Parse error'}; } })()
+          : {message: 'No output available'},
+        meta: {run_id: runData.id, duration_secs: runData.duration_secs, outcome: runData.outcome, triggered_by: runData.triggered_by || 'dashboard'}
+      };
+      document.getElementById('payloadTitle').textContent = 'Payload Inspector \u2014 ' + (runData.agent || 'run');
+      switchPayloadTab('output', document.querySelectorAll('.ptab')[1]);
+      document.getElementById('payloadOverlay').classList.add('show');
+      document.getElementById('payloadPanel').classList.add('show');
+    }
+
+    function closePayload() {
+      document.getElementById('payloadOverlay').classList.remove('show');
+      document.getElementById('payloadPanel').classList.remove('show');
+    }
+
+    function switchPayloadTab(tab, btn) {
+      document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const data = _currentPayload[tab];
+      const raw = JSON.stringify(data, null, 2);
+      const highlighted = raw
+        .replace(/"([^"]+)":/g, '<span class="tok-key">"$1"</span>:')
+        .replace(/: "([^"]*)"/g, ': <span class="tok-str">"$1"</span>')
+        .replace(/: (\d+\.?\d*)/g, ': <span class="tok-num">$1</span>')
+        .replace(/: (true|false)/g, ': <span class="tok-bool">$1</span>');
+      document.getElementById('payloadContent').innerHTML = highlighted;
+    }
+
+    // ── S41-4C: Latency Chart ──────────────────────────────────────────────
+    function buildLatencyChart(runs) {
+      const svg = document.getElementById('latencyChart');
+      if (!svg) return;
+
+      const latencies = runs && runs.length > 0
+        ? runs.slice(0, 14).map(r => r.duration_secs || 0)
+        : [1.2, 1.8, 2.1, 1.5, 6.2, 1.9, 2.4, 1.7, 1.3, 8.1, 2.0, 1.6, 1.8, 2.3];
+
+      const maxLatency = Math.max(...latencies, 5.1);
+      const W = 420, H = 100, PAD = 20, BAR_W = 22, GAP = 4;
+      const THRESHOLD = 5;
+
+      const avg = latencies.reduce((a, b) => a + b, 0) / latencies.length;
+      const label = document.getElementById('avgLatencyLabel');
+      if (label) label.textContent = 'Avg: ' + avg.toFixed(1) + 's';
+
+      let html = '';
+
+      // Threshold line
+      const threshY = H - (THRESHOLD / maxLatency) * H;
+      html += `<line x1="${PAD}" y1="${threshY}" x2="${W - PAD}" y2="${threshY}" stroke="#ef444440" stroke-width="1" stroke-dasharray="4,4"/>`;
+      html += `<text x="${W - PAD + 2}" y="${threshY + 4}" fill="#ef4444" font-size="9">5s</text>`;
+
+      // Bars
+      latencies.slice(0, 14).forEach((lat, i) => {
+        const x = PAD + i * (BAR_W + GAP);
+        const barH = (lat / maxLatency) * H;
+        const y = H - barH;
+        const color = lat > THRESHOLD ? '#ef4444' : '#6366f1';
+        html += `<rect x="${x}" y="${y}" width="${BAR_W}" height="${barH}" fill="${color}" rx="2" opacity="0.8"/>`;
+        html += `<text x="${x + BAR_W/2}" y="${H + 14}" text-anchor="middle" fill="#64748b" font-size="9">${(i+1)}</text>`;
+      });
+
+      svg.innerHTML = html;
+    }
+
+    // ── S41-4D: Failed Run Filter ──────────────────────────────────────────
+    let _showFailedOnly = false;
+    let _allRunsCache = [];
+
+    function toggleFailedFilter() {
+      _showFailedOnly = !_showFailedOnly;
+      const btn = document.getElementById('filterFailedBtn');
+      if (btn) {
+        btn.style.background = _showFailedOnly ? 'rgba(239,68,68,0.2)' : 'rgba(239,68,68,0.1)';
+        btn.textContent = _showFailedOnly ? 'Show All Runs' : 'Show Failed Only';
+      }
+      const filtered = _showFailedOnly
+        ? _allRunsCache.filter(r => r.outcome === 'failed' || r.outcome === 'partial')
+        : _allRunsCache;
+      renderRunHistory(filtered);
+    }
+
+    const FIX_SUGGESTIONS = {
+      'timeout': 'Agent exceeded 45s timeout. Check if sandbox API (port 3001/3002) is running.',
+      'failed':  'Run returned non-zero exit code. Check server logs for Python traceback.',
+      'default': 'Investigate: run the agent locally with --dry-run to reproduce the error.',
+    };
+
+    function getFixSuggestion(run) {
+      if (run.summary && run.summary.toLowerCase().includes('timeout')) return FIX_SUGGESTIONS.timeout;
+      if (run.outcome === 'failed') return FIX_SUGGESTIONS.failed;
+      return FIX_SUGGESTIONS.default;
+    }
+
+    function renderRunHistory(rows) {
+      const tbody = document.getElementById('activity-tbody');
+      if (!tbody) return;
+
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted);padding:12px 0;">No runs match the current filter.</td></tr>`;
+        return;
+      }
+
+      const failedCount = _allRunsCache.filter(r => r.outcome === 'failed' || r.outcome === 'partial').length;
+      const fcEl = document.getElementById('failedCount');
+      if (fcEl) fcEl.textContent = failedCount > 0 ? `${failedCount} failed/partial run${failedCount !== 1 ? 's' : ''}` : '';
+
+      tbody.innerHTML = rows.map(r => {
+        const isFailed = r.outcome === 'failed' || r.outcome === 'partial';
+        const recCount = r.rec_count !== undefined ? r.rec_count
+          : (r.recommendations_generated !== undefined ? r.recommendations_generated
+          : (Array.isArray(r.recommendations) ? r.recommendations.length : '\u2014'));
+        const inspectBtn = `<button onclick='openPayload(${JSON.stringify(r)})' style="font-size:11px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:none;color:var(--accent);cursor:pointer;">&#128269; Inspect</button>`;
+        let rowHtml = `<tr>
+          <td class="agent-col" title="${esc(agentFullName(r.agent))}">${esc(agentShortName(r.agent))}</td>
+          <td style="white-space:nowrap;font-size:0.75rem;">${timeAgo(r.run_at)}</td>
+          <td>${fmtDuration(r.duration_secs)}</td>
+          <td class="outcome-col">${outcomeBadge(r.outcome)}</td>
+          <td style="text-align:right;">${esc(String(recCount === null || recCount === undefined ? '\u2014' : recCount))}</td>
+          <td>${inspectBtn}</td>
+        </tr>`;
+        if (isFailed) {
+          const errMsg = r.summary || r.stdout || 'No error details available.';
+          const fix = getFixSuggestion(r);
+          rowHtml += `<tr style="background:rgba(239,68,68,0.04);">
+            <td colspan="6" style="padding:8px 12px;font-size:0.75rem;color:var(--text-secondary);">
+              <strong style="color:#ef4444;">Error:</strong> ${esc(errMsg)}<br>
+              <strong style="color:#f59e0b;">Suggested fix:</strong> ${esc(fix)}<br>
+              <button onclick="retryRun('${esc(r.agent)}')" style="margin-top:6px;font-size:11px;padding:3px 10px;border-radius:4px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.1);color:#ef4444;cursor:pointer;">&#8635; Retry</button>
+            </td>
+          </tr>`;
+        }
+        return rowHtml;
+      }).join('');
+    }
+
+    async function retryRun(slug) {
+      try {
+        await fetch(`${API}/api/run/${slug}`, { method: 'POST' });
+        loadAll();
+      } catch(e) {
+        console.warn('[it-health] Retry failed:', e.message);
+      }
+    }
+
+    // ── Init ───────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      // S41-4A: Start refresh ring and wire click
+      startRefreshCountdown();
+      const wrap = document.querySelector('.refresh-ring-wrap');
+      if (wrap) wrap.addEventListener('click', () => { _refreshSecsLeft = 1; });
+    });
+    loadAll();
+  </script>
+
+</body>
+</html>

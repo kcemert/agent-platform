@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Precision Parts Co. — Agent Platform Engagement Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0f1117;
+      --card:         #161b2e;
+      --card-alt:     #1a2035;
+      --border:       #1e293b;
+      --border-light: #253047;
+      --text:         #f1f5f9;
+      --text-sec:     #94a3b8;
+      --text-muted:   #64748b;
+      --accent:       #6366f1;
+      --accent-dim:   rgba(99,102,241,0.12);
+      --accent-glow:  rgba(99,102,241,0.25);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.12);
+      --amber:        #f59e0b;
+      --amber-dim:    rgba(245,158,11,0.12);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.12);
+      --cyan:         #06b6d4;
+      --cyan-dim:     rgba(6,182,212,0.12);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    h2.section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 0 40px;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .company-name {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .company-tagline {
+      font-size: 15px;
+      color: var(--text-sec);
+      margin-top: 6px;
+    }
+
+    .company-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .company-meta span { display: flex; align-items: center; gap: 6px; }
+
+    .header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-accent { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(99,102,241,0.3); }
+    .badge-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(34,197,94,0.3); }
+    .badge-amber  { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(245,158,11,0.3); }
+    .badge-muted  { background: rgba(100,116,139,0.15); color: var(--text-sec); border: 1px solid rgba(100,116,139,0.3); }
+
+    .tier-badge {
+      background: var(--accent);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      align-self: flex-start;
+    }
+
+    /* ── Scorecard grid ── */
+    .scorecard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .scorecard-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .scorecard-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .scorecard-item label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .scorecard-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .scorecard-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .scorecard-item.highlight { border-color: rgba(99,102,241,0.4); background: var(--accent-dim); }
+    .scorecard-item.highlight .scorecard-val { color: var(--accent); }
+
+    /* ── Agent cards ── */
+    .agent-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .agent-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: border-color 150ms ease;
+    }
+
+    .agent-card:hover { border-color: rgba(99,102,241,0.4); }
+    .agent-card.pilot-ready { border-left: 3px solid var(--accent); }
+
+    .agent-rank {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .agent-body { flex: 1; min-width: 0; }
+
+    .agent-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .agent-desc {
+      font-size: 13px;
+      color: var(--text-sec);
+    }
+
+    .agent-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .agent-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .agent-value-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .status-pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .status-pilot-ready { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(99,102,241,0.3); }
+    .status-blueprint    { background: rgba(100,116,139,0.15); color: var(--text-muted); border: 1px solid rgba(100,116,139,0.3); }
+
+    /* ── Pilot card ── */
+    .pilot-card {
+      background: var(--card);
+      border: 1px solid rgba(99,102,241,0.4);
+      border-radius: 16px;
+      padding: 32px;
+      background: linear-gradient(135deg, var(--card) 0%, rgba(99,102,241,0.05) 100%);
+    }
+
+    .pilot-card h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .pilot-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    @media (max-width: 768px) {
+      .pilot-metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .pilot-metric {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .pilot-metric label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .pilot-metric .val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .pilot-metric .val.neutral { color: var(--text); }
+
+    /* ── Persona cards ── */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .persona-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .persona-grid { grid-template-columns: 1fr; }
+    }
+
+    .persona-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .persona-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .persona-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .persona-role {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .persona-goal {
+      font-size: 13px;
+      color: var(--text-sec);
+      font-style: italic;
+      margin-bottom: 16px;
+      padding-left: 12px;
+      border-left: 2px solid var(--accent-dim);
+    }
+
+    .persona-agents {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .persona-agent-tag {
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 4px;
+      padding: 3px 8px;
+    }
+
+    /* ── Value calculator ── */
+    .calc-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .calc-equation {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .calc-factor {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 20px;
+      text-align: center;
+    }
+
+    .calc-factor .num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .calc-factor .lbl {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    .calc-op {
+      font-size: 24px;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .calc-result {
+      background: var(--accent-dim);
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 10px;
+      padding: 14px 20px;
+      text-align: center;
+    }
+
+    .calc-result .num {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .calc-result .lbl {
+      font-size: 10px;
+      color: var(--accent);
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    .calc-breakdown {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .calc-breakdown { grid-template-columns: 1fr; }
+    }
+
+    .breakdown-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .breakdown-item .b-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+    .breakdown-item .b-val   { font-size: 20px; font-weight: 700; color: var(--text); }
+    .breakdown-item .b-desc  { font-size: 11px; color: var(--text-sec); margin-top: 2px; }
+
+    /* ── Timeline ── */
+    .timeline {
+      display: flex;
+      gap: 0;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: var(--border);
+    }
+
+    .timeline-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      border: 2px solid var(--border);
+      background: var(--bg);
+    }
+
+    .timeline-dot.done {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .timeline-dot.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .timeline-dot.future {
+      background: var(--card);
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+
+    .timeline-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .timeline-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ── Next steps CTA ── */
+    .cta-card {
+      background: linear-gradient(135deg, var(--card) 0%, rgba(99,102,241,0.08) 100%);
+      border: 1px solid rgba(99,102,241,0.4);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .cta-card h3 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .cta-card p {
+      color: var(--text-sec);
+      margin-bottom: 28px;
+      font-size: 15px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 150ms ease;
+    }
+
+    .btn-primary:hover { opacity: 0.9; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color 150ms ease;
+    }
+
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Summary bar ── */
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 48px;
+    }
+
+    .summary-stat {
+      padding: 20px 24px;
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .summary-stat:last-child { border-right: none; }
+
+    .summary-stat .s-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .summary-stat .s-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+
+    /* ── Nav ── */
+    .portal-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .portal-nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .nav-link {
+      padding: 14px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+
+    .nav-link:hover { color: var(--text); border-bottom-color: var(--border); }
+    .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Footer ── */
+    .site-footer {
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .site-footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- ── Site Header ── -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <div>
+        <div class="company-name">Precision Parts Co.</div>
+        <div class="company-tagline">CNC Machining &amp; Precision Manufacturing</div>
+        <div class="company-meta">
+          <span>&#128205; Tulsa, Oklahoma</span>
+          <span>&#128101; 75 employees</span>
+          <span>&#128176; ~$28M revenue</span>
+          <span>&#127966; Epicor Kinetic ERP</span>
+        </div>
+        <div class="header-badges">
+          <span class="badge badge-accent">MFG</span>
+          <span class="badge badge-accent">MTS</span>
+          <span class="badge badge-muted">ISO 9001:2015</span>
+          <span class="badge badge-muted">AS9100D</span>
+          <span class="badge badge-accent">Integration T2</span>
+        </div>
+      </div>
+      <div>
+        <div class="tier-badge">PILOT</div>
+        <div style="text-align:right;margin-top:12px;font-size:12px;color:var(--text-muted)">Engagement Start<br><strong style="color:var(--text)">April 2026</strong></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Sticky Nav ── -->
+<nav class="portal-nav">
+  <div class="container">
+    <div class="portal-nav-inner">
+      <a class="nav-link active" href="#profile">F20 Profile</a>
+      <a class="nav-link" href="#agents">Agent Opportunities</a>
+      <a class="nav-link" href="#pilot">Recommended Pilot</a>
+      <a class="nav-link" href="#personas">Persona Impact</a>
+      <a class="nav-link" href="#value">Value Calculator</a>
+      <a class="nav-link" href="#timeline">Timeline</a>
+      <a class="nav-link" href="#next">Next Steps</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<main>
+  <div class="container">
+
+    <!-- Summary bar -->
+    <div style="padding-top:48px">
+      <div class="summary-bar">
+        <div class="summary-stat">
+          <div class="s-val">3</div>
+          <div class="s-label">Agent Opportunities</div>
+        </div>
+        <div class="summary-stat">
+          <div class="s-val">18 hrs</div>
+          <div class="s-label">Recoverable / Week</div>
+        </div>
+        <div class="summary-stat">
+          <div class="s-val">£74K</div>
+          <div class="s-label">Annual Value</div>
+        </div>
+        <div class="summary-stat">
+          <div class="s-val">4 wks</div>
+          <div class="s-label">Pilot Timeline</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 1: F20 Profile ── -->
+    <section id="profile">
+      <h2 class="section-title">F20 Company Profile — Scorecard</h2>
+      <div class="scorecard-grid">
+        <div class="scorecard-item">
+          <label>Size Tier</label>
+          <div class="scorecard-val">MID</div>
+          <div class="scorecard-sub">75 employees / $28M revenue</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Industry</label>
+          <div class="scorecard-val">MFG</div>
+          <div class="scorecard-sub">Precision Manufacturing</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Business Model</label>
+          <div class="scorecard-val">MTS</div>
+          <div class="scorecard-sub">Make-to-Stock / CNC production</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Regulatory Score</label>
+          <div class="scorecard-val">3 / 5</div>
+          <div class="scorecard-sub">ISO 9001 + AS9100D certified</div>
+        </div>
+        <div class="scorecard-item highlight">
+          <label>Integration Tier</label>
+          <div class="scorecard-val">T2</div>
+          <div class="scorecard-sub">Epicor Kinetic — JDBC / REST API</div>
+        </div>
+        <div class="scorecard-item highlight">
+          <label>Data Readiness</label>
+          <div class="scorecard-val">17 / 25</div>
+          <div class="scorecard-sub">Strong — structured inventory data</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Engagement Tier</label>
+          <div class="scorecard-val">Pilot</div>
+          <div class="scorecard-sub">Starting April 2026</div>
+        </div>
+        <div class="scorecard-item">
+          <label>Primary Systems</label>
+          <div class="scorecard-val" style="font-size:15px">Epicor</div>
+          <div class="scorecard-sub">Salesforce Essentials · InspectionXpert</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 2: Agent Opportunities ── -->
+    <section id="agents">
+      <h2 class="section-title">Agent Opportunities — Ranked by Value</h2>
+      <div class="agent-grid">
+
+        <!-- Agent 1 -->
+        <div class="agent-card pilot-ready">
+          <div class="agent-rank">1</div>
+          <div class="agent-body">
+            <div class="agent-name">Inventory Replenishment Agent</div>
+            <div class="agent-desc">Raw material stock levels trigger automatic purchase requisitions in Epicor when reorder points are reached — eliminating manual stockroom checks and delayed orders.</div>
+          </div>
+          <div class="agent-meta">
+            <div style="text-align:right">
+              <div class="agent-value">£18K</div>
+              <div class="agent-value-sub">/ year</div>
+            </div>
+            <span class="status-pill status-pilot-ready">Pilot Ready</span>
+          </div>
+        </div>
+
+        <!-- Agent 2 -->
+        <div class="agent-card">
+          <div class="agent-rank" style="background:rgba(100,116,139,0.12);color:var(--text-muted)">2</div>
+          <div class="agent-body">
+            <div class="agent-name">Production Scheduling Agent</div>
+            <div class="agent-desc">AI-optimized job scheduling across CNC cells to maximize OEE — balances machine load, tool availability, and order priority to reduce setup time and increase throughput.</div>
+          </div>
+          <div class="agent-meta">
+            <div style="text-align:right">
+              <div class="agent-value">£32K</div>
+              <div class="agent-value-sub">/ year</div>
+            </div>
+            <span class="status-pill status-blueprint">Blueprint</span>
+          </div>
+        </div>
+
+        <!-- Agent 3 -->
+        <div class="agent-card">
+          <div class="agent-rank" style="background:rgba(100,116,139,0.12);color:var(--text-muted)">3</div>
+          <div class="agent-body">
+            <div class="agent-name">Quality Inspector Agent</div>
+            <div class="agent-desc">Automated first-article inspection report generation from CMM measurement data — flags out-of-spec dimensions, generates AS9100 compliance documentation, and routes for sign-off.</div>
+          </div>
+          <div class="agent-meta">
+            <div style="text-align:right">
+              <div class="agent-value">£24K</div>
+              <div class="agent-value-sub">/ year</div>
+            </div>
+            <span class="status-pill status-blueprint">Blueprint</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Opportunity total -->
+      <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="color:var(--text-muted);font-size:13px">Total identified agent opportunity</div>
+        <div style="font-size:24px;font-weight:800;color:var(--accent)">£74,000 <span style="font-size:13px;font-weight:400;color:var(--text-muted)">/ year across all 3 agents</span></div>
+      </div>
+    </section>
+
+    <!-- ── Section 3: Recommended Pilot ── -->
+    <section id="pilot">
+      <h2 class="section-title">Recommended Pilot</h2>
+      <div class="pilot-card">
+        <h3>Inventory Replenishment Agent</h3>
+        <p style="color:var(--text-sec);margin-bottom:0">Epicor Kinetic integration — automated purchase requisition generation when stock falls below reorder thresholds. Fastest path to measurable ROI.</p>
+
+        <div class="pilot-metrics">
+          <div class="pilot-metric">
+            <label>Timeline</label>
+            <div class="val neutral">4 weeks</div>
+          </div>
+          <div class="pilot-metric">
+            <label>Year 1 Value</label>
+            <div class="val">£18,000</div>
+          </div>
+          <div class="pilot-metric">
+            <label>Pilot Investment</label>
+            <div class="val neutral">£25,000</div>
+          </div>
+          <div class="pilot-metric">
+            <label>Break-even</label>
+            <div class="val neutral">Week 12</div>
+          </div>
+        </div>
+
+        <div style="margin-top:28px;padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:10px;">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px">Integration Specification</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font-size:13px">
+            <div><span style="color:var(--text-muted)">System:</span> <strong>Epicor Kinetic</strong></div>
+            <div><span style="color:var(--text-muted)">Tier:</span> <strong>T2 — JDBC / REST</strong></div>
+            <div><span style="color:var(--text-muted)">Authority:</span> <strong>MEDIUM</strong></div>
+            <div><span style="color:var(--text-muted)">Quality:</span> <strong>InspectionXpert</strong></div>
+            <div><span style="color:var(--text-muted)">CRM:</span> <strong>Salesforce Essentials</strong></div>
+            <div><span style="color:var(--text-muted)">Data score:</span> <strong>17 / 25</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding:16px 20px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:8px;font-size:13px;color:var(--text-sec)">
+          <strong style="color:var(--accent)">Why this agent first?</strong> — Inventory replenishment is a high-frequency, rules-based process with clear measurable triggers (reorder points in Epicor). T2 integration is achievable within 2 weeks. Immediate visibility into hours saved and PRs generated. Sets foundation for Production Scheduling in Phase 2.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 4: Persona Impact Map ── -->
+    <section id="personas">
+      <h2 class="section-title">Persona Impact Map</h2>
+      <div class="persona-grid">
+
+        <!-- Sarah Mitchell -->
+        <div class="persona-card">
+          <div class="persona-avatar">&#9881;</div>
+          <div class="persona-name">Sarah Mitchell</div>
+          <div class="persona-role">VP Operations · Primary Contact</div>
+          <div class="persona-goal">"Ship on-time, maximize machine utilization, minimize inventory carrying costs."</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Key agents for Sarah:</div>
+          <div class="persona-agents">
+            <span class="persona-agent-tag">Inventory Replenishment</span>
+            <span class="persona-agent-tag">Production Scheduling</span>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-sec)">Pilot champion — fast decision-maker with direct ERP access.</div>
+        </div>
+
+        <!-- Tom Bradley -->
+        <div class="persona-card">
+          <div class="persona-avatar">&#9878;</div>
+          <div class="persona-name">Tom Bradley</div>
+          <div class="persona-role">QA Manager</div>
+          <div class="persona-goal">"Zero customer escapes, AS9100 audit readiness, and first-article reports without manual data entry."</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Key agents for Tom:</div>
+          <div class="persona-agents">
+            <span class="persona-agent-tag">Quality Inspector Agent</span>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-sec)">AS9100D compliance is the primary pain driver — automated FAI documentation is high-priority Phase 2.</div>
+        </div>
+
+        <!-- Plant Manager -->
+        <div class="persona-card">
+          <div class="persona-avatar">&#127981;</div>
+          <div class="persona-name">Plant Manager</div>
+          <div class="persona-role">Operations Leadership</div>
+          <div class="persona-goal">"OEE &gt; 85%, capacity planning visibility, and cost per part reduction across CNC cells."</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Key agents for Plant Manager:</div>
+          <div class="persona-agents">
+            <span class="persona-agent-tag">Production Scheduling</span>
+            <span class="persona-agent-tag">Inventory Replenishment</span>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-sec)">Focused on machine utilization and throughput — scheduling agent is Phase 2 priority.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Section 5: Value Calculator ── -->
+    <section id="value">
+      <h2 class="section-title">Value Calculator — Baseline Soft Savings</h2>
+      <div class="calc-card">
+        <div style="margin-bottom:24px">
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Conservative baseline calculation — staff time recovered at standard blended rate:</div>
+          <div class="calc-equation">
+            <div class="calc-factor">
+              <div class="num">18</div>
+              <div class="lbl">hrs / week</div>
+            </div>
+            <div class="calc-op">&times;</div>
+            <div class="calc-factor">
+              <div class="num">48</div>
+              <div class="lbl">working weeks</div>
+            </div>
+            <div class="calc-op">&times;</div>
+            <div class="calc-factor">
+              <div class="num">£25</div>
+              <div class="lbl">blended rate / hr</div>
+            </div>
+            <div class="calc-op">=</div>
+            <div class="calc-result">
+              <div class="num">£21,600</div>
+              <div class="lbl">soft savings / yr</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-breakdown">
+          <div class="breakdown-item">
+            <div class="b-label">Inventory Replenishment</div>
+            <div class="b-val">£18,000</div>
+            <div class="b-desc">Automated PRs — 6 hrs/wk recovered</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="b-label">Production Scheduling</div>
+            <div class="b-val">£32,000</div>
+            <div class="b-desc">OEE optimization — 8 hrs/wk + machine gains</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="b-label">Quality Inspector</div>
+            <div class="b-val">£24,000</div>
+            <div class="b-desc">FAI automation — 4 hrs/wk + zero escapes</div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;padding:16px 20px;background:var(--bg);border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="color:var(--text-muted);font-size:13px">Total annual value across all 3 agents</span>
+          <span style="font-size:22px;font-weight:800;color:var(--accent)">£74,000 / year</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 6: Engagement Timeline ── -->
+    <section id="timeline">
+      <h2 class="section-title">Engagement Timeline</h2>
+      <div class="timeline">
+        <div class="timeline-step">
+          <div class="timeline-dot done">&#10003;</div>
+          <div class="timeline-label">Discovery</div>
+          <div class="timeline-sub">Completed<br>F20 profile set</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot active">P</div>
+          <div class="timeline-label">Pilot</div>
+          <div class="timeline-sub">April 2026<br>Inventory Agent · 4 wks</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot future">2</div>
+          <div class="timeline-label">Phase 2</div>
+          <div class="timeline-sub">June 2026<br>Production Scheduling</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot future">3</div>
+          <div class="timeline-label">Phase 3</div>
+          <div class="timeline-sub">Q3 2026<br>Quality Inspector</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot future">&#9679;</div>
+          <div class="timeline-label">Platform</div>
+          <div class="timeline-sub">Q4 2026<br>Full agent platform</div>
+        </div>
+      </div>
+
+      <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Pilot Phase (4 weeks)</div>
+          <div style="font-size:13px;color:var(--text-sec)">Week 1: Epicor JDBC integration + data validation<br>Week 2: Replenishment logic build + test data<br>Week 3: UAT with Sarah Mitchell + operations team<br>Week 4: Go-live + performance baseline</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Success Criteria</div>
+          <div style="font-size:13px;color:var(--text-sec)">&#10003; &ge; 90% of PRs generated without manual review<br>&#10003; Zero stockouts attributable to late replenishment<br>&#10003; 6 hrs/wk recovered from operations team<br>&#10003; Break-even achieved by Week 12</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 7: Next Steps CTA ── -->
+    <section id="next">
+      <h2 class="section-title">Next Steps</h2>
+      <div class="cta-card">
+        <h3>Ready to start the Pilot?</h3>
+        <p>4-week Inventory Replenishment Agent pilot · Epicor Kinetic T2 integration · £18K Year 1 value</p>
+        <div style="margin-bottom:28px;font-size:13px;color:var(--text-muted)">
+          Contact: <strong style="color:var(--text)">Sarah Mitchell</strong>, VP Operations &nbsp;&bull;&nbsp; <a href="mailto:s.mitchell@precisionparts.com" style="color:var(--accent)">s.mitchell@precisionparts.com</a>
+        </div>
+        <div class="cta-buttons">
+          <a class="btn-primary" href="mailto:s.mitchell@precisionparts.com?subject=Precision Parts — Inventory Replenishment Agent Pilot">Schedule Pilot Working Session &rarr;</a>
+          <a class="btn-secondary" href="../index.html">View All Client Portals</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    Precision Parts Co. &mdash; Agent Platform Engagement Portal &nbsp;|&nbsp; <a href="../index.html">All Portals</a> &nbsp;|&nbsp; Business Agents Platform &nbsp;|&nbsp; Confidential
+  </div>
+</footer>
+
+</body>
+</html>

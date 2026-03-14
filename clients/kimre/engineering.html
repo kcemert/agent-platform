@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sam Rivera — Engineering Dashboard | Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0f1117;
+      --card:         #161b2e;
+      --card-alt:     #1a2035;
+      --border:       #1e293b;
+      --border-light: #253047;
+      --text:         #f1f5f9;
+      --text-sec:     #94a3b8;
+      --text-muted:   #64748b;
+      --kimre:        #f97316;
+      --orange:       #f97316;
+      --orange-dim:   rgba(249,115,22,0.12);
+      --orange-glow:  rgba(249,115,22,0.25);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.12);
+      --amber:        #f59e0b;
+      --amber-dim:    rgba(245,158,11,0.12);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.12);
+      --indigo:       #6366f1;
+      --indigo-dim:   rgba(99,102,241,0.12);
+      --cyan:         #06b6d4;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+      min-width: 1200px;
+    }
+
+    /* ── Nav ── */
+    .kimre-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .kimre-nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      height: 56px;
+    }
+    .kimre-nav-brand {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--kimre);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+    .kimre-nav-links {
+      display: flex;
+      gap: 4px;
+    }
+    .kimre-nav-link {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .kimre-nav-link:hover { color: var(--text); background: var(--card-alt); }
+    .kimre-nav-link.active { color: var(--kimre); background: var(--orange-dim); }
+
+    /* ── Page Layout ── */
+    .page-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 32px 64px;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .page-header-left h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .page-header-left p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .page-header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--kimre);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #ea6c10; transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--card-alt);
+      color: var(--text-sec);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--kimre); color: var(--kimre); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--card-alt); color: var(--text); }
+    .btn-sm { padding: 6px 13px; font-size: 12px; border-radius: 6px; }
+    .btn-xs { padding: 4px 10px; font-size: 11px; border-radius: 5px; }
+
+    /* ── KPI Strip ── */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 20px 16px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .kpi-card:hover { border-color: var(--border-light); }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--kimre);
+      border-radius: 12px 12px 0 0;
+    }
+    .kpi-card.alert-card::before { background: var(--amber); }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .kpi-card.alert-card .kpi-value { color: var(--amber); }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .kpi-icon {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-size: 20px;
+      opacity: 0.4;
+    }
+
+    /* ── Impact Narrative ── */
+    .narrative-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--kimre);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .narrative-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .narrative-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--kimre);
+    }
+    .narrative-text {
+      font-size: 14px;
+      color: var(--text-sec);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .narrative-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pill-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+    .pill-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+    .pill-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(249,115,22,0.25); }
+    .pill-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+
+    /* ── Section heading ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Dual Run Theater ── */
+    .run-theaters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .run-theater-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+    .run-theater-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .run-theater-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .badge-mock {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--indigo-dim);
+      color: var(--indigo);
+      border: 1px solid rgba(99,102,241,0.3);
+    }
+    .run-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--orange-dim);
+      border: 1px solid var(--kimre);
+      color: var(--kimre);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 14px;
+      width: 100%;
+      justify-content: center;
+    }
+    .run-btn:hover { background: var(--kimre); color: #fff; }
+    .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .run-steps {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .run-steps.active { display: flex; }
+    .run-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+    .run-step.done { color: var(--green); background: var(--green-dim); }
+    .run-step.active-step { color: var(--text); background: var(--card-alt); }
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .run-step.done .step-dot { background: var(--green); }
+    .run-step.active-step .step-dot {
+      background: var(--kimre);
+      box-shadow: 0 0 6px var(--kimre);
+      animation: pulse-dot 1s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .run-results {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      background: var(--card-alt);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .run-results.visible { display: block; }
+    .run-results-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .run-result-item {
+      font-size: 12px;
+      color: var(--text-sec);
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .run-result-item:last-child { border-bottom: none; }
+
+    /* ── Material Shortage Widget ── */
+    .shortage-card {
+      background: var(--card);
+      border: 1px solid var(--amber);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .shortage-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .shortage-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--amber);
+    }
+    .shortage-count {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      background: var(--amber-dim);
+      color: var(--amber);
+      border-radius: 20px;
+      border: 1px solid rgba(245,158,11,0.3);
+    }
+    .shortage-items {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .shortage-item {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .shortage-item.critical { border-color: rgba(239,68,68,0.4); }
+    .shortage-item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .shortage-item-code {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .shortage-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .shortage-meta-item label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .shortage-meta-item span {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .cover-days-ok { color: var(--amber) !important; }
+    .cover-days-critical { color: var(--red) !important; }
+    .critical-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      background: var(--red-dim);
+      color: var(--red);
+      border-radius: 4px;
+      border: 1px solid rgba(239,68,68,0.3);
+      margin-left: 6px;
+    }
+    .shortage-orders {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .shortage-rec {
+      font-size: 12px;
+      color: var(--text-sec);
+      background: var(--orange-dim);
+      border-radius: 6px;
+      padding: 7px 10px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(249,115,22,0.15);
+    }
+    .shortage-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .btn-approve {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,0.3);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-approve:hover { background: var(--green); color: #fff; }
+    .btn-modify {
+      background: var(--amber-dim);
+      color: var(--amber);
+      border: 1px solid rgba(245,158,11,0.3);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-modify:hover { background: var(--amber); color: #000; }
+    .btn-hold {
+      background: var(--card);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-hold:hover { background: var(--card-alt); color: var(--text); }
+
+    /* ── Fabrication Queue Table ── */
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .table-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .table-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .table-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--card-alt);
+      padding: 2px 9px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+    }
+    .filter-tab {
+      padding: 5px 13px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .filter-tab.active { background: var(--orange-dim); color: var(--kimre); border-color: var(--kimre); }
+    .filter-tab:hover:not(.active) { background: var(--card-alt); color: var(--text); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      text-align: left;
+      background: var(--card-alt);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    th.sortable { cursor: pointer; user-select: none; }
+    th.sortable:hover { color: var(--text); }
+    th.sort-asc::after { content: ' ↑'; color: var(--kimre); }
+    th.sort-desc::after { content: ' ↓'; color: var(--kimre); }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr.order-row {
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    tr.order-row:hover { background: var(--card-alt); }
+    tr.order-row.selected { background: var(--orange-dim); }
+    .priority-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .priority-critical { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+    .priority-high { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+    .priority-medium { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(249,115,22,0.25); }
+    .priority-low { background: var(--card-alt); color: var(--text-muted); border: 1px solid var(--border); }
+    .order-id {
+      font-family: 'Inter', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--kimre);
+    }
+    .customer-name { font-weight: 500; color: var(--text); }
+    .product-name { font-size: 12px; color: var(--text-sec); }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-complete { background: var(--green-dim); color: var(--green); }
+    .status-partial, .status-in_progress { background: var(--amber-dim); color: var(--amber); }
+    .status-pending, .status-shortage { background: var(--red-dim); color: var(--red); }
+    .status-unknown { background: var(--card-alt); color: var(--text-muted); }
+    .status-ready { background: var(--green-dim); color: var(--green); }
+    .days-urgent { color: var(--red); font-weight: 700; }
+    .days-soon { color: var(--amber); font-weight: 600; }
+    .days-ok { color: var(--green); }
+
+    /* ── Milestone Progress Bar (inline mini) ── */
+    .milestone-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 140px;
+    }
+    .milestone-label-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .milestone-bar {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .milestone-seg {
+      height: 5px;
+      flex: 1;
+      border-radius: 3px;
+      background: var(--border);
+    }
+    .milestone-seg.done { background: var(--green); }
+    .milestone-seg.current { background: var(--kimre); }
+
+    /* ── Side Panel ── */
+    .side-panel-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+    }
+    .side-panel-overlay.open { display: block; }
+    .side-panel-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+    }
+    .side-panel {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 560px;
+      background: var(--card);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .side-panel-overlay.open .side-panel {
+      transform: translateX(0);
+    }
+    .panel-header {
+      padding: 22px 24px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--card-alt);
+    }
+    .panel-header-info h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--kimre);
+      letter-spacing: -0.02em;
+    }
+    .panel-header-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .panel-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      background: var(--orange-dim);
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--orange-glow);
+      white-space: nowrap;
+    }
+    .btn-close {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .btn-close:hover { background: var(--red-dim); color: var(--red); border-color: var(--red); }
+    .panel-body { padding: 22px 24px; flex: 1; }
+    .panel-section {
+      margin-bottom: 24px;
+    }
+    .panel-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Full Milestone Steps ── */
+    .milestone-steps {
+      display: flex;
+      gap: 0;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .ms-step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+    .ms-step::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: -50%;
+      right: 50%;
+      height: 2px;
+      background: var(--border);
+    }
+    .ms-step:first-child::before { display: none; }
+    .ms-step.done::before { background: var(--green); }
+    .ms-step.current::before { background: var(--kimre); }
+    .ms-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--border);
+      margin: 0 auto 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+    .ms-step.done .ms-dot { background: var(--green); color: #fff; }
+    .ms-step.current .ms-dot {
+      background: var(--kimre);
+      color: #fff;
+      box-shadow: 0 0 12px var(--orange-glow);
+    }
+    .ms-step-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+    .ms-step.done .ms-step-label { color: var(--green); }
+    .ms-step.current .ms-step-label { color: var(--kimre); }
+
+    /* ── BOM Line Items ── */
+    .bom-table { width: 100%; border-collapse: collapse; }
+    .bom-table th {
+      font-size: 10px;
+      padding: 7px 10px;
+    }
+    .bom-table td {
+      font-size: 12px;
+      padding: 9px 10px;
+    }
+    .bom-table tr:last-child td { border-bottom: none; }
+    .cert-expiry-ok { color: var(--text-sec); }
+    .cert-expiry-warn { color: var(--amber); font-weight: 600; }
+    .cert-expiry-critical { color: var(--red); font-weight: 700; }
+    .no-materials {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 12px 0;
+    }
+
+    /* ── Engineering Notes ── */
+    .notes-area {
+      width: 100%;
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text-sec);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+    .notes-area:focus {
+      outline: none;
+      border-color: var(--kimre);
+    }
+
+    /* ── ECR Log ── */
+    .ecr-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--card-alt);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .ecr-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--kimre);
+      white-space: nowrap;
+    }
+    .ecr-desc {
+      font-size: 12px;
+      color: var(--text-sec);
+      flex: 1;
+    }
+    .ecr-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .ecr-empty {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .panel-actions {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: var(--card-alt);
+    }
+
+    /* ── Capacity Heatmap ── */
+    .heatmap-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .heatmap-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .heatmap-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .heatmap-legend {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+    }
+    .legend-green { background: rgba(34,197,94,0.4); }
+    .legend-amber { background: rgba(245,158,11,0.4); }
+    .legend-red { background: rgba(239,68,68,0.4); }
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: auto repeat(12, 1fr);
+      gap: 4px;
+      align-items: center;
+    }
+    .heatmap-week-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: right;
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+    .heatmap-day-header {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+      padding-bottom: 4px;
+    }
+    .heatmap-cell {
+      border-radius: 6px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border: 1px solid transparent;
+    }
+    .heatmap-cell:hover { border-color: var(--kimre); transform: scale(1.05); z-index: 2; }
+    .heatmap-cell.today { border-color: var(--kimre) !important; }
+    .heatmap-cell-green { background: rgba(34,197,94,0.15); }
+    .heatmap-cell-amber { background: rgba(245,158,11,0.15); }
+    .heatmap-cell-red { background: rgba(239,68,68,0.2); }
+    .heatmap-cell-empty { background: var(--card-alt); opacity: 0.4; cursor: default; }
+    .heatmap-date {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .heatmap-count {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .heatmap-cell-green .heatmap-count { color: var(--green); }
+    .heatmap-cell-amber .heatmap-count { color: var(--amber); }
+    .heatmap-cell-red .heatmap-count { color: var(--red); }
+    .heatmap-cap {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* ── Day Tooltip ── */
+    .day-tooltip {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      z-index: 50;
+      white-space: nowrap;
+      min-width: 160px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .heatmap-cell:hover .day-tooltip { display: block; }
+    .day-tooltip-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--kimre);
+      margin-bottom: 6px;
+    }
+    .day-tooltip-order {
+      font-size: 11px;
+      color: var(--text-sec);
+      padding: 2px 0;
+    }
+
+    /* ── Pre-Ship QC ── */
+    .qc-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .qc-order-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .qc-order-id {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--kimre);
+    }
+    .qc-order-info {
+      font-size: 13px;
+      color: var(--text-sec);
+    }
+    .qc-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .qc-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--card-alt);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .qc-item:hover { border-color: var(--border-light); }
+    .qc-item.checked {
+      border-color: rgba(34,197,94,0.3);
+      background: rgba(34,197,94,0.05);
+    }
+    .qc-checkbox {
+      width: 18px; height: 18px;
+      border-radius: 4px;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: all 0.15s;
+    }
+    .qc-item.checked .qc-checkbox {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .qc-item-text {
+      flex: 1;
+    }
+    .qc-item-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .qc-item.checked .qc-item-label { color: var(--text-muted); text-decoration: line-through; }
+    .qc-item-detail {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .qc-timestamp {
+      font-size: 10px;
+      color: var(--green);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* ── ECR Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 560px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+    .modal-header {
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .modal-body { padding: 24px; }
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sec);
+      margin-bottom: 7px;
+      letter-spacing: 0.02em;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 13px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--kimre);
+    }
+    .form-select { cursor: pointer; }
+    .form-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+    .form-input[readonly] {
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+    .radio-group {
+      display: flex;
+      gap: 16px;
+    }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-sec);
+    }
+    .radio-label input[type="radio"] { accent-color: var(--kimre); }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* ── Toast ── */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      max-width: 320px;
+      animation: toast-in 0.3s ease;
+    }
+    @keyframes toast-in {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .toast.toast-exit {
+      animation: toast-out 0.3s ease forwards;
+    }
+    @keyframes toast-out {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    .toast-green { border-left: 3px solid var(--green); }
+    .toast-amber { border-left: 3px solid var(--amber); }
+    .toast-orange { border-left: 3px solid var(--kimre); }
+
+    /* ── Bottom grid: capacity + QC ── */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1300px) {
+      .shortage-items { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 1200px) {
+      body { min-width: 1200px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="kimre-nav">
+  <div class="kimre-nav-inner">
+    <span class="kimre-nav-brand">Kimre Inc.</span>
+    <div class="kimre-nav-links">
+      <a href="./index.html" class="kimre-nav-link">Home</a>
+      <a href="./sales.html" class="kimre-nav-link">Sales</a>
+      <a href="./engineering.html" class="kimre-nav-link active">Engineering</a>
+      <a href="./customer-service.html" class="kimre-nav-link">Customer Service</a>
+      <a href="./executive.html" class="kimre-nav-link">Executive</a>
+      <a href="./quality.html" class="kimre-nav-link">Quality</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="page-wrap">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Sam Rivera — Engineering Dashboard</h1>
+      <p>Engineering Lead / Fabrication Manager &nbsp;·&nbsp; Kimre Inc. &nbsp;·&nbsp; Updated <span id="last-updated">just now</span></p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-secondary btn-sm" onclick="openECRModal()">+ New ECR</button>
+      <button class="btn btn-secondary btn-sm" onclick="refreshData()">&#8635; Refresh</button>
+      <button class="btn btn-primary btn-sm" onclick="openECRModal()">Create BOM</button>
+    </div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-icon">📋</div>
+      <div class="kpi-label">Orders Pending BOM</div>
+      <div class="kpi-value" id="kpi-pending-bom">3</div>
+      <div class="kpi-sub">Oldest: 1.5 days ago</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🔧</div>
+      <div class="kpi-label">In Fabrication</div>
+      <div class="kpi-value" id="kpi-in-fab">6</div>
+      <div class="kpi-sub">2 work cells active</div>
+    </div>
+    <div class="kpi-card alert-card">
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-label">Material Alerts</div>
+      <div class="kpi-value" id="kpi-alerts">2</div>
+      <div class="kpi-sub">PP mesh &amp; CPVC critical</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-label">This Week Capacity</div>
+      <div class="kpi-value" id="kpi-capacity">78%</div>
+      <div class="kpi-sub">High utilization</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-label">Pre-Ship QC Queue</div>
+      <div class="kpi-value" id="kpi-qc">2</div>
+      <div class="kpi-sub">1 pending sign-off</div>
+    </div>
+  </div>
+
+  <!-- Impact Narrative -->
+  <div class="narrative-card">
+    <div class="narrative-header">
+      <div class="narrative-title">Agent Intelligence Summary</div>
+    </div>
+    <div class="narrative-text">
+      Sam has <strong>3 orders pending BOM creation</strong> (oldest 1.5 days). 2 material shortages flagged against open orders: <strong>Polypropylene mesh</strong> (3.2 days cover vs. 3 orders consuming it) and <strong>CPVC sheeting</strong> (1.8 days cover, critical). Material Requisition Agent ran this morning — recommends 2 purchase requisitions.
+    </div>
+    <div class="narrative-pills">
+      <span class="pill pill-red">🔴 2 Material Shortages</span>
+      <span class="pill pill-amber">📋 3 BOMs Pending</span>
+      <span class="pill pill-orange">🔧 6 In Fabrication</span>
+    </div>
+  </div>
+
+  <!-- Dual Run Theater -->
+  <div class="section-label">Agent Run Theater</div>
+  <div class="run-theaters">
+
+    <!-- Run Theater 1: Material Requisition -->
+    <div class="run-theater-card">
+      <div class="run-theater-header">
+        <div class="run-theater-title">Material Requisition Agent</div>
+      </div>
+      <button class="run-btn" id="run-btn-1" onclick="runAgent(1)">
+        &#9654; Run Material Requisition Agent
+      </button>
+      <div class="run-steps" id="run-steps-1">
+        <div class="run-step" id="step-1-1"><div class="step-dot"></div>Checking open production orders...</div>
+        <div class="run-step" id="step-1-2"><div class="step-dot"></div>Scanning BOM requirements vs. material stock...</div>
+        <div class="run-step" id="step-1-3"><div class="step-dot"></div>Identifying shortage risk items...</div>
+        <div class="run-step" id="step-1-4"><div class="step-dot"></div>Calculating reorder quantities...</div>
+        <div class="run-step" id="step-1-5"><div class="step-dot"></div>Creating purchase requisitions...</div>
+      </div>
+      <div class="run-results" id="run-results-1">
+        <div class="run-results-title">&#10003; Agent Complete — 2 PRs Generated</div>
+        <div class="run-result-item">PR-2026-041: 500 sqft Polypropylene mesh from Plastco Industrial — $2,350</div>
+        <div class="run-result-item">PR-2026-042: 100 sqft CPVC Sheeting from ChemPlast Supply — $1,180</div>
+        <div class="run-result-item">Next scheduled run: Tomorrow 06:00 AM</div>
+      </div>
+    </div>
+
+    <!-- Run Theater 2: Quality Compliance -->
+    <div class="run-theater-card">
+      <div class="run-theater-header">
+        <div class="run-theater-title">Quality Compliance Checker</div>
+        <span class="badge-mock">MOCK</span>
+      </div>
+      <button class="run-btn" id="run-btn-2" onclick="runAgent(2)">
+        &#9654; Run Quality Compliance Checker
+      </button>
+      <div class="run-steps" id="run-steps-2">
+        <div class="run-step" id="step-2-1"><div class="step-dot"></div>Loading order specifications...</div>
+        <div class="run-step" id="step-2-2"><div class="step-dot"></div>Checking EPA material compatibility...</div>
+        <div class="run-step" id="step-2-3"><div class="step-dot"></div>Verifying dimensional tolerances...</div>
+        <div class="run-step" id="step-2-4"><div class="step-dot"></div>Validating material certifications...</div>
+        <div class="run-step" id="step-2-5"><div class="step-dot"></div>Flagging non-conformances...</div>
+      </div>
+      <div class="run-results" id="run-results-2">
+        <div class="run-results-title">&#10003; Compliance Check Complete — 1 Flag</div>
+        <div class="run-result-item">PASS: KIM-052 — All EPA material specs verified</div>
+        <div class="run-result-item">PASS: KIM-051 — Dimensional tolerances within spec</div>
+        <div class="run-result-item">FLAG: KIM-046 — CPVC cert CPVC-2024-05 expires in 109 days (amber)</div>
+        <div class="run-result-item">PASS: KIM-050 — No non-conformances detected</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Material Shortage Widget -->
+  <div class="section-label">Material Shortage Alert</div>
+  <div class="shortage-card">
+    <div class="shortage-header">
+      <span style="font-size:20px;">⚠️</span>
+      <span class="shortage-title">Material Shortage Alert</span>
+      <span class="shortage-count">2 items require action</span>
+    </div>
+    <div class="shortage-items">
+
+      <!-- Item 1: PP Mesh -->
+      <div class="shortage-item">
+        <div class="shortage-item-name">Polypropylene Mesh</div>
+        <div class="shortage-item-code">PP-MESH-001</div>
+        <div class="shortage-meta">
+          <div class="shortage-meta-item">
+            <label>Current Stock</label>
+            <span>85 sqft</span>
+          </div>
+          <div class="shortage-meta-item">
+            <label>Days Cover</label>
+            <span class="cover-days-ok">3.2 days</span>
+          </div>
+        </div>
+        <div class="shortage-orders">
+          Consuming orders: <strong>KIM-052, KIM-049</strong> (need 120 sqft combined)
+        </div>
+        <div class="shortage-rec">
+          Recommended PR: 500 sqft from <strong>Plastco Industrial</strong>
+        </div>
+        <div class="shortage-actions">
+          <button class="btn-approve" onclick="shortageAction('PP-MESH-001','approve')">&#10003; Approve PR</button>
+          <button class="btn-modify" onclick="shortageAction('PP-MESH-001','modify')">&#9998; Modify Qty</button>
+          <button class="btn-hold" onclick="shortageAction('PP-MESH-001','hold')">&#9646;&#9646; Hold</button>
+        </div>
+      </div>
+
+      <!-- Item 2: CPVC Sheeting -->
+      <div class="shortage-item critical">
+        <div class="shortage-item-name">
+          CPVC Sheeting
+          <span class="critical-tag">&#9650; CRITICAL</span>
+        </div>
+        <div class="shortage-item-code">CPVC-SHEET-001</div>
+        <div class="shortage-meta">
+          <div class="shortage-meta-item">
+            <label>Current Stock</label>
+            <span>18 sqft</span>
+          </div>
+          <div class="shortage-meta-item">
+            <label>Days Cover</label>
+            <span class="cover-days-critical">1.8 days</span>
+          </div>
+        </div>
+        <div class="shortage-orders">
+          Consuming orders: <strong>KIM-050</strong> (needs 24 sqft, ships in 9 days)
+        </div>
+        <div class="shortage-rec">
+          Recommended PR: 100 sqft from <strong>ChemPlast Supply</strong>
+        </div>
+        <div class="shortage-actions">
+          <button class="btn-approve" onclick="shortageAction('CPVC-SHEET-001','approve')">&#10003; Approve PR</button>
+          <button class="btn-modify" onclick="shortageAction('CPVC-SHEET-001','modify')">&#9998; Modify Qty</button>
+          <button class="btn-hold" onclick="shortageAction('CPVC-SHEET-001','hold')">&#9646;&#9646; Hold</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Fabrication Queue Table -->
+  <div class="section-label">Fabrication Queue</div>
+  <div class="table-card">
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+        <div class="table-title">Open Production Orders</div>
+        <div class="table-count" id="order-count">10 orders</div>
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterOrders('all',this)">All</button>
+        <button class="filter-tab" onclick="filterOrders('critical',this)">Critical</button>
+        <button class="filter-tab" onclick="filterOrders('shortage',this)">Shortage</button>
+        <button class="filter-tab" onclick="filterOrders('bom_pending',this)">BOM Pending</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="orders-table">
+        <thead>
+          <tr>
+            <th>Priority</th>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th class="sortable sort-asc" onclick="sortTable('days_until_due',this)">Days Due</th>
+            <th>Due Date</th>
+            <th>Milestone</th>
+            <th>BOM</th>
+            <th>Material</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bottom Grid: Capacity Heatmap + Pre-Ship QC -->
+  <div class="bottom-grid">
+
+    <!-- Capacity Heatmap -->
+    <div class="heatmap-card">
+      <div class="heatmap-header">
+        <div class="heatmap-title">Fabrication Capacity — 2-Week View</div>
+        <div class="heatmap-legend">
+          <div class="legend-item"><div class="legend-dot legend-green"></div>≤60%</div>
+          <div class="legend-item"><div class="legend-dot legend-amber"></div>61–85%</div>
+          <div class="legend-item"><div class="legend-dot legend-red"></div>&gt;85%</div>
+        </div>
+      </div>
+      <div class="heatmap-grid" id="heatmap-grid">
+      </div>
+    </div>
+
+    <!-- Pre-Ship QC Panel -->
+    <div class="qc-card">
+      <div class="section-label" style="margin-bottom:14px;">Pre-Ship QC — KIM-046</div>
+      <div class="qc-order-header">
+        <div class="qc-order-id">KIM-046</div>
+        <div class="qc-order-info">LIQUI-NOMIX® CO-48-PP &nbsp;·&nbsp; Rhine Energy GmbH &nbsp;·&nbsp; Due Apr 5</div>
+      </div>
+      <div class="qc-checklist" id="qc-checklist">
+        <!-- populated by JS -->
+      </div>
+      <button class="btn btn-primary" onclick="generateQCReport()" style="width:100%;justify-content:center;">
+        Generate QC Report
+      </button>
+    </div>
+
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- Side Panel (Order Detail) -->
+<div class="side-panel-overlay" id="side-panel-overlay" onclick="closeSidePanel(event)">
+  <div class="side-panel-backdrop"></div>
+  <div class="side-panel" id="side-panel">
+    <div class="panel-header">
+      <div class="panel-header-info">
+        <h2 id="panel-order-id">KIM-000</h2>
+        <p id="panel-customer">Customer Name</p>
+        <p id="panel-product" style="margin-top:2px;font-size:12px;color:var(--text-sec);">Product</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="panel-value" id="panel-value">~$48,500</div>
+        <button class="btn-close" onclick="closePanelBtn()">&#x2715;</button>
+      </div>
+    </div>
+    <div class="panel-body">
+
+      <!-- Milestone Steps -->
+      <div class="panel-section">
+        <div class="panel-section-title">Milestone Progress</div>
+        <div class="milestone-steps" id="panel-milestone-steps">
+        </div>
+      </div>
+
+      <!-- BOM Line Items -->
+      <div class="panel-section">
+        <div class="panel-section-title">BOM — Material Line Items</div>
+        <div id="panel-bom-content">
+          <table class="bom-table">
+            <thead>
+              <tr>
+                <th>Material</th>
+                <th>Qty</th>
+                <th>Status</th>
+                <th>Cert #</th>
+                <th>Cert Expiry</th>
+              </tr>
+            </thead>
+            <tbody id="panel-bom-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Engineering Notes -->
+      <div class="panel-section">
+        <div class="panel-section-title">Engineering Notes</div>
+        <textarea class="notes-area" id="panel-notes" placeholder="Add engineering notes..."></textarea>
+        <button class="btn btn-secondary btn-xs" style="margin-top:6px;" onclick="saveNotes()">Save Notes</button>
+      </div>
+
+      <!-- ECR Log -->
+      <div class="panel-section">
+        <div class="panel-section-title">Engineering Change Requests (ECR)</div>
+        <div id="panel-ecr-log">
+          <div class="ecr-empty">No ECRs on file for this order.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="panel-actions">
+      <button class="btn btn-secondary btn-sm" onclick="generateQCFromPanel()">📋 Generate QC Checklist</button>
+      <button class="btn btn-secondary btn-sm" onclick="runAgentFromPanel()">▶ Run Material Requisition Agent</button>
+      <button class="btn btn-ghost btn-sm" onclick="openECRModal()">+ New ECR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ECR Modal -->
+<div class="modal-overlay" id="ecr-modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>New Engineering Change Request</h3>
+      <button class="btn-close" onclick="closeECRModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">ECR Number (Auto-generated)</label>
+        <input type="text" class="form-input" id="ecr-number" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Order</label>
+        <select class="form-select" id="ecr-order">
+          <option value="">— Select Order —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Change Description</label>
+        <textarea class="form-textarea" id="ecr-desc" placeholder="Describe the engineering change..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reason</label>
+        <select class="form-select" id="ecr-reason">
+          <option value="customer_request">Customer Request</option>
+          <option value="engineering_error">Engineering Error</option>
+          <option value="material_sub">Material Substitution</option>
+          <option value="regulatory">Regulatory Requirement</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Customer Approval Required</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="ecr-approval" value="yes"> Yes
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="ecr-approval" value="no" checked> No
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Spec Document (upload placeholder)</label>
+        <input type="file" class="form-input" style="padding:8px;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeECRModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="authorizeECR()">Authorize ECR</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+  // ── Constants ──────────────────────────────────────────────────────────────
+  const API = 'http://localhost:8500';
+  const TODAY = new Date('2026-03-13');
+
+  const MILESTONE_LABELS = [
+    'BOM Created', 'Materials Pulled', 'Fabrication',
+    'QC Check', 'Packed', 'Shipped'
+  ];
+
+  const ORDERS = [
+    {id:'KIM-052', customer:'Gulf Fertilizers Co.', product:'B-GON® ME-48-PP', product_family:'mist_eliminator', due:'2026-03-18', milestone:3, milestone_label:'Fabrication', bom_status:'complete', material_status:'ready', priority:'critical', days_until_due:5, value:'$52,400', materials:[{name:'Polypropylene mesh',qty:'48 sqft',status:'ok',cert:'PP-2024-15',cert_exp:'2026-09-01'},{name:'FRP framing',qty:'2 sections',status:'ok',cert:'FRP-2024-08',cert_exp:'2026-12-01'},{name:'Stainless wire',qty:'12ft',status:'ok',cert:'SS-2024-22',cert_exp:'2027-01-01'}], notes:'Customer requires ATEX Zone 2 certification. Rush order — expedited fabrication approved.'},
+    {id:'KIM-051', customer:'Pacific Chemicals Inc', product:'DRIFTOR® DE-48-PP', product_family:'drift_eliminator', due:'2026-03-20', milestone:4, milestone_label:'QC Check', bom_status:'complete', material_status:'ready', priority:'high', days_until_due:7, value:'$38,200', materials:[{name:'Polypropylene profiles',qty:'96 linear ft',status:'ok',cert:'PP-2024-14',cert_exp:'2026-08-01'}], notes:'Standard order. QC in progress — dimensional checks pending.'},
+    {id:'KIM-050', customer:'Petrochem Solutions Ltd', product:'LIQUI-NOMIX® CO-36-CPVC', product_family:'coalescer', due:'2026-03-22', milestone:2, milestone_label:'Materials Pulled', bom_status:'complete', material_status:'partial', priority:'high', days_until_due:9, value:'$29,800', materials:[{name:'CPVC sheeting',qty:'24 sqft',status:'shortage',cert:'CPVC-2024-06',cert_exp:'2026-07-15'},{name:'PP fiber',qty:'8 lbs',status:'ok',cert:'PPF-2024-11',cert_exp:'2026-10-01'}], notes:'CPVC shortage flagged. PR submitted — awaiting approval from Sam.'},
+    {id:'KIM-049', customer:'Atlas Fertilizer Corp', product:'B-GON® ME-72-SS', product_family:'mist_eliminator', due:'2026-03-25', milestone:1, milestone_label:'BOM Created', bom_status:'complete', material_status:'shortage', priority:'high', days_until_due:12, value:'$64,700', materials:[{name:'Polypropylene mesh',qty:'72 sqft',status:'shortage',cert:'PP-2024-15',cert_exp:'2026-09-01'},{name:'Stainless wire mesh',qty:'18ft',status:'ok',cert:'SS-2024-22',cert_exp:'2027-01-01'},{name:'FRP framing',qty:'3 sections',status:'ok',cert:'FRP-2024-08',cert_exp:'2026-12-01'}], notes:'Large format unit. PP mesh shortage impacts this order directly.'},
+    {id:'KIM-048', customer:'Southern Power Generation', product:'Fiber Bed FB-60-FRP', product_family:'fiber_bed', due:'2026-03-28', milestone:3, milestone_label:'Fabrication', bom_status:'complete', material_status:'ready', priority:'medium', days_until_due:15, value:'$41,300', materials:[{name:'PP fiber',qty:'24 lbs',status:'ok',cert:'PPF-2024-11',cert_exp:'2026-10-01'},{name:'FRP housing',qty:'1 unit',status:'ok',cert:'FRP-2024-09',cert_exp:'2026-11-01'}], notes:''},
+    {id:'KIM-047', customer:'Mosaic Steel Works', product:'B-GON® ME-24-CPVC', product_family:'mist_eliminator', due:'2026-04-02', milestone:0, milestone_label:'BOM Pending', bom_status:'pending', material_status:'unknown', priority:'medium', days_until_due:20, value:'$22,600', materials:[], notes:''},
+    {id:'KIM-046', customer:'Rhine Energy GmbH', product:'LIQUI-NOMIX® CO-48-PP', product_family:'coalescer', due:'2026-04-05', milestone:5, milestone_label:'Packed', bom_status:'complete', material_status:'ready', priority:'low', days_until_due:23, value:'$36,900', materials:[{name:'PP fiber',qty:'16 lbs',status:'ok',cert:'PPF-2024-10',cert_exp:'2026-09-15'},{name:'CPVC sheeting',qty:'16 sqft',status:'ok',cert:'CPVC-2024-05',cert_exp:'2026-06-30'}], notes:'Packed and ready. Awaiting final QC sign-off from Sam.'},
+    {id:'KIM-045', customer:'Gulf Chemicals Trading', product:'KON-TANE® KT-PP-2IN', product_family:'scrubber_packing', due:'2026-04-08', milestone:0, milestone_label:'BOM Pending', bom_status:'in_progress', material_status:'unknown', priority:'medium', days_until_due:26, value:'$18,200', materials:[], notes:'BOM in progress — standard KT-PP product, minimal customization.'},
+    {id:'KIM-044', customer:'Horizon Petrochemicals', product:'B-GON® ME-36-PP', product_family:'mist_eliminator', due:'2026-04-12', milestone:0, milestone_label:'BOM Pending', bom_status:'pending', material_status:'unknown', priority:'low', days_until_due:30, value:'$31,100', materials:[], notes:''},
+    {id:'KIM-043', customer:'Coastal Refineries Ltd', product:'Fiber Bed FB-48-FRP', product_family:'fiber_bed', due:'2026-04-15', milestone:2, milestone_label:'Materials Pulled', bom_status:'complete', material_status:'ready', priority:'low', days_until_due:33, value:'$45,600', materials:[{name:'PP fiber',qty:'18 lbs',status:'ok',cert:'PPF-2024-09',cert_exp:'2026-08-01'},{name:'FRP housing',qty:'1 unit',status:'ok',cert:'FRP-2024-07',cert_exp:'2026-10-01'}], notes:'Long lead item — materials pulled early. Fab scheduled week of Apr 6.'}
+  ];
+
+  let currentOrders = [...ORDERS];
+  let currentSort = { key: 'days_until_due', dir: 'asc' };
+  let selectedOrderId = null;
+  let ecrs = JSON.parse(localStorage.getItem('kimre_ecrs') || '[]');
+  let ecrCounter = ecrs.length + 41;
+  let qcChecked = {};
+  let agentRunning = [false, false];
+
+  // ── Heatmap data ──────────────────────────────────────────────────────────
+  const HEATMAP_DATA = [
+    // Week 1: Mar 13–18
+    { date: '2026-03-13', count: 3, orders: ['KIM-052 (Fab)', 'KIM-051 (QC)', 'KIM-048 (Fab)'] },
+    { date: '2026-03-14', count: 4, orders: ['KIM-052 (Fab)', 'KIM-051 (QC)', 'KIM-050 (Mat)', 'KIM-048 (Fab)'] },
+    { date: '2026-03-16', count: 3, orders: ['KIM-052 (Fab)', 'KIM-050 (Mat)', 'KIM-049 (BOM)'] },
+    { date: '2026-03-17', count: 5, orders: ['KIM-052 (Ship)', 'KIM-051 (QC)', 'KIM-050 (Fab)', 'KIM-049 (Fab)', 'KIM-048 (Pack)'] },
+    { date: '2026-03-18', count: 6, orders: ['KIM-051 (Ship)', 'KIM-050 (Fab)', 'KIM-049 (Fab)', 'KIM-048 (QC)', 'KIM-047 (BOM)', 'KIM-045 (BOM)'] },
+    // Week 2: Mar 19–25
+    { date: '2026-03-19', count: 4, orders: ['KIM-050 (Pack)', 'KIM-049 (QC)', 'KIM-048 (Ship)', 'KIM-047 (Mat)'] },
+    { date: '2026-03-20', count: 2, orders: ['KIM-049 (QC)', 'KIM-047 (Mat)'] },
+    { date: '2026-03-21', count: 4, orders: ['KIM-049 (Ship)', 'KIM-047 (Fab)', 'KIM-046 (QC)', 'KIM-045 (Mat)'] },
+    { date: '2026-03-23', count: 3, orders: ['KIM-047 (Fab)', 'KIM-046 (Pack)', 'KIM-045 (Fab)'] },
+    { date: '2026-03-24', count: 3, orders: ['KIM-047 (Fab)', 'KIM-045 (Fab)', 'KIM-044 (BOM)'] },
+    { date: '2026-03-25', count: 4, orders: ['KIM-047 (QC)', 'KIM-046 (Ship)', 'KIM-045 (Fab)', 'KIM-044 (Mat)'] },
+  ];
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    renderTable(currentOrders);
+    buildHeatmap();
+    buildQCChecklist();
+    populateECROrders();
+    generateECRNumber();
+    updateLastUpdated();
+    fetchData();
+  });
+
+  function updateLastUpdated() {
+    const el = document.getElementById('last-updated');
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // ── Data Fetch ─────────────────────────────────────────────────────────────
+  async function fetchData() {
+    try {
+      const res = await fetch(`${API}/api/orders/engineering`, { signal: AbortSignal.timeout(3000) });
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      if (data && Array.isArray(data.orders)) {
+        currentOrders = data.orders;
+        renderTable(currentOrders);
+      }
+    } catch {
+      // Fallback to hardcoded ORDERS — already rendered
+    }
+  }
+
+  function refreshData() {
+    updateLastUpdated();
+    showToast('Refreshed dashboard data', 'orange');
+    fetchData();
+  }
+
+  // ── Table Render ──────────────────────────────────────────────────────────
+  function renderTable(orders) {
+    const tbody = document.getElementById('orders-tbody');
+    document.getElementById('order-count').textContent = `${orders.length} orders`;
+    tbody.innerHTML = orders.map(o => `
+      <tr class="order-row${selectedOrderId === o.id ? ' selected' : ''}" onclick="openSidePanel('${o.id}')">
+        <td><span class="priority-badge priority-${o.priority}">${o.priority.charAt(0).toUpperCase() + o.priority.slice(1)}</span></td>
+        <td><span class="order-id">${o.id}</span></td>
+        <td><span class="customer-name">${o.customer}</span></td>
+        <td><span class="product-name">${o.product}</span></td>
+        <td><span class="${daysClass(o.days_until_due)}">${o.days_until_due}d</span></td>
+        <td style="color:var(--text-sec);font-size:12px;">${formatDate(o.due)}</td>
+        <td>
+          <div class="milestone-wrap">
+            <span class="milestone-label-text">${o.milestone_label}</span>
+            <div class="milestone-bar">
+              ${[0,1,2,3,4,5].map(i => {
+                let cls = '';
+                if (o.milestone > 0 && i < o.milestone) cls = 'done';
+                else if (i === o.milestone && o.milestone > 0) cls = 'current';
+                else if (i === 0 && o.milestone === 0 && o.bom_status !== 'pending') cls = 'current';
+                return `<div class="milestone-seg ${cls}"></div>`;
+              }).join('')}
+            </div>
+          </div>
+        </td>
+        <td>${bomBadge(o.bom_status)}</td>
+        <td>${matBadge(o.material_status)}</td>
+      </tr>
+    `).join('');
+  }
+
+  function daysClass(d) {
+    if (d <= 7) return 'days-urgent';
+    if (d <= 14) return 'days-soon';
+    return 'days-ok';
+  }
+
+  function formatDate(s) {
+    const d = new Date(s + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  }
+
+  function bomBadge(s) {
+    const map = {
+      complete: ['status-complete','✓ Complete'],
+      in_progress: ['status-in_progress','⚠ In Progress'],
+      pending: ['status-pending','✗ Pending']
+    };
+    const [cls, label] = map[s] || ['status-unknown','—'];
+    return `<span class="status-badge ${cls}">${label}</span>`;
+  }
+
+  function matBadge(s) {
+    const map = {
+      ready: ['status-ready','✓ Ready'],
+      partial: ['status-partial','⚠ Partial'],
+      shortage: ['status-shortage','✗ Shortage'],
+      unknown: ['status-unknown','— TBD']
+    };
+    const [cls, label] = map[s] || ['status-unknown','—'];
+    return `<span class="status-badge ${cls}">${label}</span>`;
+  }
+
+  // ── Sorting ───────────────────────────────────────────────────────────────
+  function sortTable(key, th) {
+    document.querySelectorAll('th.sortable').forEach(t => {
+      t.classList.remove('sort-asc','sort-desc');
+    });
+    if (currentSort.key === key) {
+      currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSort = { key, dir: 'asc' };
+    }
+    th.classList.add(currentSort.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+    currentOrders.sort((a, b) => {
+      let va = a[key], vb = b[key];
+      if (typeof va === 'string') return currentSort.dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+      return currentSort.dir === 'asc' ? va - vb : vb - va;
+    });
+    renderTable(currentOrders);
+  }
+
+  // ── Filter ────────────────────────────────────────────────────────────────
+  function filterOrders(filter, btn) {
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    let filtered;
+    if (filter === 'all') filtered = [...ORDERS];
+    else if (filter === 'critical') filtered = ORDERS.filter(o => o.priority === 'critical');
+    else if (filter === 'shortage') filtered = ORDERS.filter(o => o.material_status === 'shortage' || o.material_status === 'partial');
+    else if (filter === 'bom_pending') filtered = ORDERS.filter(o => o.bom_status === 'pending' || o.bom_status === 'in_progress');
+    currentOrders = filtered;
+    filtered.sort((a,b) => a.days_until_due - b.days_until_due);
+    renderTable(currentOrders);
+  }
+
+  // ── Side Panel ────────────────────────────────────────────────────────────
+  function openSidePanel(orderId) {
+    const order = ORDERS.find(o => o.id === orderId);
+    if (!order) return;
+    selectedOrderId = orderId;
+    renderTable(currentOrders);
+
+    document.getElementById('panel-order-id').textContent = order.id;
+    document.getElementById('panel-customer').textContent = order.customer;
+    document.getElementById('panel-product').textContent = order.product;
+    document.getElementById('panel-value').textContent = order.value || '~$38,000';
+
+    // Milestone steps
+    const stepsEl = document.getElementById('panel-milestone-steps');
+    stepsEl.innerHTML = MILESTONE_LABELS.map((label, i) => {
+      let cls = '';
+      if (order.milestone > 0) {
+        if (i < order.milestone) cls = 'done';
+        else if (i === order.milestone) cls = 'current';
+      } else if (i === 0 && order.bom_status !== 'pending') {
+        cls = 'current';
+      }
+      return `
+        <div class="ms-step ${cls}">
+          <div class="ms-dot">${cls === 'done' ? '✓' : i+1}</div>
+          <div class="ms-step-label">${label}</div>
+        </div>
+      `;
+    }).join('');
+
+    // BOM line items
+    const bomTbody = document.getElementById('panel-bom-tbody');
+    if (order.materials.length === 0) {
+      bomTbody.innerHTML = `<tr><td colspan="5" class="no-materials">No BOM materials — BOM not yet created.</td></tr>`;
+    } else {
+      bomTbody.innerHTML = order.materials.map(m => {
+        const expClass = certExpiryClass(m.cert_exp);
+        return `
+          <tr>
+            <td style="font-weight:600;color:var(--text);">${m.name}</td>
+            <td style="color:var(--text-sec);">${m.qty}</td>
+            <td>${m.status === 'shortage' ? '<span class="status-badge status-shortage">✗ Shortage</span>' : '<span class="status-badge status-ready">✓ OK</span>'}</td>
+            <td style="font-size:11px;color:var(--text-muted);font-family:monospace;">${m.cert}</td>
+            <td class="${expClass}" style="font-size:12px;">${m.cert_exp}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Notes
+    const savedNotes = localStorage.getItem(`kimre_notes_${orderId}`);
+    document.getElementById('panel-notes').value = savedNotes || order.notes || '';
+
+    // ECR log
+    renderECRLog(orderId);
+
+    document.getElementById('side-panel-overlay').classList.add('open');
+  }
+
+  function certExpiryClass(dateStr) {
+    const exp = new Date(dateStr + 'T00:00:00');
+    const diff = (exp - TODAY) / (1000 * 60 * 60 * 24);
+    if (diff < 30) return 'cert-expiry-critical';
+    if (diff < 60) return 'cert-expiry-warn';
+    return 'cert-expiry-ok';
+  }
+
+  function renderECRLog(orderId) {
+    const logEl = document.getElementById('panel-ecr-log');
+    const orderECRs = ecrs.filter(e => e.order === orderId);
+    if (orderECRs.length === 0) {
+      logEl.innerHTML = '<div class="ecr-empty">No ECRs on file for this order.</div>';
+    } else {
+      logEl.innerHTML = orderECRs.map(e => `
+        <div class="ecr-item">
+          <span class="ecr-num">${e.number}</span>
+          <span class="ecr-desc">${e.desc} <em style="color:var(--text-muted)">(${e.reason})</em></span>
+          <span class="ecr-date">${e.date}</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  function closeSidePanel(event) {
+    if (event.target.classList.contains('side-panel-backdrop') || event.target.classList.contains('side-panel-overlay')) {
+      closePanelBtn();
+    }
+  }
+
+  function closePanelBtn() {
+    document.getElementById('side-panel-overlay').classList.remove('open');
+    selectedOrderId = null;
+    renderTable(currentOrders);
+  }
+
+  function saveNotes() {
+    if (!selectedOrderId) return;
+    const notes = document.getElementById('panel-notes').value;
+    localStorage.setItem(`kimre_notes_${selectedOrderId}`, notes);
+    showToast('Engineering notes saved', 'green');
+  }
+
+  function generateQCFromPanel() {
+    showToast('QC Checklist generated for ' + selectedOrderId, 'orange');
+  }
+
+  function runAgentFromPanel() {
+    closePanelBtn();
+    setTimeout(() => runAgent(1), 200);
+  }
+
+  // ── ECR Modal ─────────────────────────────────────────────────────────────
+  function generateECRNumber() {
+    ecrCounter++;
+    document.getElementById('ecr-number').value = `ECR-2026-${String(ecrCounter).padStart(3,'0')}`;
+  }
+
+  function populateECROrders() {
+    const sel = document.getElementById('ecr-order');
+    ORDERS.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o.id;
+      opt.textContent = `${o.id} — ${o.customer}`;
+      sel.appendChild(opt);
+    });
+    if (selectedOrderId) sel.value = selectedOrderId;
+  }
+
+  function openECRModal() {
+    generateECRNumber();
+    const sel = document.getElementById('ecr-order');
+    if (selectedOrderId) sel.value = selectedOrderId;
+    document.getElementById('ecr-desc').value = '';
+    document.getElementById('ecr-modal-overlay').classList.add('open');
+  }
+
+  function closeECRModal() {
+    document.getElementById('ecr-modal-overlay').classList.remove('open');
+  }
+
+  document.getElementById('ecr-modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeECRModal();
+  });
+
+  function authorizeECR() {
+    const number = document.getElementById('ecr-number').value;
+    const order = document.getElementById('ecr-order').value;
+    const desc = document.getElementById('ecr-desc').value.trim();
+    const reason = document.getElementById('ecr-reason').value;
+    const approval = document.querySelector('input[name="ecr-approval"]:checked')?.value || 'no';
+
+    if (!order) { showToast('Please select an order', 'amber'); return; }
+    if (!desc) { showToast('Please enter a change description', 'amber'); return; }
+
+    const ecr = {
+      number,
+      order,
+      desc,
+      reason: reason.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      approval,
+      date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+    };
+
+    ecrs.push(ecr);
+    localStorage.setItem('kimre_ecrs', JSON.stringify(ecrs));
+
+    closeECRModal();
+    showToast(`${number} authorized and saved`, 'green');
+
+    if (selectedOrderId === order) {
+      renderECRLog(order);
+    }
+  }
+
+  // ── Agent Run Theater ─────────────────────────────────────────────────────
+  const AGENT_STEPS = {
+    1: ['Checking open production orders...', 'Scanning BOM requirements vs. material stock...', 'Identifying shortage risk items...', 'Calculating reorder quantities...', 'Creating purchase requisitions...'],
+    2: ['Loading order specifications...', 'Checking EPA material compatibility...', 'Verifying dimensional tolerances...', 'Validating material certifications...', 'Flagging non-conformances...']
+  };
+
+  const AGENT_SLUGS = {
+    1: 'kimre-material-requisition-agent',
+    2: 'kimre-quality-compliance-agent'
+  };
+
+  async function runAgent(agentNum) {
+    if (agentRunning[agentNum - 1]) return;
+    agentRunning[agentNum - 1] = true;
+
+    const btn = document.getElementById(`run-btn-${agentNum}`);
+    const stepsEl = document.getElementById(`run-steps-${agentNum}`);
+    const resultsEl = document.getElementById(`run-results-${agentNum}`);
+
+    btn.disabled = true;
+    btn.textContent = 'Running...';
+    stepsEl.classList.add('active');
+    resultsEl.classList.remove('visible');
+
+    const steps = stepsEl.querySelectorAll('.run-step');
+    steps.forEach(s => s.classList.remove('done','active-step'));
+
+    // Try real API
+    let useStream = false;
+    try {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), 1500);
+      const res = await fetch(`${API}/api/run/${AGENT_SLUGS[agentNum]}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orders: ORDERS.map(o => o.id) }),
+        signal: controller.signal
+      });
+      if (res.ok) useStream = true;
+    } catch {
+      // offline — use mock animation
+    }
+
+    // Animate steps
+    for (let i = 0; i < steps.length; i++) {
+      steps[i].classList.add('active-step');
+      await delay(700 + Math.random() * 500);
+      steps[i].classList.remove('active-step');
+      steps[i].classList.add('done');
+    }
+
+    resultsEl.classList.add('visible');
+    btn.disabled = false;
+    btn.innerHTML = `&#9654; Run Again`;
+    agentRunning[agentNum - 1] = false;
+    showToast(`Agent ${agentNum === 1 ? 'Material Requisition' : 'Quality Compliance'} complete`, 'green');
+  }
+
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // ── Shortage Actions ──────────────────────────────────────────────────────
+  function shortageAction(itemCode, action) {
+    const labels = { approve: 'PR Approved', modify: 'Modify Qty — enter new quantity in purchasing', hold: 'Item placed on hold' };
+    const colors = { approve: 'green', modify: 'amber', hold: 'orange' };
+    showToast(`${itemCode}: ${labels[action]}`, colors[action]);
+  }
+
+  // ── Heatmap ───────────────────────────────────────────────────────────────
+  function buildHeatmap() {
+    const grid = document.getElementById('heatmap-grid');
+    const MAX = 5;
+
+    // Build date range: 2 weeks, Mon–Sat
+    // Week 1: Mar 13 (Fri today) + fill week, Week 2: Mar 16–21, etc.
+    // Columns: Mon Tue Wed Thu Fri Sat x2
+    const days = ['Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    // Header row: blank label + 12 day headers
+    const allDates = [];
+    // Week 1: Mar 9–14, Week 2: Mar 16–21
+    // Actually per spec: today=Mar13, show Mon-Sat x2
+    // Week starting Mar 9 (Mon) through Mar 14 (Sat)
+    // Week starting Mar 16 (Mon) through Mar 21 (Sat)
+    for (let w = 0; w < 2; w++) {
+      for (let d = 0; d < 6; d++) {
+        const base = new Date('2026-03-09T00:00:00');
+        base.setDate(base.getDate() + w * 7 + d);
+        allDates.push(base);
+      }
+    }
+
+    // Header
+    const labelBlank = document.createElement('div');
+    grid.appendChild(labelBlank);
+    days.concat(days).forEach((d, i) => {
+      const h = document.createElement('div');
+      h.className = 'heatmap-day-header';
+      h.textContent = d;
+      grid.appendChild(h);
+    });
+
+    // Week labels + cells
+    ['Week 1', 'Week 2'].forEach((wLabel, wi) => {
+      const wl = document.createElement('div');
+      wl.className = 'heatmap-week-label';
+      wl.textContent = wLabel;
+      grid.appendChild(wl);
+
+      for (let d = 0; d < 6; d++) {
+        const date = allDates[wi * 6 + d];
+        const dateStr = date.toISOString().split('T')[0];
+        const isToday = dateStr === '2026-03-13';
+
+        const hdata = HEATMAP_DATA.find(h => h.date === dateStr);
+        const count = hdata ? hdata.count : 0;
+        const orders = hdata ? hdata.orders : [];
+
+        const ratio = count / MAX;
+        let colorClass = 'heatmap-cell-empty';
+        if (count > 0) {
+          if (ratio <= 0.6) colorClass = 'heatmap-cell-green';
+          else if (ratio <= 0.85) colorClass = 'heatmap-cell-amber';
+          else colorClass = 'heatmap-cell-red';
+        }
+        if (count > MAX) colorClass = 'heatmap-cell-red';
+
+        const cell = document.createElement('div');
+        cell.className = `heatmap-cell ${colorClass}${isToday ? ' today' : ''}`;
+
+        const dayNum = date.getDate();
+        const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+
+        cell.innerHTML = `
+          <div class="heatmap-date">${monthName} ${dayNum}${isToday ? ' ★' : ''}</div>
+          ${count > 0 ? `<div class="heatmap-count">${count}/${MAX}</div><div class="heatmap-cap">orders</div>` : '<div style="font-size:10px;color:var(--text-muted)">—</div>'}
+          ${count > 0 ? `<div class="day-tooltip">
+            <div class="day-tooltip-title">${monthName} ${dayNum} — ${count} order${count !== 1 ? 's' : ''}</div>
+            ${orders.map(o => `<div class="day-tooltip-order">${o}</div>`).join('')}
+          </div>` : ''}
+        `;
+        grid.appendChild(cell);
+      }
+    });
+  }
+
+  // ── Pre-Ship QC Checklist ─────────────────────────────────────────────────
+  const QC_ITEMS = [
+    { id: 'qc1', label: 'Dimensional check', detail: 'Nominal 48" dia ±0.5" — verify caliper measurement' },
+    { id: 'qc2', label: 'Weight verification', detail: 'Spec 285 lbs ±5% — scale check required' },
+    { id: 'qc3', label: 'Material cert confirmed', detail: 'PP fiber cert PPF-2024-10 — cross-reference cert package' },
+    { id: 'qc4', label: 'Customer labeling verified', detail: 'Rhine Energy GmbH label, PO #RE-4492 confirmed' },
+    { id: 'qc5', label: 'Packaging integrity check', detail: 'No damage, shrink wrap secure, corner protection' },
+    { id: 'qc6', label: 'Customer-specific requirements', detail: 'ATEX zone rating confirmed — CE marking applied' }
+  ];
+
+  function buildQCChecklist() {
+    const container = document.getElementById('qc-checklist');
+    container.innerHTML = QC_ITEMS.map(item => {
+      const isChecked = qcChecked[item.id];
+      return `
+        <div class="qc-item${isChecked ? ' checked' : ''}" onclick="toggleQC('${item.id}', this)">
+          <div class="qc-checkbox">${isChecked ? '✓' : ''}</div>
+          <div class="qc-item-text">
+            <div class="qc-item-label">${item.label}</div>
+            <div class="qc-item-detail">${item.detail}</div>
+            ${isChecked ? `<div class="qc-timestamp">Signed off: ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleQC(id, el) {
+    qcChecked[id] = !qcChecked[id];
+    buildQCChecklist();
+    if (qcChecked[id]) showToast(`QC item checked: ${QC_ITEMS.find(q=>q.id===id)?.label}`, 'green');
+  }
+
+  function generateQCReport() {
+    const checkedCount = Object.values(qcChecked).filter(Boolean).length;
+    const total = QC_ITEMS.length;
+    if (checkedCount < total) {
+      showToast(`QC incomplete: ${checkedCount}/${total} items checked`, 'amber');
+    } else {
+      showToast('QC Report generated — KIM-046 cleared for shipment', 'green');
+    }
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────────
+  function showToast(message, color = 'orange') {
+    const container = document.getElementById('toast-container');
+    const icons = { green: '✓', amber: '⚠', orange: '◆' };
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${color}`;
+    toast.innerHTML = `<span>${icons[color] || '◆'}</span> ${message}`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('toast-exit');
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+</script>
+</body>
+</html>

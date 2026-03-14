@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Portfolio | Business Agents Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --card:      #161b2e;
+      --border:    #1e293b;
+      --text:      #f1f5f9;
+      --text-sec:  #94a3b8;
+      --text-muted: #64748b;
+      --orange:    #f97316;
+      --orange-dim: rgba(249,115,22,0.12);
+      --indigo:    #6366f1;
+      --indigo-dim: rgba(99,102,241,0.12);
+      --green:     #22c55e;
+      --green-dim: rgba(34,197,94,0.12);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 0 40px;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .header-sub {
+      font-size: 14px;
+      color: var(--text-sec);
+      margin-top: 6px;
+    }
+
+    .header-breadcrumb {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .header-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+    .header-breadcrumb a:hover { color: var(--text); }
+
+    .header-meta {
+      text-align: right;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── Main ── */
+    main { flex: 1; padding: 56px 0; }
+
+    /* ── Client cards grid ── */
+    .client-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    @media (max-width: 900px) {
+      .client-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .client-grid { grid-template-columns: 1fr; }
+    }
+
+    .client-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      position: relative;
+    }
+
+    .client-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .client-card.orange:hover { border-color: rgba(249,115,22,0.5); }
+    .client-card.indigo:hover { border-color: rgba(99,102,241,0.5); }
+    .client-card.green:hover  { border-color: rgba(34,197,94,0.5); }
+
+    /* Accent top bar */
+    .client-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .client-card.orange::before { background: var(--orange); }
+    .client-card.indigo::before { background: var(--indigo); }
+    .client-card.green::before  { background: var(--green); }
+
+    /* Card sections */
+    .card-name {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .client-card.orange .card-name { color: var(--orange); }
+    .client-card.indigo .card-name { color: var(--indigo); }
+    .client-card.green  .card-name { color: var(--green); }
+
+    .card-tagline {
+      font-size: 13px;
+      color: var(--text-sec);
+      margin-top: 2px;
+    }
+
+    .card-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(249,115,22,0.25); }
+    .badge-indigo { background: var(--indigo-dim); color: var(--indigo); border: 1px solid rgba(99,102,241,0.25); }
+    .badge-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(34,197,94,0.25); }
+    .badge-muted  { background: rgba(100,116,139,0.12); color: var(--text-muted); border: 1px solid rgba(100,116,139,0.2); }
+
+    .card-pilot-status {
+      font-size: 13px;
+      color: var(--text-sec);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.active   { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .status-dot.upcoming { background: var(--text-muted); }
+
+    .card-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .metric {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .metric .m-val {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .client-card.orange .metric .m-val { color: var(--orange); }
+    .client-card.indigo .metric .m-val { color: var(--indigo); }
+    .client-card.green  .metric .m-val { color: var(--green); }
+
+    .metric .m-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    /* View portal button */
+    .card-footer {
+      margin-top: auto;
+      padding-top: 4px;
+    }
+
+    .view-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      color: var(--text-sec);
+      transition: all 150ms ease;
+      background: transparent;
+    }
+
+    .client-card.orange:hover .view-btn { background: var(--orange-dim); border-color: rgba(249,115,22,0.3); color: var(--orange); }
+    .client-card.indigo:hover .view-btn { background: var(--indigo-dim); border-color: rgba(99,102,241,0.3); color: var(--indigo); }
+    .client-card.green:hover  .view-btn { background: var(--green-dim);  border-color: rgba(34,197,94,0.3);  color: var(--green); }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      overflow: hidden;
+    }
+
+    .stat-item {
+      padding: 24px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-top: 4px;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-breadcrumb">
+      <a href="../index.html">Business Agents Platform</a> &nbsp;/&nbsp; Client Portfolio
+    </div>
+    <div class="header-inner">
+      <div>
+        <div class="header-title">Client Portfolio</div>
+        <div class="header-sub">Agent engagement portals — all active and upcoming client pilots</div>
+      </div>
+      <div class="header-meta">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">3 clients</div>
+        <div>Q1–Q2 2026</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Main ── -->
+<main>
+  <div class="container">
+
+    <div class="section-title">Active &amp; Upcoming Client Pilots</div>
+
+    <!-- Client Cards Grid -->
+    <div class="client-grid">
+
+      <!-- ── Kimre Inc. ── -->
+      <a class="client-card orange" href="./kimre/index.html" target="_blank" rel="noopener">
+        <div>
+          <div class="card-name">Kimre Inc.</div>
+          <div class="card-tagline">Industrial Mist &amp; Drift Eliminators — Homestead, FL</div>
+        </div>
+
+        <div class="card-badges">
+          <span class="badge badge-orange">MFG</span>
+          <span class="badge badge-orange">ETO</span>
+          <span class="badge badge-muted">MID</span>
+          <span class="badge badge-muted">Pilot</span>
+        </div>
+
+        <div class="card-pilot-status">
+          <div class="status-dot active"></div>
+          <span><strong>Material Requisition Agent</strong> — Active Pilot</span>
+        </div>
+
+        <div style="font-size:12px;color:var(--text-muted)">5 agent opportunities · Integration T2 · Epicor ERP</div>
+
+        <div class="card-metrics">
+          <div class="metric">
+            <div class="m-val">34 hrs</div>
+            <div class="m-label">Recoverable / wk</div>
+          </div>
+          <div class="metric">
+            <div class="m-val">£190K</div>
+            <div class="m-label">Annual Value</div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="view-btn">
+            <span>View Portal</span>
+            <span>&rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ── Precision Parts Co. ── -->
+      <a class="client-card indigo" href="./precisionparts/index.html" target="_blank" rel="noopener">
+        <div>
+          <div class="card-name">Precision Parts Co.</div>
+          <div class="card-tagline">CNC Machining &amp; Precision Manufacturing — Tulsa, OK</div>
+        </div>
+
+        <div class="card-badges">
+          <span class="badge badge-indigo">MFG</span>
+          <span class="badge badge-indigo">MTS</span>
+          <span class="badge badge-muted">MID</span>
+          <span class="badge badge-muted">Pilot</span>
+          <span class="badge badge-muted">ISO 9001</span>
+          <span class="badge badge-muted">AS9100D</span>
+        </div>
+
+        <div class="card-pilot-status">
+          <div class="status-dot upcoming"></div>
+          <span>&#128197; Starting April 2026 — Inventory Replenishment</span>
+        </div>
+
+        <div style="font-size:12px;color:var(--text-muted)">3 agent opportunities · Integration T2 · Epicor Kinetic</div>
+
+        <div class="card-metrics">
+          <div class="metric">
+            <div class="m-val">18 hrs</div>
+            <div class="m-label">Recoverable / wk</div>
+          </div>
+          <div class="metric">
+            <div class="m-val">£74K</div>
+            <div class="m-label">Annual Value</div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="view-btn">
+            <span>View Portal</span>
+            <span>&rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ── Meridian Community Bank ── -->
+      <a class="client-card green" href="./meridianbank/index.html" target="_blank" rel="noopener">
+        <div>
+          <div class="card-name">Meridian Community Bank</div>
+          <div class="card-tagline">Community Banking — Charlotte, NC</div>
+        </div>
+
+        <div class="card-badges">
+          <span class="badge badge-green">FS</span>
+          <span class="badge badge-green">Service</span>
+          <span class="badge badge-muted">MID</span>
+          <span class="badge badge-muted">Pilot</span>
+          <span class="badge badge-muted">FDIC</span>
+          <span class="badge badge-muted">OCC</span>
+        </div>
+
+        <div class="card-pilot-status">
+          <div class="status-dot upcoming"></div>
+          <span>&#128197; Starting April 2026 — AML Alert Triage</span>
+        </div>
+
+        <div style="font-size:12px;color:var(--text-muted)">4 agent opportunities · Integration T2 · Jack Henry · Verafin</div>
+
+        <div class="card-metrics">
+          <div class="metric">
+            <div class="m-val">28 hrs</div>
+            <div class="m-label">Recoverable / wk</div>
+          </div>
+          <div class="metric">
+            <div class="m-val">£127K</div>
+            <div class="m-label">Annual Value</div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="view-btn">
+            <span>View Portal</span>
+            <span>&rarr;</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- ── Bottom stats bar ── -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-val">3</div>
+        <div class="stat-label">Active Clients</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">80 hrs</div>
+        <div class="stat-label">Recoverable / Week</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">£391K</div>
+        <div class="stat-label">Combined Annual Value</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">12</div>
+        <div class="stat-label">Total Agent Opportunities</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="container">
+    <a href="../index.html">Business Agents Platform</a> &nbsp;|&nbsp; Client Portfolio &nbsp;|&nbsp; Internal use only &nbsp;|&nbsp; Built with Claude Code
+  </div>
+</footer>
+
+</body>
+</html>

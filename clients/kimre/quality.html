@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pat Chen — Quality &amp; Compliance | Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --kimre: #f97316;
+      --kimre-dim: rgba(249,115,22,0.15);
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --green-dim: rgba(34,197,94,0.08);
+      --amber-dim: rgba(245,158,11,0.08);
+      --red-dim: rgba(239,68,68,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; }
+
+    /* NAV */
+    .kimre-nav { background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .kimre-nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .kimre-nav-brand { font-weight: 800; font-size: 18px; color: var(--kimre); letter-spacing: -0.5px; }
+    .kimre-nav-links { display: flex; gap: 4px; }
+    .kimre-nav-link { color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; transition: all 0.15s; }
+    .kimre-nav-link:hover { color: var(--text); background: var(--border); }
+    .kimre-nav-link.active { color: var(--kimre); background: var(--kimre-dim); }
+
+    /* LAYOUT */
+    .page { max-width: 1400px; margin: 0 auto; padding: 24px; }
+    .page-header { margin-bottom: 24px; }
+    .page-title { font-size: 24px; font-weight: 700; }
+    .page-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+    /* KPI STRIP */
+    .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .kpi-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .kpi-value { font-size: 28px; font-weight: 800; line-height: 1; }
+    .kpi-amber { color: var(--amber); }
+
+    /* NARRATIVE */
+    .narrative { background: var(--kimre-dim); border: 1px solid rgba(249,115,22,0.3); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .narrative p { color: var(--text); line-height: 1.6; }
+
+    /* CARDS */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .card-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+
+    /* TABLES */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    td { padding: 10px 12px; border-bottom: 1px solid rgba(30,41,59,0.5); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr.row-red td { background: rgba(239,68,68,0.07); }
+    tr.row-amber td { background: rgba(245,158,11,0.06); }
+    tr.row-green td { background: rgba(34,197,94,0.04); }
+    tr:hover td { filter: brightness(1.08); }
+
+    /* NCR */
+    .ncr-table tr.ncr-critical td { border-left: 3px solid var(--red); }
+    .ncr-table tr.ncr-medium td { border-left: 3px solid var(--amber); }
+    .ncr-table tr.ncr-low td { border-left: 3px solid var(--green); }
+    .severity-high { color: var(--red); font-weight: 700; }
+    .severity-medium { color: var(--amber); font-weight: 700; }
+    .severity-low { color: var(--green); font-weight: 700; }
+    .days-badge { display: inline-block; padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+    .days-red { background: var(--red-dim); color: var(--red); }
+    .days-amber { background: var(--amber-dim); color: var(--amber); }
+    .days-green { background: var(--green-dim); color: var(--green); }
+    .clickable-row { cursor: pointer; }
+
+    /* SHIP CHECKLIST */
+    .ship-orders { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .ship-order { border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .ship-order-header { font-weight: 700; margin-bottom: 4px; }
+    .ship-order-meta { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+    .checklist-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid rgba(30,41,59,0.4); font-size: 13px; }
+    .checklist-item:last-child { border-bottom: none; }
+    .check-done { color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .check-pending { color: var(--muted); font-weight: 700; flex-shrink: 0; }
+    .check-label { flex: 1; }
+    .check-label.done { color: var(--muted); text-decoration: line-through; }
+    .ship-checkbox { width: 16px; height: 16px; accent-color: var(--kimre); cursor: pointer; }
+    .ship-btn { margin-top: 14px; width: 100%; padding: 9px; border-radius: 8px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .ship-btn-ready { background: var(--green); color: #fff; }
+    .ship-btn-ready:hover { filter: brightness(1.1); }
+    .ship-btn-pending { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
+    /* COMPLIANCE CALENDAR */
+    .calendar-list { display: flex; flex-direction: column; gap: 8px; }
+    .cal-item { display: grid; grid-template-columns: 110px 1fr 130px 140px; gap: 12px; align-items: center; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; cursor: pointer; transition: filter 0.15s; }
+    .cal-item:hover { filter: brightness(1.1); }
+    .cal-item.cal-red { border-color: rgba(239,68,68,0.3); background: var(--red-dim); }
+    .cal-item.cal-amber { border-color: rgba(245,158,11,0.3); background: var(--amber-dim); }
+    .cal-item.cal-green { border-color: rgba(34,197,94,0.2); background: var(--green-dim); }
+    .cal-date { font-weight: 700; font-size: 12px; }
+    .cal-type { font-size: 11px; color: var(--muted); }
+    .cal-status { font-size: 12px; font-weight: 600; text-align: right; }
+    .cal-red .cal-status { color: var(--red); }
+    .cal-amber .cal-status { color: var(--amber); }
+    .cal-green .cal-status { color: var(--green); }
+
+    /* RUN THEATER */
+    .run-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--kimre); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
+    .run-btn:hover { filter: brightness(1.1); }
+    .run-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; filter: none; }
+    .mock-badge { background: rgba(59,130,246,0.2); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+    .theater-log { background: #0a0e1a; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 16px; min-height: 60px; display: none; }
+    .theater-line { opacity: 0; padding: 2px 0; animation: fadeLine 0.4s forwards; }
+    @keyframes fadeLine { to { opacity: 1; } }
+    .theater-line.ok { color: var(--green); }
+    .theater-line.step { color: var(--kimre); }
+    .theater-results { display: none; }
+    .rec-card { border-radius: 10px; padding: 16px; margin-bottom: 12px; border: 1px solid; }
+    .rec-critical { border-color: rgba(239,68,68,0.4); background: var(--red-dim); }
+    .rec-high { border-color: rgba(245,158,11,0.4); background: var(--amber-dim); }
+    .rec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .rec-title { font-weight: 700; font-size: 13px; }
+    .urgency-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+    .urgency-critical { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.4); }
+    .urgency-high { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.4); }
+    .rec-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* MODALS */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; max-width: 560px; width: 90%; max-height: 80vh; overflow-y: auto; }
+    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; }
+    .modal-close:hover { color: var(--text); }
+    .modal-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(30,41,59,0.5); font-size: 13px; }
+    .modal-row:last-child { border-bottom: none; }
+    .modal-row span { color: var(--muted); }
+    .modal-row strong { color: var(--text); }
+    .status-select { background: var(--border); color: var(--text); border: 1px solid var(--muted); border-radius: 6px; padding: 5px 10px; font-size: 12px; margin-top: 10px; }
+    .btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+    .btn-primary { background: var(--kimre); color: #fff; }
+    .btn-primary:hover { filter: brightness(1.1); }
+
+    @media (max-width: 900px) {
+      .ship-orders { grid-template-columns: 1fr; }
+      .cal-item { grid-template-columns: 1fr; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="kimre-nav">
+  <div class="kimre-nav-inner">
+    <span class="kimre-nav-brand">Kimre Inc.</span>
+    <div class="kimre-nav-links">
+      <a href="./index.html" class="kimre-nav-link">Home</a>
+      <a href="./sales.html" class="kimre-nav-link">Sales</a>
+      <a href="./engineering.html" class="kimre-nav-link">Engineering</a>
+      <a href="./customer-service.html" class="kimre-nav-link">Customer Service</a>
+      <a href="./executive.html" class="kimre-nav-link">Executive</a>
+      <a href="./quality.html" class="kimre-nav-link active">Quality</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="page-title">Pat Chen — Quality &amp; Compliance</div>
+    <div class="page-sub">Material Certifications &nbsp;&bull;&nbsp; NCR Queue &nbsp;&bull;&nbsp; Ship-With Docs &nbsp;&bull;&nbsp; Compliance Calendar &nbsp;&bull;&nbsp; March 13, 2026</div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-label">Materials Pending Certs</div>
+      <div class="kpi-value" style="color:var(--amber)">4</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Open NCRs</div>
+      <div class="kpi-value" style="color:var(--red)">3</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Ships This Week</div>
+      <div class="kpi-value">2</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">EPA/OSHA Items Due</div>
+      <div class="kpi-value kpi-amber">1</div>
+    </div>
+  </div>
+
+  <!-- IMPACT NARRATIVE -->
+  <div class="narrative">
+    <p>Pat: 4 material batches awaiting certification from suppliers. 3 open NCRs (1 critical — &gt;5 days open). 2 orders ship this week — ship-with documentation 1 complete, 1 pending. Quality Compliance Checker ran this morning — flagged 1 cert expiry issue and 1 material compatibility concern.</p>
+  </div>
+
+  <!-- MATERIAL CERTIFICATION TRACKER -->
+  <div class="card">
+    <div class="card-title">Material Certification Tracker</div>
+    <table id="certTable">
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Batch</th>
+          <th>Supplier</th>
+          <th>Cert Status</th>
+          <th>Days Until Needed</th>
+          <th>Consuming Orders</th>
+        </tr>
+      </thead>
+      <tbody id="certBody"></tbody>
+    </table>
+  </div>
+
+  <!-- NCR QUEUE -->
+  <div class="card">
+    <div class="card-title">NCR (Non-Conformance Report) Queue</div>
+    <table class="ncr-table" id="ncrTable">
+      <thead>
+        <tr>
+          <th>NCR #</th>
+          <th>Order</th>
+          <th>Issue Type</th>
+          <th>Severity</th>
+          <th>Status</th>
+          <th>Days Open</th>
+          <th>Responsible</th>
+        </tr>
+      </thead>
+      <tbody id="ncrBody"></tbody>
+    </table>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Click any NCR to view detail and update status</div>
+  </div>
+
+  <!-- SHIP-WITH DOCUMENT CHECKLIST -->
+  <div class="card">
+    <div class="card-title">Ship-With Document Checklist — Orders Shipping This Week</div>
+    <div class="ship-orders" id="shipOrders"></div>
+  </div>
+
+  <!-- COMPLIANCE CALENDAR -->
+  <div class="card">
+    <div class="card-title">Compliance Calendar — Next 60 Days</div>
+    <div class="calendar-list" id="calendarList"></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:10px;">Click any item to set a reminder</div>
+  </div>
+
+  <!-- QC RUN THEATER -->
+  <div class="card">
+    <div class="card-title">Quality Compliance Checker — Agent Run Theater</div>
+    <button class="run-btn" id="runBtn" onclick="runAgentTheater()">
+      ▶ Run Quality Compliance Checker
+      <span class="mock-badge">MOCK</span>
+    </button>
+    <div class="theater-log" id="theaterLog"></div>
+    <div class="theater-results" id="theaterResults"></div>
+  </div>
+</div>
+
+<!-- NCR DETAIL MODAL -->
+<div class="modal-overlay" id="ncrModal">
+  <div class="modal">
+    <div class="modal-title">
+      NCR Detail
+      <button class="modal-close" onclick="closeModal('ncrModal')">✕</button>
+    </div>
+    <div id="ncrModalContent"></div>
+  </div>
+</div>
+
+<!-- CALENDAR REMINDER MODAL -->
+<div class="modal-overlay" id="calModal">
+  <div class="modal">
+    <div class="modal-title">
+      Compliance Reminder
+      <button class="modal-close" onclick="closeModal('calModal')">✕</button>
+    </div>
+    <div id="calModalContent"></div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8500';
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const CERT_DATA = [
+  { material: 'Polypropylene mesh', batch: 'PP-BATCH-2026-03', supplier: 'Plastco Industrial', status: 'awaiting', daysUntil: 4, orders: 'KIM-052, KIM-049', note: '' },
+  { material: 'CPVC Sheeting', batch: 'CPVC-BATCH-2026-02', supplier: 'ChemPlast Supply', status: 'awaiting', daysUntil: 7, orders: 'KIM-050', note: '' },
+  { material: 'PP Fiber', batch: 'PPF-BATCH-2026-01', supplier: 'FiberTech Inc', status: 'certified', daysUntil: 9, orders: 'KIM-048, KIM-043', note: '' },
+  { material: 'FRP Framing', batch: 'FRP-BATCH-2026-01', supplier: 'Composites Direct', status: 'awaiting', daysUntil: 12, orders: 'KIM-052', note: '' },
+  { material: 'Stainless Wire Mesh', batch: 'SS-BATCH-2026-02', supplier: 'MetalMesh Ltd', status: 'expiring', daysUntil: 5, orders: 'KIM-049', note: 'cert expires 2026-03-20' },
+];
+
+const NCR_DATA = [
+  { id: 'NCR-2026-008', order: 'KIM-047', issue: 'Dimensional — ID 0.3" undersized', severity: 'High', status: 'In Investigation', daysOpen: 6, responsible: 'Sam Rivera', corrective: 'Under investigation — re-measure confirmed. Sam to assess feasibility of re-machining. Customer notified of potential delay.', critical: true },
+  { id: 'NCR-2026-007', order: 'KIM-044', issue: 'Material cert — FRP cert missing', severity: 'Medium', status: 'Open', daysOpen: 3, responsible: 'FRP Supplier', corrective: 'Cert requested from Composites Direct on 2026-03-10. Awaiting response. Expedite request sent 2026-03-12.', critical: false },
+  { id: 'NCR-2026-006', order: 'KIM-041 (closed)', issue: 'Surface finish — mesh corrosion', severity: 'Low', status: 'Resolved', daysOpen: 12, responsible: 'Sam Rivera', corrective: 'Corrective action complete — mesh replaced with fresh batch, re-inspected and approved. Root cause: storage humidity. Updated storage protocol.', critical: false },
+];
+
+const SHIP_ORDERS = [
+  {
+    id: 'KIM-046',
+    customer: 'Rhine Energy GmbH',
+    shipDate: 'March 14',
+    allComplete: false,
+    items: [
+      { label: 'Certificate of Compliance (signed)', done: true },
+      { label: 'Polypropylene Fiber material cert (PPF-2024-10)', done: true },
+      { label: 'CPVC material cert (CPVC-2024-05)', done: true },
+      { label: 'MSDS — Polypropylene (required for EU shipment)', done: false },
+      { label: 'Packing list confirmed', done: false },
+    ],
+  },
+  {
+    id: 'KIM-051',
+    customer: 'Pacific Chemicals',
+    shipDate: 'March 15',
+    allComplete: true,
+    items: [
+      { label: 'Certificate of Compliance (signed)', done: true },
+      { label: 'Polypropylene Profiles cert (PP-2024-14)', done: true },
+      { label: 'Packing list confirmed', done: true },
+    ],
+  },
+];
+
+const CALENDAR_DATA = [
+  { date: '2026-03-20', item: 'SS Mesh Batch cert renewal — SS-BATCH-2026-02', type: 'Material Cert', cls: 'cal-red', status: '🔴 Due in 7 days' },
+  { date: '2026-03-28', item: 'OSHA annual respirator fit testing — fabrication team', type: 'Training', cls: 'cal-amber', status: '🟡 Due in 15 days' },
+  { date: '2026-04-15', item: 'EPA permit annual renewal — facility', type: 'Permit', cls: 'cal-amber', status: '🟡 Due in 33 days' },
+  { date: '2026-04-30', item: 'ISO 9001 internal audit', type: 'Audit', cls: 'cal-green', status: '🟢 Due in 48 days' },
+  { date: '2026-05-15', item: 'Emergency response training', type: 'Training', cls: 'cal-green', status: '🟢 Due in 63 days' },
+];
+
+// ── RENDER CERT TABLE ─────────────────────────────────────────────────────────
+function renderCertTable() {
+  const tbody = document.getElementById('certBody');
+  tbody.innerHTML = CERT_DATA.map(c => {
+    let rowClass = '';
+    let statusIcon = '';
+    if (c.status === 'certified') { rowClass = 'row-green'; statusIcon = '<span style="color:var(--green);font-weight:700">✓ Certified</span>'; }
+    else if (c.status === 'awaiting' && c.daysUntil < 5) { rowClass = 'row-red'; statusIcon = '<span style="color:var(--red);font-weight:700">⏳ Awaiting cert</span>'; }
+    else if (c.status === 'awaiting') { rowClass = 'row-amber'; statusIcon = '<span style="color:var(--amber);font-weight:700">⏳ Awaiting cert</span>'; }
+    else if (c.status === 'expiring') { rowClass = 'row-amber'; statusIcon = '<span style="color:var(--amber);font-weight:700">⚠️ Cert expiring</span>'; }
+
+    const daysColor = c.daysUntil < 5 ? 'var(--red)' : c.daysUntil <= 7 ? 'var(--amber)' : 'var(--text)';
+    const ordersCell = c.note ? `${c.orders} <span style="color:var(--muted);font-size:11px">— ${c.note}</span>` : c.orders;
+    return `<tr class="${rowClass}">
+      <td style="font-weight:600">${c.material}</td>
+      <td style="font-family:monospace;font-size:12px">${c.batch}</td>
+      <td>${c.supplier}</td>
+      <td>${statusIcon}</td>
+      <td style="font-weight:700;color:${daysColor}">${c.daysUntil} days</td>
+      <td style="font-size:12px;color:var(--muted)">${ordersCell}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── RENDER NCR TABLE ──────────────────────────────────────────────────────────
+function renderNCRTable() {
+  const tbody = document.getElementById('ncrBody');
+  tbody.innerHTML = NCR_DATA.map((n, i) => {
+    const rowClass = n.critical && n.daysOpen > 5 ? 'ncr-critical' : n.severity === 'Medium' ? 'ncr-medium' : 'ncr-low';
+    const sevClass = n.severity === 'High' ? 'severity-high' : n.severity === 'Medium' ? 'severity-medium' : 'severity-low';
+    const daysCls = n.daysOpen > 5 ? 'days-red' : n.daysOpen >= 3 ? 'days-amber' : 'days-green';
+    return `<tr class="${rowClass} clickable-row" onclick="openNCR(${i})">
+      <td style="font-weight:700;color:var(--kimre)">${n.id}</td>
+      <td>${n.order}</td>
+      <td>${n.issue}</td>
+      <td class="${sevClass}">${n.severity}</td>
+      <td><span style="color:var(--muted)">${n.status}</span></td>
+      <td><span class="days-badge ${daysCls}">${n.daysOpen}d</span></td>
+      <td>${n.responsible}</td>
+    </tr>`;
+  }).join('');
+}
+
+function openNCR(i) {
+  const n = NCR_DATA[i];
+  const content = document.getElementById('ncrModalContent');
+  content.innerHTML = `
+    <div class="modal-row"><span>NCR Number</span><strong>${n.id}</strong></div>
+    <div class="modal-row"><span>Order</span><strong>${n.order}</strong></div>
+    <div class="modal-row"><span>Issue Type</span><strong>${n.issue}</strong></div>
+    <div class="modal-row"><span>Severity</span><strong>${n.severity}</strong></div>
+    <div class="modal-row"><span>Status</span><strong>${n.status}</strong></div>
+    <div class="modal-row"><span>Days Open</span><strong>${n.daysOpen} days</strong></div>
+    <div class="modal-row"><span>Responsible</span><strong>${n.responsible}</strong></div>
+    <div style="margin-top:14px;">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Corrective Action Notes</div>
+      <div style="background:#0a0e1a;border-radius:8px;padding:12px;font-size:13px;color:var(--text);line-height:1.5">${n.corrective}</div>
+    </div>
+    <div style="margin-top:14px;">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Update Status</div>
+      <select class="status-select" onchange="updateNCRStatus(${i}, this.value)">
+        <option ${n.status==='Open'?'selected':''}>Open</option>
+        <option ${n.status==='In Investigation'?'selected':''}>In Investigation</option>
+        <option ${n.status==='Corrective Action'?'selected':''}>Corrective Action</option>
+        <option ${n.status==='Resolved'?'selected':''}>Resolved</option>
+      </select>
+    </div>
+    <div style="margin-top:16px;">
+      <button class="btn btn-primary" onclick="closeModal('ncrModal')">Close</button>
+    </div>
+  `;
+  document.getElementById('ncrModal').classList.add('open');
+}
+
+function updateNCRStatus(i, newStatus) {
+  NCR_DATA[i].status = newStatus;
+}
+
+// ── RENDER SHIP CHECKLIST ─────────────────────────────────────────────────────
+function renderShipOrders() {
+  const container = document.getElementById('shipOrders');
+
+  const orderStates = SHIP_ORDERS.map(o => ({ ...o, items: o.items.map(it => ({ ...it })) }));
+
+  function rebuild() {
+    container.innerHTML = orderStates.map((o, oi) => {
+      const allDone = o.items.every(it => it.done);
+      const btnClass = allDone ? 'ship-btn ship-btn-ready' : 'ship-btn ship-btn-pending';
+      const btnText = allDone ? '✓ Ready to Ship' : 'Ready to Ship';
+      return `
+        <div class="ship-order">
+          <div class="ship-order-header">${o.id} — ${o.customer}</div>
+          <div class="ship-order-meta">Ships ${o.shipDate}</div>
+          ${o.items.map((it, ii) => `
+            <div class="checklist-item">
+              ${it.done
+                ? `<span class="check-done">✓</span><span class="check-label done">${it.label}</span>`
+                : `<input type="checkbox" class="ship-checkbox" onchange="toggleCheck(${oi},${ii})" /><span class="check-label">${it.label}</span>`
+              }
+            </div>
+          `).join('')}
+          <button class="${btnClass}" ${!allDone ? 'disabled' : ''}>${btnText}</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.toggleCheck = function(oi, ii) {
+    orderStates[oi].items[ii].done = !orderStates[oi].items[ii].done;
+    rebuild();
+  };
+
+  rebuild();
+}
+
+// ── RENDER COMPLIANCE CALENDAR ────────────────────────────────────────────────
+function renderCalendar() {
+  const list = document.getElementById('calendarList');
+  list.innerHTML = CALENDAR_DATA.map((c, i) => `
+    <div class="cal-item ${c.cls}" onclick="openCalModal(${i})">
+      <div class="cal-date">${c.date}</div>
+      <div>
+        <div style="font-size:13px;font-weight:500">${c.item}</div>
+        <div class="cal-type">${c.type}</div>
+      </div>
+      <div></div>
+      <div class="cal-status">${c.status}</div>
+    </div>
+  `).join('');
+}
+
+function openCalModal(i) {
+  const c = CALENDAR_DATA[i];
+  const content = document.getElementById('calModalContent');
+  content.innerHTML = `
+    <div class="modal-row"><span>Date</span><strong>${c.date}</strong></div>
+    <div class="modal-row"><span>Item</span><strong>${c.item}</strong></div>
+    <div class="modal-row"><span>Type</span><strong>${c.type}</strong></div>
+    <div class="modal-row"><span>Status</span><strong>${c.status}</strong></div>
+    <div style="margin-top:16px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:12px;font-size:13px;">
+      📅 Reminder set. Pat Chen will be notified 7 days before this item is due.
+    </div>
+    <div style="margin-top:12px;"><button class="btn btn-primary" onclick="closeModal('calModal')">Close</button></div>
+  `;
+  document.getElementById('calModal').classList.add('open');
+}
+
+// ── RUN THEATER ───────────────────────────────────────────────────────────────
+const THEATER_STEPS = [
+  { text: '[14:22:01] Loading 6 active order specifications...', cls: 'step' },
+  { text: '[14:22:02] Checking EPA material compatibility for each application...', cls: 'step' },
+  { text: '[14:22:03] Verifying material cert expiry dates...', cls: 'step' },
+  { text: '[14:22:04] Running dimensional tolerance validation...', cls: 'step' },
+  { text: '[14:22:05] Flagging non-conformances...', cls: 'step' },
+  { text: '[14:22:06] Generating QC report...', cls: 'step' },
+  { text: '[14:22:07] ✓ 4 orders compliant | 2 compliance flags raised', cls: 'ok' },
+];
+
+function runAgentTheater() {
+  const btn = document.getElementById('runBtn');
+  const log = document.getElementById('theaterLog');
+  const results = document.getElementById('theaterResults');
+  btn.disabled = true;
+  btn.textContent = '⏳ Running...';
+  log.innerHTML = '';
+  log.style.display = 'block';
+  results.style.display = 'none';
+
+  THEATER_STEPS.forEach((step, i) => {
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.className = `theater-line ${step.cls}`;
+      line.style.animationDelay = '0s';
+      line.textContent = step.text;
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+
+      if (i === THEATER_STEPS.length - 1) {
+        setTimeout(() => showResults(), 600);
+      }
+    }, i * 700);
+  });
+}
+
+function showResults() {
+  const btn = document.getElementById('runBtn');
+  const results = document.getElementById('theaterResults');
+  btn.disabled = false;
+  btn.innerHTML = '▶ Run Quality Compliance Checker <span class="mock-badge">MOCK</span>';
+
+  results.style.display = 'block';
+  results.innerHTML = `
+    <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text)">Quality Compliance Checker — Results (${new Date().toLocaleTimeString()})</div>
+
+    <div class="rec-card rec-critical">
+      <div class="rec-header">
+        <div class="rec-title">REC 1 — KIM-049 — Atlas Fertilizer Corp</div>
+        <span class="urgency-badge urgency-critical">CRITICAL</span>
+      </div>
+      <div class="rec-body">
+        <strong style="color:var(--text)">Issue:</strong> SS Mesh cert SS-BATCH-2026-02 expires 2026-03-20 — order ships 2026-03-25.<br>
+        <strong style="color:var(--text)">Action:</strong> Renew cert immediately or source alternative batch from approved supplier. Ship date at risk if cert not received by 2026-03-19.
+      </div>
+    </div>
+
+    <div class="rec-card rec-high">
+      <div class="rec-header">
+        <div class="rec-title">REC 2 — KIM-047 — Mosaic Steel Works</div>
+        <span class="urgency-badge urgency-high">HIGH</span>
+      </div>
+      <div class="rec-body">
+        <strong style="color:var(--text)">Issue:</strong> CPVC material in HCl application — verify grade for HCl resistance. NCR-2026-008 confirmed dimensional: 23.7" actual vs 24.0" nominal (tolerance ±0.25") — non-conformance flagged.<br>
+        <strong style="color:var(--text)">Action:</strong> Standard CPVC is compatible with HCl. Dimensional NCR requires investigation and possible re-machining. Estimated impact: 2 day delay.
+      </div>
+    </div>
+  `;
+}
+
+// ── MODAL HELPERS ─────────────────────────────────────────────────────────────
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderCertTable();
+renderNCRTable();
+renderShipOrders();
+renderCalendar();
+</script>
+</body>
+</html>

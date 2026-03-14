@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Case Calculator | Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0f1117;
+      --card:         #161b2e;
+      --card-alt:     #1a2035;
+      --border:       #1e253b;
+      --border-light: #253047;
+      --text:         #f1f5f9;
+      --text-sec:     #94a3b8;
+      --muted:        #64748b;
+      --kimre:        #f97316;
+      --orange:       #f97316;
+      --orange-dim:   rgba(249,115,22,0.12);
+      --orange-glow:  rgba(249,115,22,0.25);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.12);
+      --amber:        #f59e0b;
+      --amber-dim:    rgba(245,158,11,0.12);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.12);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── Nav ── */
+    .kimre-nav {
+      background: var(--card);
+      border-bottom: 1px solid #1e293b;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .kimre-nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .kimre-nav-brand {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .kimre-nav-links {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .kimre-nav-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .kimre-nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .kimre-nav-link.active { color: var(--orange); background: var(--orange-dim); }
+
+    /* ── Layout ── */
+    .page-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      margin-bottom: 32px;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .page-header .subtitle {
+      font-size: 14px;
+      color: var(--text-sec);
+      margin-bottom: 8px;
+    }
+    .page-header .disclaimer {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      padding: 8px 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    /* ── Two-column grid ── */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .calc-grid { grid-template-columns: 1fr; }
+      .results-col { position: static !important; }
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .card + .card { margin-top: 16px; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 16px;
+    }
+
+    /* ── Form elements ── */
+    .field-group {
+      margin-bottom: 14px;
+    }
+    .field-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sec);
+      margin-bottom: 5px;
+    }
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .input-row input,
+    .input-row select {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px 0 0 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.15s;
+      min-width: 0;
+    }
+    .input-row input:focus,
+    .input-row select:focus {
+      border-color: var(--orange);
+    }
+    .input-row .unit {
+      background: var(--card-alt);
+      border: 1px solid var(--border-light);
+      border-left: none;
+      color: var(--muted);
+      padding: 9px 11px;
+      border-radius: 0 8px 8px 0;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    /* Full-width select (no unit) */
+    select.full {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    select.full:focus { border-color: var(--orange); }
+
+    .field-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* ── Results column ── */
+    .results-col {
+      position: sticky;
+      top: 68px;
+    }
+
+    .results-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .results-header {
+      background: linear-gradient(135deg, #1a2035 0%, #161b2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 20px;
+    }
+    .results-header h2 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 2px;
+    }
+    .results-header p {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .results-body {
+      padding: 20px;
+    }
+
+    /* Placeholder state */
+    .placeholder-state {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--muted);
+    }
+    .placeholder-state svg {
+      opacity: 0.3;
+      margin-bottom: 12px;
+    }
+    .placeholder-state p {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Results rows */
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .result-row:last-of-type { border-bottom: none; }
+    .result-row .label {
+      font-size: 12px;
+      color: var(--text-sec);
+    }
+    .result-row .value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .result-row.big .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .result-row.big .value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--orange);
+    }
+    .result-row.big.green .value { color: var(--green); }
+
+    .result-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* Payback badge */
+    .payback-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .payback-badge.green { background: var(--green-dim); color: var(--green); }
+    .payback-badge.amber { background: var(--amber-dim); color: var(--amber); }
+    .payback-badge.red { background: var(--red-dim); color: var(--red); }
+
+    /* EPA badge */
+    .epa-badge {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 8px;
+      margin: 12px 0;
+    }
+    .epa-badge .icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .epa-badge .text { font-size: 11px; color: var(--amber); line-height: 1.4; }
+    .epa-badge .pill {
+      display: inline-block;
+      background: var(--amber);
+      color: #000;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-bottom: 3px;
+    }
+
+    /* Product recommendation card */
+    .product-card {
+      background: var(--orange-dim);
+      border: 1px solid var(--orange-glow);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 16px;
+    }
+    .product-card .prod-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 4px;
+    }
+    .product-card .prod-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .product-card .prod-note {
+      font-size: 12px;
+      color: var(--text-sec);
+      line-height: 1.5;
+    }
+
+    /* Size indicator */
+    .size-indicator {
+      background: var(--card-alt);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      font-size: 12px;
+      color: var(--text-sec);
+    }
+    .size-indicator strong { color: var(--text); }
+
+    /* Action buttons */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      text-align: center;
+      white-space: nowrap;
+      min-width: 0;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #ea6c10; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-light);
+      color: var(--text-sec);
+    }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* ── Print styles ── */
+    @media print {
+      body { background: #fff; color: #000; font-size: 12px; }
+      .kimre-nav, .action-buttons { display: none !important; }
+      .calc-grid { display: block; }
+      .card, .results-card { background: #fff; border: 1px solid #ccc; border-radius: 4px; }
+      .results-col { position: static; }
+      .page-wrap { padding: 16px; }
+      .section-label { color: #d97706; }
+      .result-row.big .value { color: #d97706; }
+      .product-card { background: #fff7ed; border: 1px solid #fdba74; }
+      .epa-badge { background: #fffbeb; border: 1px solid #fcd34d; }
+      input, select { border: 1px solid #ccc !important; background: #f9fafb !important; color: #000 !important; }
+      .unit { background: #f3f4f6 !important; color: #6b7280 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="kimre-nav">
+  <div class="kimre-nav-inner">
+    <a href="../index.html" class="kimre-nav-brand">Kimre</a>
+    <div class="kimre-nav-links">
+      <a href="../sales.html" class="kimre-nav-link">Sales</a>
+      <a href="../engineering.html" class="kimre-nav-link">Engineering</a>
+      <a href="../customer-service.html" class="kimre-nav-link">Customer Service</a>
+      <a href="../executive.html" class="kimre-nav-link">Executive</a>
+      <a href="../quality.html" class="kimre-nav-link">Quality</a>
+      <a href="./index.html" class="kimre-nav-link active">Tools</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Page ── -->
+<div class="page-wrap">
+
+  <div class="page-header">
+    <h1>Business Case Calculator</h1>
+    <p class="subtitle">Quantify the cost of mist carryover and the value of proper separation for your process.</p>
+    <span class="disclaimer">Results are indicative estimates for scoping purposes. A Kimre engineer will validate your specific conditions.</span>
+  </div>
+
+  <div class="calc-grid">
+
+    <!-- ── LEFT: Inputs ── -->
+    <div class="inputs-col">
+
+      <!-- Step 1: Application Type -->
+      <div class="card">
+        <div class="section-label">Step 1 &mdash; Application Type</div>
+        <div class="field-group">
+          <label for="application">Application / Process</label>
+          <select id="application" class="full">
+            <option value="">-- Select your application --</option>
+            <option value="h2so4">Sulfuric Acid Processing (H&#8322;SO&#8324;)</option>
+            <option value="hno3">Fertilizer / HNO&#8323; Processing</option>
+            <option value="hcl">Steel Pickling / HCl Recovery</option>
+            <option value="cooling">Cooling Tower Drift</option>
+            <option value="hydro">Petrochemical / Hydrocarbon</option>
+            <option value="fgd">Power Generation (FGD / Flue Gas)</option>
+            <option value="custom">Other / Custom</option>
+          </select>
+        </div>
+        <div id="app-note" class="field-note" style="display:none;"></div>
+      </div>
+
+      <!-- Step 2: Operating Conditions -->
+      <div class="card">
+        <div class="section-label">Step 2 &mdash; Operating Conditions</div>
+
+        <div class="field-group">
+          <label for="gas-flow">Gas Flow Rate</label>
+          <div class="input-row">
+            <input type="number" id="gas-flow" min="0" step="100" value="5000" placeholder="5000">
+            <span class="unit">Nm&#179;/hr</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="temperature">Operating Temperature</label>
+          <div class="input-row">
+            <input type="number" id="temperature" min="-20" max="500" step="1" value="60" placeholder="60">
+            <span class="unit">&#176;C</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="pressure">Operating Pressure</label>
+          <div class="input-row">
+            <input type="number" id="pressure" min="0.1" max="50" step="0.001" value="1.013" placeholder="1.013">
+            <span class="unit">bar(a)</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="op-hours">Annual Operating Hours</label>
+          <div class="input-row">
+            <input type="number" id="op-hours" min="0" max="8760" step="100" value="8000" placeholder="8000">
+            <span class="unit">hrs/yr</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Mist Loading -->
+      <div class="card">
+        <div class="section-label">Step 3 &mdash; Current Mist Loading</div>
+        <div class="field-group">
+          <label for="mist-loading">Estimated Mist Loading</label>
+          <div class="input-row">
+            <input type="number" id="mist-loading" min="0" step="0.01" value="" placeholder="0.00">
+            <span class="unit">g/Nm&#179;</span>
+          </div>
+          <div class="field-note">Auto-estimated from application type. Adjust if you have measured data.</div>
+        </div>
+        <div id="vel-range-note" class="field-note" style="display:none;"></div>
+      </div>
+
+      <!-- Step 4: Economics -->
+      <div class="card">
+        <div class="section-label">Step 4 &mdash; Economics</div>
+
+        <div class="field-group">
+          <label for="product-value">Product / Chemical Value</label>
+          <div class="input-row">
+            <input type="number" id="product-value" min="0" step="1" value="" placeholder="0">
+            <span class="unit">&#163;/tonne</span>
+          </div>
+          <div class="field-note">Auto-filled from application benchmark. Adjust to your actual contracted price.</div>
+        </div>
+
+        <div class="field-group">
+          <label for="current-efficiency">Current Recovery Efficiency</label>
+          <div class="input-row">
+            <input type="number" id="current-efficiency" min="0" max="99" step="0.1" value="0" placeholder="0">
+            <span class="unit">%</span>
+          </div>
+          <div class="field-note">Enter 0 if no mist eliminator is currently installed.</div>
+        </div>
+
+        <div class="field-group">
+          <label for="kimre-efficiency">Kimre Target Efficiency</label>
+          <div class="input-row">
+            <input type="number" id="kimre-efficiency" min="0" max="99.99" step="0.1" value="" placeholder="99.0">
+            <span class="unit">%</span>
+          </div>
+          <div class="field-note">Auto-filled from application. Kimre engineers can confirm achievable efficiency.</div>
+        </div>
+      </div>
+
+    </div><!-- end inputs-col -->
+
+    <!-- ── RIGHT: Results ── -->
+    <div class="results-col">
+      <div class="results-card">
+        <div class="results-header">
+          <h2>Business Case Summary</h2>
+          <p>Updates live as you type</p>
+        </div>
+        <div class="results-body" id="results-body">
+
+          <!-- Placeholder -->
+          <div class="placeholder-state" id="results-placeholder">
+            <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 6h16M4 10h16M4 14h16M4 18h16"/>
+            </svg>
+            <p>Select an application type and enter operating conditions to see your business case.</p>
+          </div>
+
+          <!-- Results (hidden until calculated) -->
+          <div id="results-content" style="display:none;">
+
+            <div class="result-row">
+              <span class="label">Current annual loss</span>
+              <span class="value" id="r-current-loss">&mdash;</span>
+            </div>
+            <div class="result-row">
+              <span class="label">With Kimre ME</span>
+              <span class="value" id="r-kimre-loss">&mdash;</span>
+            </div>
+
+            <div class="result-divider"></div>
+
+            <div class="result-row big">
+              <span class="label">Annual savings potential</span>
+              <span class="value" id="r-savings">&mdash;</span>
+            </div>
+
+            <div style="padding: 6px 0 4px;">
+              <div id="r-payback-badge"></div>
+            </div>
+
+            <div class="result-row">
+              <span class="label">Carryover reduced (current)</span>
+              <span class="value" id="r-carryover-current">&mdash;</span>
+            </div>
+            <div class="result-row">
+              <span class="label">Carryover with Kimre</span>
+              <span class="value" id="r-carryover-kimre">&mdash;</span>
+            </div>
+
+            <div id="r-size-indicator" class="size-indicator" style="display:none;"></div>
+
+            <div id="r-epa-badge" style="display:none;"></div>
+
+            <div id="r-product-card" class="product-card" style="display:none;"></div>
+
+            <div class="action-buttons">
+              <button class="btn btn-secondary" onclick="window.print()">&#128203; Export Business Case</button>
+              <button class="btn btn-primary" id="btn-quote">&#9993; Request Quote</button>
+            </div>
+
+          </div><!-- end results-content -->
+
+        </div><!-- end results-body -->
+      </div><!-- end results-card -->
+    </div><!-- end results-col -->
+
+  </div><!-- end calc-grid -->
+
+</div><!-- end page-wrap -->
+
+<script>
+  // ── Application data ──
+  const APPS = {
+    h2so4: {
+      label: 'Sulfuric Acid Processing (H\u2082SO\u2084)',
+      chemical: 'H\u2082SO\u2084',
+      benchmark_price: 180,
+      product_rec: 'Kimre\u00ae Fiber Bed Filter',
+      efficiency_target: 99.5,
+      typical_loading: 0.15,
+      velocity_range: '0.1\u20130.3 m/s',
+      velocity_mid: 0.2,
+      regulated: true,
+      notes: 'Fiber beds provide the highest efficiency for acid mist \u2014 the industry standard for H\u2082SO\u2084 plants.'
+    },
+    hno3: {
+      label: 'Fertilizer / HNO\u2083 Processing',
+      chemical: 'HNO\u2083/NH\u2083',
+      benchmark_price: 220,
+      product_rec: 'B-GON\u00ae Mist Eliminator',
+      efficiency_target: 99.0,
+      typical_loading: 0.08,
+      velocity_range: '0.8\u20132.5 m/s',
+      velocity_mid: 1.65,
+      regulated: true,
+      notes: 'Polypropylene mesh provides excellent resistance to nitric acid \u2014 cost-effective at high gas flows.'
+    },
+    hcl: {
+      label: 'Steel Pickling / HCl Recovery',
+      chemical: 'HCl',
+      benchmark_price: 160,
+      product_rec: 'B-GON\u00ae CPVC Mist Eliminator',
+      efficiency_target: 99.0,
+      typical_loading: 0.06,
+      velocity_range: '0.8\u20132.0 m/s',
+      velocity_mid: 1.4,
+      regulated: true,
+      notes: 'CPVC construction resists hydrochloric acid attack. Recovering HCl also reduces waste disposal cost.'
+    },
+    cooling: {
+      label: 'Cooling Tower Drift',
+      chemical: 'Water/Chemicals',
+      benchmark_price: 2,
+      product_rec: 'DRIFTOR\u00ae Drift Eliminator',
+      efficiency_target: 99.9,
+      typical_loading: 0.20,
+      velocity_range: '1.5\u20133.5 m/s',
+      velocity_mid: 2.5,
+      regulated: false,
+      notes: 'Drift eliminators prevent Legionella risk and reduce water/chemical loss from cooling towers.'
+    },
+    hydro: {
+      label: 'Petrochemical / Hydrocarbon',
+      chemical: 'Hydrocarbons',
+      benchmark_price: 400,
+      product_rec: 'LIQUI-NOMIX\u00ae Coalescer',
+      efficiency_target: 98.5,
+      typical_loading: 0.05,
+      velocity_range: '0.1\u20130.5 m/s',
+      velocity_mid: 0.3,
+      regulated: false,
+      notes: 'Coalescer design handles liquid-liquid and liquid-gas separation in hydrocarbon streams.'
+    },
+    fgd: {
+      label: 'Power Generation (FGD / Flue Gas)',
+      chemical: 'SO\u2082/H\u2082SO\u2084',
+      benchmark_price: 150,
+      product_rec: 'B-GON\u00ae Mist Eliminator (PP)',
+      efficiency_target: 99.0,
+      typical_loading: 0.10,
+      velocity_range: '2.5\u20134.0 m/s',
+      velocity_mid: 3.25,
+      regulated: true,
+      notes: 'High-velocity mist eliminators for FGD scrubber outlet \u2014 polypropylene standard.'
+    },
+    custom: {
+      label: 'Other / Custom',
+      chemical: '',
+      benchmark_price: null,
+      product_rec: '',
+      efficiency_target: null,
+      typical_loading: null,
+      velocity_range: null,
+      velocity_mid: null,
+      regulated: false,
+      notes: ''
+    }
+  };
+
+  // ── Helper: format currency ──
+  function fmt(n, decimals) {
+    if (decimals === undefined) decimals = 0;
+    return '\u00a3' + n.toLocaleString('en-GB', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+  function fmtNum(n, decimals) {
+    if (decimals === undefined) decimals = 2;
+    return n.toLocaleString('en-GB', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+
+  // ── Helper: unit cost by diameter ──
+  function unitCost(dia) {
+    if (dia < 0.5) return 8000;
+    if (dia < 1.0) return 15000;
+    if (dia < 1.5) return 28000;
+    if (dia < 2.0) return 45000;
+    return 80000;
+  }
+
+  // ── Auto-fill on application change ──
+  document.getElementById('application').addEventListener('change', function () {
+    var key = this.value;
+    var app = APPS[key];
+    if (!app) return;
+
+    // Mist loading
+    var loadingEl = document.getElementById('mist-loading');
+    if (app.typical_loading !== null) {
+      loadingEl.value = app.typical_loading;
+    } else {
+      loadingEl.value = '';
+    }
+
+    // Product value
+    var pvEl = document.getElementById('product-value');
+    if (app.benchmark_price !== null) {
+      pvEl.value = app.benchmark_price;
+    } else {
+      pvEl.value = '';
+    }
+
+    // Kimre efficiency
+    var keEl = document.getElementById('kimre-efficiency');
+    if (app.efficiency_target !== null) {
+      keEl.value = app.efficiency_target;
+    } else {
+      keEl.value = '';
+    }
+
+    // App note
+    var noteEl = document.getElementById('app-note');
+    if (app.notes) {
+      noteEl.textContent = app.notes;
+      noteEl.style.display = 'block';
+    } else {
+      noteEl.style.display = 'none';
+    }
+
+    // Velocity range note
+    var velEl = document.getElementById('vel-range-note');
+    if (app.velocity_range) {
+      velEl.textContent = 'Typical superficial gas velocity for this application: ' + app.velocity_range;
+      velEl.style.display = 'block';
+    } else {
+      velEl.style.display = 'none';
+    }
+
+    calculate();
+  });
+
+  // ── Live calculation on any input change ──
+  var inputs = ['gas-flow', 'temperature', 'pressure', 'op-hours',
+                'mist-loading', 'product-value', 'current-efficiency', 'kimre-efficiency'];
+  inputs.forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calculate);
+  });
+
+  function calculate() {
+    var appKey = document.getElementById('application').value;
+    var app = APPS[appKey] || null;
+
+    var gasFlow    = parseFloat(document.getElementById('gas-flow').value) || 0;
+    var opHours    = parseFloat(document.getElementById('op-hours').value) || 0;
+    var loading    = parseFloat(document.getElementById('mist-loading').value);
+    var prodValue  = parseFloat(document.getElementById('product-value').value);
+    var curEff     = parseFloat(document.getElementById('current-efficiency').value) || 0;
+    var kimreEff   = parseFloat(document.getElementById('kimre-efficiency').value);
+
+    // Guard: need minimum inputs to show results
+    var hasMinInputs = gasFlow > 0 && opHours > 0 &&
+                       !isNaN(loading) && loading >= 0 &&
+                       !isNaN(prodValue) && prodValue >= 0 &&
+                       !isNaN(kimreEff) && kimreEff > 0 &&
+                       appKey && appKey !== '';
+
+    if (!hasMinInputs) {
+      showPlaceholder();
+      return;
+    }
+
+    // ── Calculations ──
+    // Carryover in tonnes/yr
+    var curCarryover   = gasFlow * loading / 1e6 * (1 - curEff / 100) * opHours;
+    var kimreCarryover = gasFlow * loading / 1e6 * (1 - kimreEff / 100) * opHours;
+
+    // Values
+    var curLoss   = curCarryover * prodValue;
+    var kimreLoss = kimreCarryover * prodValue;
+    var savings   = curLoss - kimreLoss;
+
+    // Vessel diameter (indicative)
+    var velMid = app && app.velocity_mid ? app.velocity_mid : 1.5;
+    var flowM3s = gasFlow / 3600;
+    var diameter = Math.sqrt(4 * flowM3s / velMid / Math.PI);
+
+    // Unit cost and payback
+    var cost = unitCost(diameter);
+    var paybackMonths = savings > 0 ? (cost / (savings / 12)) : null;
+
+    // ── Render ──
+    showResults();
+
+    document.getElementById('r-current-loss').textContent   = fmt(curLoss) + '/yr';
+    document.getElementById('r-kimre-loss').textContent     = fmt(kimreLoss) + '/yr';
+    document.getElementById('r-savings').textContent        = fmt(savings) + '/yr';
+    document.getElementById('r-carryover-current').textContent = fmtNum(curCarryover) + ' t/yr';
+    document.getElementById('r-carryover-kimre').textContent   = fmtNum(kimreCarryover) + ' t/yr';
+
+    // Payback badge
+    var pbEl = document.getElementById('r-payback-badge');
+    if (savings <= 0) {
+      pbEl.innerHTML = '';
+    } else if (paybackMonths !== null && paybackMonths < 12) {
+      pbEl.innerHTML = '<span class="payback-badge green">&#10003; Payback in ' + paybackMonths.toFixed(1) + ' months</span>';
+    } else if (paybackMonths !== null && paybackMonths <= 24) {
+      pbEl.innerHTML = '<span class="payback-badge amber">&#9650; Payback in ' + paybackMonths.toFixed(1) + ' months</span>';
+    } else {
+      pbEl.innerHTML = '<span class="payback-badge red">Contact Kimre for detailed analysis</span>';
+    }
+
+    // Size indicator
+    var sizeEl = document.getElementById('r-size-indicator');
+    if (app && app.velocity_range) {
+      sizeEl.innerHTML = 'Indicative vessel I.D.: <strong>~' + diameter.toFixed(2) + ' m</strong> &mdash; based on ' + app.label + ' superficial velocity (' + app.velocity_range + ')';
+      sizeEl.style.display = 'block';
+    } else {
+      sizeEl.style.display = 'none';
+    }
+
+    // EPA / regulatory badge
+    var epaEl = document.getElementById('r-epa-badge');
+    if (app && app.regulated) {
+      epaEl.style.display = 'flex';
+      epaEl.innerHTML = '<div class="epa-badge"><span class="icon">&#9888;</span><div class="text"><span class="pill">Regulated Emission</span><br>Uncontrolled acid mist may trigger EPA / Environment Agency compliance obligations.</div></div>';
+    } else {
+      epaEl.style.display = 'none';
+    }
+
+    // Product recommendation
+    var prodEl = document.getElementById('r-product-card');
+    if (app && app.product_rec) {
+      prodEl.style.display = 'block';
+      prodEl.innerHTML =
+        '<div class="prod-label">Recommended Solution</div>' +
+        '<div class="prod-name">' + app.product_rec + '</div>' +
+        '<div class="prod-note">' + app.notes + '</div>';
+    } else {
+      prodEl.style.display = 'none';
+    }
+
+    // Quote mailto
+    var quoteBtn = document.getElementById('btn-quote');
+    var subject = encodeURIComponent('Business Case Calculator \u2014 ' + (app ? app.label : 'Custom Application'));
+    var body = encodeURIComponent(
+      'Hi,\n\nI used the Kimre Business Case Calculator and would like to discuss the following scenario:\n\n' +
+      'Application: ' + (app ? app.label : 'Custom') + '\n' +
+      'Gas Flow: ' + gasFlow + ' Nm\u00b3/hr\n' +
+      'Operating Hours: ' + opHours + ' hrs/yr\n' +
+      'Mist Loading: ' + loading + ' g/Nm\u00b3\n' +
+      'Chemical Value: \u00a3' + prodValue + '/tonne\n' +
+      'Current Efficiency: ' + curEff + '%\n' +
+      'Kimre Target Efficiency: ' + kimreEff + '%\n\n' +
+      'Calculated Annual Savings: \u00a3' + Math.round(savings).toLocaleString('en-GB') + '/yr\n' +
+      'Indicative Payback: ' + (paybackMonths ? paybackMonths.toFixed(1) + ' months' : 'N/A') + '\n\n' +
+      'Please contact me to discuss further.\n\nThank you.'
+    );
+    quoteBtn.setAttribute('onclick', 'window.location.href="mailto:sales@kimre.com?subject=' + subject + '&body=' + body + '"');
+  }
+
+  function showPlaceholder() {
+    document.getElementById('results-placeholder').style.display = 'block';
+    document.getElementById('results-content').style.display = 'none';
+  }
+
+  function showResults() {
+    document.getElementById('results-placeholder').style.display = 'none';
+    document.getElementById('results-content').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+{
+  "generated_at": "2026-03-14T22:24:55Z",
+  "generator_version": "1.0",
+  "platform_stats": {
+    "industries": 13,
+    "processes": 760,
+    "blueprints": 40,
+    "agent_actions": 1755,
+    "systems": 131,
+    "frameworks": 27,
+    "agents_discovered": 17,
+    "api_endpoints": 16
+  },
+  "blueprint_lifecycle": {
+    "blueprint": 37,
+    "sandbox": 3
+  },
+  "blueprint_size_fit": {
+    "ALL": 1,
+    "ENT": 12,
+    "MID": 18,
+    "SMB": 9
+  },
+  "sections": [
+    {
+      "id": "architecture",
+      "file": "docs/architecture.html",
+      "exists": true,
+      "last_verified": null,
+      "stale": false,
+      "auto_generated": false,
+      "notes": "Manually built. Run generate.py to keep stats strip current.",
+      "last_generated": "2026-03-14",
+      "coverage": 0.75
+    },
+    {
+      "id": "agents/index",
+      "file": "docs/agents/index.html",
+      "exists": false,
+      "last_verified": null,
+      "stale": false,
+      "auto_generated": true,
+      "notes": "",
+      "last_generated": null,
+      "coverage": 0.0
+    },
+    {
+      "id": "api/reference",
+      "file": "docs/api/reference.html",
+      "exists": false,
+      "last_verified": null,
+      "stale": false,
+      "auto_generated": true,
+      "notes": "",
+      "last_generated": null,
+      "coverage": 0.0
+    }
+  ],
+  "overall_coverage": 0.2,
+  "stale_sections": [
+    "ap-invoice-processing",
+    "business-model-agent",
+    "cg-demand-forecast-agent",
+    "marketing-agent",
+    "mfg-predictive-maintenance-agent",
+    "orchestrator",
+    "cg-quality-capa-agent",
+    "cg-replenishment-pr-agent",
+    "research-agent",
+    "stakeholder-enrichment-agent",
+    "kimre-business-model-agent",
+    "kimre-marketing-agent",
+    "kimre-order-notifier-agent",
+    "kimre-quality-compliance-agent",
+    "kimre-research-agent",
+    "kimre-retrofit-reorder-agent",
+    "kimre-rfq-quote-agent"
+  ],
+  "missing_sections": [
+    "guides/developer",
+    "guides/client-kimre"
+  ]
+}

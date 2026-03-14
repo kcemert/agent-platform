@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketing &amp; Outreach | Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0f1117;
+      --card:         #161b2e;
+      --card-alt:     #1a2035;
+      --border:       #1e293b;
+      --border-light: #253047;
+      --text:         #f1f5f9;
+      --text-sec:     #94a3b8;
+      --text-muted:   #64748b;
+      --kimre:        #f97316;
+      --orange:       #f97316;
+      --orange-dim:   rgba(249,115,22,0.12);
+      --orange-glow:  rgba(249,115,22,0.25);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.12);
+      --amber:        #f59e0b;
+      --amber-dim:    rgba(245,158,11,0.12);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.12);
+      --indigo:       #6366f1;
+      --indigo-dim:   rgba(99,102,241,0.12);
+      --cyan:         #06b6d4;
+      --cyan-dim:     rgba(6,182,212,0.12);
+      --blue:         #3b82f6;
+      --blue-dim:     rgba(59,130,246,0.12);
+      --purple:       #a855f7;
+      --purple-dim:   rgba(168,85,247,0.12);
+      --emerald:      #10b981;
+      --emerald-dim:  rgba(16,185,129,0.12);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── Nav ── */
+    .kimre-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .kimre-nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .kimre-nav-brand {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .kimre-nav-links {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .kimre-nav-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .kimre-nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .kimre-nav-link.active { color: var(--orange); background: var(--orange-dim); }
+
+    /* ── Layout ── */
+    .page-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 24px 64px;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .page-header-left h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .page-header-left .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .page-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .refresh-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+    }
+    .btn-primary:hover { background: #ea6c0a; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-sec);
+      border-color: var(--border-light);
+    }
+    .btn-secondary:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: transparent;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    .btn-ghost:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .btn-sm {
+      font-size: 11.5px;
+      padding: 5px 11px;
+      border-radius: 6px;
+    }
+    .btn-amber {
+      background: transparent;
+      color: var(--amber);
+      border-color: rgba(245,158,11,0.35);
+    }
+    .btn-amber:hover { background: var(--amber-dim); }
+    .btn-green {
+      background: var(--green);
+      color: #000;
+      border-color: var(--green);
+    }
+    .btn-green:hover { background: #16a34a; }
+    .btn-red {
+      background: transparent;
+      color: var(--red);
+      border-color: rgba(239,68,68,0.35);
+    }
+    .btn-red:hover { background: var(--red-dim); }
+
+    /* ── KPI Strip ── */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 1100px) { .kpi-strip { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px)  { .kpi-strip { grid-template-columns: repeat(2, 1fr); } }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--orange);
+    }
+    .kpi-card.top-green::before { background: var(--green); }
+    .kpi-card.top-amber::before { background: var(--amber); }
+    .kpi-card.top-blue::before  { background: var(--blue); }
+    .kpi-card.top-cyan::before  { background: var(--cyan); }
+    .kpi-value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--orange);
+      margin-bottom: 6px;
+    }
+    .kpi-card.top-green .kpi-value { color: var(--green); }
+    .kpi-card.top-amber .kpi-value { color: var(--amber); }
+    .kpi-card.top-blue .kpi-value  { color: var(--blue); }
+    .kpi-card.top-cyan .kpi-value  { color: var(--cyan); }
+    .kpi-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+      line-height: 1.35;
+    }
+    .kpi-sub {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    /* ── Impact Narrative ── */
+    .impact-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+    .impact-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .impact-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+    .impact-text {
+      font-size: 13.5px;
+      color: var(--text-sec);
+      line-height: 1.75;
+    }
+
+    /* ── Pain Point Cards ── */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 900px) { .pain-grid { grid-template-columns: 1fr; } }
+    .pain-card {
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .pain-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .pain-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .pain-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--amber);
+    }
+    .pain-body {
+      font-size: 12.5px;
+      color: var(--text-sec);
+      line-height: 1.65;
+    }
+
+    /* ── Section Header ── */
+    .section-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .section-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .section-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sec);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0 24px;
+    }
+
+    /* ── Tab Toggle ── */
+    .tab-toggle {
+      display: inline-flex;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .tab-btn {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--orange);
+      color: #fff;
+    }
+    .tab-btn:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+    /* ── Table ── */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      white-space: nowrap;
+      background: rgba(255,255,255,0.02);
+    }
+    .data-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px;
+      color: var(--text-sec);
+      vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tbody tr { transition: background 0.12s; }
+    .data-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+    .td-primary {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .td-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── Priority Badges ── */
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid;
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+      display: inline-block;
+    }
+    .badge-high   { background: var(--red-dim);    border-color: var(--red);    color: var(--red); }
+    .badge-medium { background: var(--amber-dim);  border-color: var(--amber);  color: var(--amber); }
+    .badge-low    { background: rgba(100,116,139,0.12); border-color: var(--border-light); color: var(--text-muted); }
+    .badge-new     { background: var(--blue-dim);    border-color: var(--blue);    color: var(--blue); }
+    .badge-contacted { background: var(--amber-dim);  border-color: var(--amber);  color: var(--amber); }
+    .badge-qualified { background: var(--green-dim);  border-color: var(--green);  color: var(--green); }
+    .badge-active  { background: var(--orange-dim); border-color: var(--orange); color: var(--orange); }
+    .badge-overdue { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+    .badge-ok      { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+
+    /* ── Score Bar ── */
+    .score-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .score-bar {
+      height: 5px;
+      width: 60px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .score-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: var(--green);
+    }
+    .score-fill.score-mid { background: var(--amber); }
+    .score-fill.score-low { background: var(--red); }
+    .score-val {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    /* ── Overdue Contact Cards ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; } }
+    .contact-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .contact-card.overdue-card {
+      border-color: rgba(239,68,68,0.3);
+      background: rgba(239,68,68,0.04);
+    }
+    .contact-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .contact-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .contact-meta {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .contact-days {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .contact-interest {
+      font-size: 12px;
+      color: var(--text-sec);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 12px;
+    }
+    .contact-interest-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    /* ── Installed Base Cards ── */
+    .reorder-signal {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+    .signal-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .signal-high   { background: var(--red); }
+    .signal-medium { background: var(--amber); }
+    .signal-low    { background: var(--text-muted); }
+
+    /* ── EPC Cards ── */
+    .epc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 900px) { .epc-grid { grid-template-columns: 1fr; } }
+    .epc-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .epc-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .epc-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .epc-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .epc-row-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      min-width: 90px;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+    .epc-row-val {
+      font-size: 12.5px;
+      color: var(--text-sec);
+    }
+    .epc-row-val.warn { color: var(--amber); }
+    .epc-row-val.cold { color: var(--text-muted); font-style: italic; }
+    .epc-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    .epc-context {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    /* ── Content Cards ── */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
+    .content-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .content-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .content-stat {
+      font-size: 12.5px;
+      color: var(--text-sec);
+      margin-bottom: 6px;
+    }
+    .content-pain {
+      font-size: 12px;
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 6px;
+      padding: 7px 10px;
+      margin-bottom: 14px;
+      line-height: 1.55;
+    }
+
+    /* ── Draft Outreach Cards ── */
+    .draft-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .draft-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .draft-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .draft-card-meta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .draft-card-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .draft-card-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .draft-card-body {
+      padding: 14px 18px;
+    }
+    .draft-subject {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sec);
+      margin-bottom: 6px;
+    }
+    .draft-subject span {
+      color: var(--orange);
+    }
+    .draft-preview {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .draft-hitl-note {
+      font-size: 11px;
+      color: var(--cyan);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ── Agent Run Drawer ── */
+    .run-drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 300;
+      backdrop-filter: blur(3px);
+    }
+    .run-drawer-overlay.open { display: flex; align-items: flex-end; justify-content: center; }
+    .run-drawer {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 0 0;
+      width: 100%;
+      max-width: 820px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      animation: slideUp 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);   opacity: 1; }
+    }
+    .run-drawer-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .run-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .run-drawer-mode {
+      font-size: 11.5px;
+      color: var(--orange);
+      font-weight: 600;
+      margin-top: 3px;
+    }
+    .run-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .run-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .run-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .run-step.step-active {
+      border-color: var(--orange);
+      background: var(--orange-dim);
+    }
+    .run-step.step-done {
+      border-color: rgba(34,197,94,0.3);
+      background: var(--green-dim);
+    }
+    .step-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .run-step.step-active .step-icon {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+      animation: pulse-step 1s infinite;
+    }
+    .run-step.step-done .step-icon {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+    @keyframes pulse-step {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.4); }
+      50%       { box-shadow: 0 0 0 6px rgba(249,115,22,0); }
+    }
+    .step-text {
+      font-size: 13px;
+      color: var(--text-sec);
+    }
+    .run-step.step-active .step-text { color: var(--orange); font-weight: 600; }
+    .run-step.step-done .step-text   { color: var(--green); }
+
+    .run-result-area {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .run-result-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .run-result-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .run-result-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12.5px;
+      color: var(--text-sec);
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.025);
+      border-radius: 6px;
+    }
+    .run-result-item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .hitl-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--cyan-dim);
+      border: 1px solid rgba(6,182,212,0.35);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 12.5px;
+      color: var(--cyan);
+    }
+
+    /* ── Prospect Table Controls ── */
+    .convert-btn {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid rgba(249,115,22,0.4);
+      background: var(--orange-dim);
+      color: var(--orange);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .convert-btn:hover { background: var(--orange); color: #fff; }
+    .convert-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    /* ── Misc ── */
+    .drawer-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.15s;
+    }
+    .drawer-close:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .run-drawer-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 13px;
+      color: var(--text);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 16px; }
+    .months-cell {
+      font-weight: 700;
+    }
+    .months-high { color: var(--red); }
+    .months-med  { color: var(--amber); }
+    .months-ok   { color: var(--green); }
+    .section-note {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    .section-note strong { color: var(--text-sec); }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="kimre-nav">
+  <div class="kimre-nav-inner">
+    <span class="kimre-nav-brand">Kimre Inc.</span>
+    <div class="kimre-nav-links">
+      <a href="./index.html" class="kimre-nav-link">Home</a>
+      <a href="./strategy.html" class="kimre-nav-link">Strategy</a>
+      <a href="./marketing.html" class="kimre-nav-link active">Marketing</a>
+      <a href="./sales.html" class="kimre-nav-link">Sales</a>
+      <a href="./engineering.html" class="kimre-nav-link">Engineering</a>
+      <a href="./customer-service.html" class="kimre-nav-link">Customer Service</a>
+      <a href="./executive.html" class="kimre-nav-link">Executive</a>
+      <a href="./quality.html" class="kimre-nav-link">Quality</a>
+      <a href="./tools/index.html" class="kimre-nav-link">Tools</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Page ── -->
+<div class="page-wrap">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Marketing &amp; Outreach</h1>
+      <div class="subtitle">Market Presence &middot; Lead Generation &middot; Account Development</div>
+    </div>
+    <div class="page-header-right">
+      <span class="refresh-label">Last updated: Mar 14, 2026 &nbsp;&middot;&nbsp; Data: hardcoded demo</span>
+      <button class="btn btn-secondary btn-sm" onclick="showToast('Data refreshed', 'green')">&#8635; Refresh</button>
+    </div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-value">2</div>
+      <div class="kpi-label">Active Campaigns</div>
+      <div class="kpi-sub">Trade Show + Installed Base</div>
+    </div>
+    <div class="kpi-card top-amber">
+      <div class="kpi-value">14</div>
+      <div class="kpi-label">Trade Show Contacts</div>
+      <div class="kpi-sub">Last 90 days &mdash; 3 overdue</div>
+    </div>
+    <div class="kpi-card top-blue">
+      <div class="kpi-value">15</div>
+      <div class="kpi-label">Installed Base Accounts</div>
+      <div class="kpi-sub">4 showing reorder signals</div>
+    </div>
+    <div class="kpi-card top-green">
+      <div class="kpi-value">34%</div>
+      <div class="kpi-label">Outreach Response Rate</div>
+      <div class="kpi-sub">Installed base campaigns</div>
+    </div>
+    <div class="kpi-card top-cyan">
+      <div class="kpi-value">8</div>
+      <div class="kpi-label">New Prospects (EPA)</div>
+      <div class="kpi-sub">NAICS-matched facilities</div>
+    </div>
+  </div>
+
+  <!-- Impact Narrative -->
+  <div class="impact-card">
+    <div class="impact-header">
+      <span class="impact-label">Agent Insight</span>
+    </div>
+    <div class="impact-text">
+      Kimre has strong technical content but no systematic distribution. 14 trade show contacts from AIChE and Ammonia Forum need follow-up &mdash; 3 are overdue (&gt;14 days). Marketing Agent has drafted outreach for 4 installed base accounts showing reorder signals. Research Agent identified 8 EPA-flagged facilities matching Kimre&rsquo;s NAICS profile. 2 EPC relationships (Bechtel, Fluor) have no recent touchpoint.
+    </div>
+  </div>
+
+  <!-- Section 1: Current State Pain Points -->
+  <div class="section-bar">
+    <div class="section-bar-left">
+      <span class="section-title">Current State &mdash; Pain Points</span>
+      <span class="section-count">3</span>
+    </div>
+  </div>
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="pain-card-header">
+        <span class="pain-icon">&#9888;</span>
+        <span class="pain-title">Trade Show Follow-up Gap</span>
+      </div>
+      <div class="pain-body">Trade shows (AIChE, METALS USA, Ammonia Forum) generate contacts but follow-up is manual and slow &mdash; days or weeks after the event. Contacts go cold before outreach arrives.</div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-card-header">
+        <span class="pain-icon">&#128196;</span>
+        <span class="pain-title">Content Without Distribution</span>
+      </div>
+      <div class="pain-body">Technical content exists (application notes, case studies, EPA compliance guides) but no systematic distribution to target accounts. Valuable material sits unused while prospects make uninformed decisions.</div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-card-header">
+        <span class="pain-icon">&#128205;</span>
+        <span class="pain-title">Rep Network Gaps</span>
+      </div>
+      <div class="pain-body">Rep network coverage is geographic &mdash; some markets are underserved. EPC relationships (Bechtel, Fluor, KBR) are ad hoc, not systematically cultivated. Being specified in EPC standards is the biggest leverage point.</div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 2: Trade Show Follow-up -->
+  <div class="section-bar">
+    <div class="section-bar-left">
+      <span class="section-title">Trade Show Follow-up</span>
+      <span class="section-count">3 events &nbsp;|&nbsp; 14 contacts</span>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openRunDrawer('kimre-marketing-agent', 'trade-show-followup')">&#9654; Run Marketing Agent (Trade Show Mode)</button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Contacts</th>
+          <th>Followed Up</th>
+          <th>Overdue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="td-primary">AIChE Spring Meeting</span></td>
+          <td>Feb 2026</td>
+          <td>6</td>
+          <td><span class="badge badge-medium">3 / 6</span></td>
+          <td><span class="badge badge-overdue">2 overdue</span></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Ammonia Forum</span></td>
+          <td>Jan 2026</td>
+          <td>5</td>
+          <td><span class="badge badge-medium">4 / 5</span></td>
+          <td><span class="badge badge-overdue">1 overdue</span></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">METALS USA</span></td>
+          <td>Dec 2025</td>
+          <td>3</td>
+          <td><span class="badge badge-ok">3 / 3</span></td>
+          <td><span style="color:var(--text-muted);font-size:12px;">None</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Overdue Contact Cards -->
+  <div class="section-bar" style="margin-top:20px;">
+    <div class="section-bar-left">
+      <span class="section-title">Overdue Follow-ups</span>
+      <span class="section-count" style="color:var(--red);border-color:rgba(239,68,68,0.3);">3 contacts</span>
+    </div>
+  </div>
+
+  <div class="contact-grid" id="overdue-contacts">
+    <div class="contact-card overdue-card">
+      <div class="contact-card-header">
+        <div>
+          <div class="contact-name">Dr. Sarah Chen</div>
+          <div class="contact-meta">Mosaic Fertilizer &middot; Process Engineer</div>
+          <div class="contact-meta">AIChE Spring Meeting</div>
+        </div>
+        <div class="contact-days">18 days</div>
+      </div>
+      <div class="contact-interest">
+        <div class="contact-interest-label">Product Interest</div>
+        B-GON&reg; Mist Eliminators
+      </div>
+      <button class="btn btn-amber btn-sm" style="width:100%;" onclick="draftOutreach('Dr. Sarah Chen', 'Mosaic Fertilizer')">&#9993; Draft Outreach</button>
+    </div>
+    <div class="contact-card overdue-card">
+      <div class="contact-card-header">
+        <div>
+          <div class="contact-name">James Kowalski</div>
+          <div class="contact-meta">Nucor Steel &middot; Environmental Eng</div>
+          <div class="contact-meta">METALS USA</div>
+        </div>
+        <div class="contact-days">16 days</div>
+      </div>
+      <div class="contact-interest">
+        <div class="contact-interest-label">Product Interest</div>
+        Fiber Bed Filters (HCl scrubbing)
+      </div>
+      <button class="btn btn-amber btn-sm" style="width:100%;" onclick="draftOutreach('James Kowalski', 'Nucor Steel')">&#9993; Draft Outreach</button>
+    </div>
+    <div class="contact-card overdue-card">
+      <div class="contact-card-header">
+        <div>
+          <div class="contact-name">Priya Patel</div>
+          <div class="contact-meta">OCI Nitrogen &middot; Maintenance Mgr</div>
+          <div class="contact-meta">Ammonia Forum</div>
+        </div>
+        <div class="contact-days">14 days</div>
+      </div>
+      <div class="contact-interest">
+        <div class="contact-interest-label">Product Interest</div>
+        DRIFTOR&reg; Drift Eliminators
+      </div>
+      <button class="btn btn-amber btn-sm" style="width:100%;" onclick="draftOutreach('Priya Patel', 'OCI Nitrogen')">&#9993; Draft Outreach</button>
+    </div>
+  </div>
+
+  <!-- Draft Outreach Output (initially hidden) -->
+  <div id="draft-outreach-section" style="display:none;">
+    <div class="section-bar">
+      <div class="section-bar-left">
+        <span class="section-title">Agent-Drafted Outreach</span>
+        <span class="section-count" style="color:var(--green);border-color:rgba(34,197,94,0.3);">HITL Review Required</span>
+      </div>
+    </div>
+    <div class="hitl-banner">
+      <span>&#128101;</span>
+      Human-in-the-Loop: All outreach queued for review. Do not auto-send. Approve each draft before delivery.
+    </div>
+    <div class="draft-grid" id="draft-cards-container"></div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 3: Installed Base Campaign -->
+  <div class="section-bar">
+    <div class="section-bar-left">
+      <span class="section-title">Installed Base Outreach</span>
+      <span class="section-count">15 accounts &nbsp;|&nbsp; 4 high priority</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" onclick="openRunDrawer('kimre-marketing-agent', 'installed-base')">&#9654; Run Marketing Agent (Installed Base Mode)</button>
+    </div>
+  </div>
+
+  <div class="section-note">
+    Showing top 8 accounts by urgency. Priority based on months since last order vs. typical reorder interval per product. <strong>High = overdue for reorder.</strong>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Product Installed</th>
+          <th>Last Order</th>
+          <th>Months Since</th>
+          <th>Reorder Signal</th>
+          <th>Priority</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="td-primary">Valero Corpus Christi</span><div class="td-sub">TX</div></td>
+          <td>B-GON&reg; ME (H&#8322;SO&#8324;)</td>
+          <td>Aug 2023</td>
+          <td><span class="months-cell months-high">19</span></td>
+          <td>Media replacement due</td>
+          <td><span class="badge badge-high">High</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="showToast('Outreach queued for Valero Corpus Christi', 'orange')">Queue</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">CF Industries Donaldsonville</span><div class="td-sub">LA</div></td>
+          <td>B-GON&reg; ME (HNO&#8323;)</td>
+          <td>Nov 2023</td>
+          <td><span class="months-cell months-high">16</span></td>
+          <td>Upcoming turnaround</td>
+          <td><span class="badge badge-high">High</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="showToast('Outreach queued for CF Industries', 'orange')">Queue</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Mosaic New Wales FL</span><div class="td-sub">FL</div></td>
+          <td>LIQUI-NOMIX&reg; Coalescer</td>
+          <td>Mar 2024</td>
+          <td><span class="months-cell months-med">12</span></td>
+          <td>Annual inspection</td>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="showToast('Outreach queued for Mosaic New Wales', 'orange')">Queue</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Nucor Hertford NC</span><div class="td-sub">NC</div></td>
+          <td>Fiber Bed Filter (HCl)</td>
+          <td>Jan 2024</td>
+          <td><span class="months-cell months-high">14</span></td>
+          <td>Cage replacement signal</td>
+          <td><span class="badge badge-high">High</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="showToast('Outreach queued for Nucor Hertford', 'orange')">Queue</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Georgia-Pacific Palatka</span><div class="td-sub">FL</div></td>
+          <td>DRIFTOR&reg; Eliminators</td>
+          <td>Jun 2024</td>
+          <td><span class="months-cell months-ok">9</span></td>
+          <td>None</td>
+          <td><span class="badge badge-low">Low</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="showToast('Outreach queued for Georgia-Pacific', 'orange')">Queue</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">OCI Nitrogen Wever IA</span><div class="td-sub">IA</div></td>
+          <td>KON-TANE&reg; Packing</td>
+          <td>Sep 2024</td>
+          <td><span class="months-cell months-ok">6</span></td>
+          <td>Reorder approaching</td>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="showToast('Outreach queued for OCI Nitrogen', 'orange')">Queue</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Chemours Beaumont TX</span><div class="td-sub">TX</div></td>
+          <td>B-GON&reg; ME (H&#8322;SO&#8324;)</td>
+          <td>Dec 2023</td>
+          <td><span class="months-cell months-high">15</span></td>
+          <td>Media wear</td>
+          <td><span class="badge badge-high">High</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="showToast('Outreach queued for Chemours Beaumont', 'orange')">Queue</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Nutrien White Springs FL</span><div class="td-sub">FL</div></td>
+          <td>B-GON&reg; ME (H&#8323;PO&#8324;)</td>
+          <td>Apr 2024</td>
+          <td><span class="months-cell months-med">11</span></td>
+          <td>Permit renewal</td>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="showToast('Outreach queued for Nutrien White Springs', 'orange')">Queue</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 4: EPC Relationships -->
+  <div class="section-bar">
+    <div class="section-bar-left">
+      <span class="section-title">EPC &amp; Engineering Firm Relationships</span>
+      <span class="section-count">3 firms</span>
+    </div>
+  </div>
+
+  <p class="section-note">
+    Getting specified in EPC design standards = dozens of projects per relationship. Kimre wins on application depth &mdash; the goal is to be the <strong>default call when Bechtel/Fluor write a mist eliminator spec</strong>.
+  </p>
+
+  <div class="epc-grid">
+    <div class="epc-card">
+      <div class="epc-card-header">
+        <span class="epc-name">Bechtel</span>
+        <span class="badge badge-medium">Warm</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Last touchpoint</span>
+        <span class="epc-row-val warn">8 months ago</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Projects</span>
+        <span class="epc-row-val">Acid plant expansions (sulfuric acid)</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Status</span>
+        <span class="epc-row-val">No current specification</span>
+      </div>
+      <hr class="epc-divider">
+      <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="showToast('Lunch &amp; Learn scheduled for Bechtel', 'green')">&#128197; Schedule Lunch &amp; Learn</button>
+    </div>
+    <div class="epc-card">
+      <div class="epc-card-header">
+        <span class="epc-name">Fluor</span>
+        <span class="badge badge-high">Stale</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Last touchpoint</span>
+        <span class="epc-row-val warn" style="color:var(--red);">14 months ago</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Projects</span>
+        <span class="epc-row-val">Fertilizer plants (HNO&#8323;, NH&#8323;)</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Status</span>
+        <span class="epc-row-val warn">Evaluating alternatives</span>
+      </div>
+      <hr class="epc-divider">
+      <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="showToast('Application Guide queued for Fluor', 'orange')">&#128196; Send Application Guide</button>
+    </div>
+    <div class="epc-card">
+      <div class="epc-card-header">
+        <span class="epc-name">KBR</span>
+        <span class="badge badge-low">Cold</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Last touchpoint</span>
+        <span class="epc-row-val cold">Never</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Projects</span>
+        <span class="epc-row-val">Refining, petrochemical</span>
+      </div>
+      <div class="epc-row">
+        <span class="epc-row-label">Status</span>
+        <span class="epc-row-val cold">Cold &mdash; no contact established</span>
+      </div>
+      <hr class="epc-divider">
+      <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="showToast('Initial outreach initiated for KBR', 'orange')">&#128172; Initiate Outreach</button>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 5: Prospect Pipeline -->
+  <div class="section-bar">
+    <div class="section-bar-left">
+      <span class="section-title">Prospect Pipeline &mdash; EPA Plant Intelligence</span>
+      <span class="section-count">8 facilities</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div class="tab-toggle" id="prospect-toggle">
+        <button class="tab-btn active" onclick="setProspectMode(this, 'plant')">Plant Intelligence</button>
+        <button class="tab-btn" onclick="setProspectMode(this, 'reg')">Regulatory Trigger</button>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openRunDrawer('kimre-research-agent', 'plant-intelligence')">&#9654; Run Research Agent</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Facility</th>
+          <th>State</th>
+          <th>NAICS</th>
+          <th>Signal</th>
+          <th>Lead Score</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="td-primary">Mosaic Fertilizer New Wales</span></td>
+          <td>FL</td>
+          <td><span style="font-size:11px;font-family:'Courier New',monospace;color:var(--text-muted);">325311</span></td>
+          <td>Permit renewal</td>
+          <td>
+            <div class="score-wrap">
+              <div class="score-bar"><div class="score-fill score-mid" style="width:70%"></div></div>
+              <span class="score-val">7/10</span>
+            </div>
+          </td>
+          <td><span class="badge badge-new">New</span></td>
+          <td><button class="convert-btn" onclick="convertToContact(this, 'Mosaic Fertilizer New Wales')">Convert</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Chemours Washington Works</span></td>
+          <td>WV</td>
+          <td><span style="font-size:11px;font-family:'Courier New',monospace;color:var(--text-muted);">325181</span></td>
+          <td>Inspection overdue (18mo)</td>
+          <td>
+            <div class="score-wrap">
+              <div class="score-bar"><div class="score-fill" style="width:80%"></div></div>
+              <span class="score-val">8/10</span>
+            </div>
+          </td>
+          <td><span class="badge badge-contacted">Contacted</span></td>
+          <td><button class="convert-btn" disabled>Contacted</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Nucor Steel Hertford</span></td>
+          <td>NC</td>
+          <td><span style="font-size:11px;font-family:'Courier New',monospace;color:var(--text-muted);">331110</span></td>
+          <td>Violation flag</td>
+          <td>
+            <div class="score-wrap">
+              <div class="score-bar"><div class="score-fill" style="width:90%"></div></div>
+              <span class="score-val">9/10</span>
+            </div>
+          </td>
+          <td><span class="badge badge-qualified">Qualified</span></td>
+          <td><button class="convert-btn" disabled>Qualified</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">OCI Nitrogen Wever</span></td>
+          <td>IA</td>
+          <td><span style="font-size:11px;font-family:'Courier New',monospace;color:var(--text-muted);">325311</span></td>
+          <td>Expansion permit</td>
+          <td>
+            <div class="score-wrap">
+              <div class="score-bar"><div class="score-fill score-mid" style="width:60%"></div></div>
+              <span class="score-val">6/10</span>
+            </div>
+          </td>
+          <td><span class="badge badge-new">New</span></td>
+          <td><button class="convert-btn" onclick="convertToContact(this, 'OCI Nitrogen Wever')">Convert</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Valero Corpus Christi</span></td>
+          <td>TX</td>
+          <td><span style="font-size:11px;font-family:'Courier New',monospace;color:var(--text-muted);">325181</span></td>
+          <td>Major permit renewal</td>
+          <td>
+            <div class="score-wrap">
+              <div class="score-bar"><div class="score-fill" style="width:80%"></div></div>
+              <span class="score-val">8/10</span>
+            </div>
+          </td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td><button class="convert-btn" disabled>Active</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">CF Industries Donaldsonville</span></td>
+          <td>LA</td>
+          <td><span style="font-size:11px;font-family:'Courier New',monospace;color:var(--text-muted);">325311</span></td>
+          <td>Capacity expansion</td>
+          <td>
+            <div class="score-wrap">
+              <div class="score-bar"><div class="score-fill score-mid" style="width:70%"></div></div>
+              <span class="score-val">7/10</span>
+            </div>
+          </td>
+          <td><span class="badge badge-new">New</span></td>
+          <td><button class="convert-btn" onclick="convertToContact(this, 'CF Industries Donaldsonville')">Convert</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Gerdau Tampa</span></td>
+          <td>FL</td>
+          <td><span style="font-size:11px;font-family:'Courier New',monospace;color:var(--text-muted);">331110</span></td>
+          <td>Inspection overdue</td>
+          <td>
+            <div class="score-wrap">
+              <div class="score-bar"><div class="score-fill score-low" style="width:50%"></div></div>
+              <span class="score-val">5/10</span>
+            </div>
+          </td>
+          <td><span class="badge badge-new">New</span></td>
+          <td><button class="convert-btn" onclick="convertToContact(this, 'Gerdau Tampa')">Convert</button></td>
+        </tr>
+        <tr>
+          <td><span class="td-primary">Nutrien White Springs</span></td>
+          <td>FL</td>
+          <td><span style="font-size:11px;font-family:'Courier New',monospace;color:var(--text-muted);">325181</span></td>
+          <td>Permit renewal</td>
+          <td>
+            <div class="score-wrap">
+              <div class="score-bar"><div class="score-fill score-mid" style="width:60%"></div></div>
+              <span class="score-val">6/10</span>
+            </div>
+          </td>
+          <td><span class="badge badge-new">New</span></td>
+          <td><button class="convert-btn" onclick="convertToContact(this, 'Nutrien White Springs')">Convert</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 6: Content & Channels -->
+  <div class="section-bar">
+    <div class="section-bar-left">
+      <span class="section-title">Content &amp; Distribution</span>
+      <span class="section-count">3 asset types</span>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="content-card">
+      <div class="content-card-title">Application Notes</div>
+      <div class="content-stat">12 created &nbsp;&middot;&nbsp; <span style="color:var(--red);">2 distributed</span></div>
+      <div class="content-pain">Content exists but no systematic send to matching accounts. Most prospects never see Kimre&rsquo;s technical depth.</div>
+      <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="showToast('Application Notes added to active campaign', 'green')">+ Add to Campaign</button>
+    </div>
+    <div class="content-card">
+      <div class="content-card-title">Case Studies</div>
+      <div class="content-stat">4 studies &nbsp;&middot;&nbsp; <span style="color:var(--amber);">Not linked to outreach</span></div>
+      <div class="content-pain">Mosaic, Nucor, Valero, and generic acid case studies are not linked to prospect outreach workflow. High-value proof points going unused.</div>
+      <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="showToast('Case Studies added to active campaign', 'green')">+ Add to Campaign</button>
+    </div>
+    <div class="content-card">
+      <div class="content-card-title">EPA Compliance Guides</div>
+      <div class="content-stat">B-GON&reg; MATS selection guide &nbsp;&middot;&nbsp; <span style="color:var(--red);">Not positioned as compliance tool</span></div>
+      <div class="content-pain">EPA compliance framing drives urgency for regulated facilities. Currently positioned as product spec, not regulatory solution.</div>
+      <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="showToast('EPA Compliance Guide added to active campaign', 'green')">+ Add to Campaign</button>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- ── Run Drawer Overlay ── -->
+<div class="run-drawer-overlay" id="run-overlay" onclick="closeRunDrawer(event)">
+  <div class="run-drawer" id="run-drawer" onclick="event.stopPropagation()">
+    <div class="run-drawer-header">
+      <div>
+        <div class="run-drawer-title" id="drawer-title">Running Agent</div>
+        <div class="run-drawer-mode" id="drawer-mode"></div>
+      </div>
+      <button class="drawer-close" onclick="closeRunDrawer(null)">&#10005;</button>
+    </div>
+    <div class="run-drawer-body" id="drawer-body">
+      <div class="run-steps" id="run-steps-list"></div>
+      <div class="run-result-area" id="run-result-area" style="display:none;">
+        <div class="run-result-label">Agent Output</div>
+        <div class="hitl-banner">
+          <span>&#128101;</span>
+          Human-in-the-Loop review required. Approve or reject each recommendation below.
+        </div>
+        <div class="run-result-items" id="run-result-items"></div>
+      </div>
+    </div>
+    <div class="run-drawer-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeRunDrawer(null)">Close</button>
+      <span id="drawer-status" style="font-size:12px;color:var(--text-muted);margin-left:8px;"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">&#10003;</span>
+  <span id="toast-msg">Done</span>
+</div>
+
+<script>
+  const API = 'http://localhost:8500';
+
+  /* ── Toast ── */
+  function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    var icons = { green: '&#10003;', orange: '&#9654;', red: '&#9888;', cyan: '&#9432;' };
+    document.getElementById('toast-msg').textContent = msg;
+    document.getElementById('toast-icon').innerHTML = icons[type] || '&#10003;';
+    t.style.borderColor = type === 'green' ? 'rgba(34,197,94,0.4)' :
+                          type === 'red'   ? 'rgba(239,68,68,0.4)' :
+                          type === 'cyan'  ? 'rgba(6,182,212,0.4)' :
+                          'rgba(249,115,22,0.4)';
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3200);
+  }
+
+  /* ── Prospect Mode Toggle ── */
+  function setProspectMode(btn, mode) {
+    document.querySelectorAll('#prospect-toggle .tab-btn').forEach(function(b) {
+      b.classList.remove('active');
+    });
+    btn.classList.add('active');
+    showToast('View: ' + (mode === 'plant' ? 'Plant Intelligence' : 'Regulatory Trigger'), 'cyan');
+  }
+
+  /* ── Convert to Contact ── */
+  function convertToContact(btn, name) {
+    btn.disabled = true;
+    btn.textContent = 'Added';
+    btn.style.background = 'var(--green-dim)';
+    btn.style.borderColor = 'rgba(34,197,94,0.4)';
+    btn.style.color = 'var(--green)';
+    showToast(name + ' converted to contact', 'green');
+  }
+
+  /* ── Draft Single Outreach ── */
+  var draftData = {
+    'Dr. Sarah Chen': {
+      company: 'Mosaic Fertilizer',
+      subject: 'B-GON\u00ae Mist Eliminator Performance Follow-up \u2014 AIChE Spring',
+      preview: 'Dr. Chen, it was great connecting at AIChE last month. Following up on your questions about B-GON\u00ae mist eliminator performance in phosphoric acid service. We\u2019ve attached our application note for H\u2083PO\u2084 duty \u2014 Mosaic\u2019s New Wales facility profile matches closely...'
+    },
+    'James Kowalski': {
+      company: 'Nucor Steel',
+      subject: 'Fiber Bed Filter HCl Recovery \u2014 METALS USA Follow-up',
+      preview: 'James, following up from METALS USA. Based on our conversation about HCl scrubbing challenges at Hertford, I wanted to share Kimre\u2019s Fiber Bed Filter case study from a comparable EAF operation. Cage replacement intervals and acid recovery rates are detailed...'
+    },
+    'Priya Patel': {
+      company: 'OCI Nitrogen',
+      subject: 'DRIFTOR\u00ae Drift Eliminator Specs \u2014 Ammonia Forum Follow-up',
+      preview: 'Priya, great conversation at Ammonia Forum. As discussed, DRIFTOR\u00ae eliminators are specified for ammonia service at several nitrogen producers in the Gulf. I\u2019ve put together a quick spec sheet relevant to your cooling tower configuration at Wever...'
+    }
+  };
+
+  function draftOutreach(name, company) {
+    var d = draftData[name];
+    if (!d) return;
+    var sec = document.getElementById('draft-outreach-section');
+    var container = document.getElementById('draft-cards-container');
+    var existingIds = Array.from(container.querySelectorAll('.draft-card')).map(function(el) { return el.dataset.name; });
+    if (existingIds.indexOf(name) !== -1) {
+      sec.style.display = 'block';
+      sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showToast('Draft already created for ' + name, 'cyan');
+      return;
+    }
+    var card = document.createElement('div');
+    card.className = 'draft-card';
+    card.dataset.name = name;
+    card.innerHTML =
+      '<div class="draft-card-header">' +
+        '<div>' +
+          '<div class="draft-card-meta">' + name + ' &nbsp;&mdash;&nbsp; ' + company + '</div>' +
+          '<div class="draft-card-sub">Draft ready for review</div>' +
+        '</div>' +
+        '<div class="draft-card-actions">' +
+          '<button class="btn btn-green btn-sm" onclick="approveDraft(this, \'' + name + '\')">Accept</button>' +
+          '<button class="btn btn-secondary btn-sm" onclick="showToast(\'Edit mode for ' + name + '\', \'cyan\')">Edit</button>' +
+          '<button class="btn btn-red btn-sm" onclick="rejectDraft(this, \'' + name + '\')">Reject</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="draft-card-body">' +
+        '<div class="draft-subject">Subject: <span>' + d.subject + '</span></div>' +
+        '<div class="draft-preview">' + d.preview + '</div>' +
+        '<div class="draft-hitl-note">&#128101; Queued for review &mdash; will not send until approved</div>' +
+      '</div>';
+    container.appendChild(card);
+    sec.style.display = 'block';
+    setTimeout(function() { sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+    showToast('Draft created for ' + name, 'orange');
+  }
+
+  function approveDraft(btn, name) {
+    var card = btn.closest('.draft-card');
+    card.style.borderColor = 'rgba(34,197,94,0.4)';
+    card.style.background = 'rgba(34,197,94,0.04)';
+    btn.disabled = true;
+    btn.textContent = 'Approved';
+    showToast('Outreach approved for ' + name + ' \u2014 queued for send', 'green');
+  }
+
+  function rejectDraft(btn, name) {
+    var card = btn.closest('.draft-card');
+    card.style.opacity = '0';
+    card.style.transition = 'opacity 0.3s';
+    setTimeout(function() { card.remove(); }, 320);
+    showToast('Draft rejected for ' + name, 'red');
+  }
+
+  /* ── Run Drawer ── */
+  var runTimer = null;
+  var AGENT_STEPS = {
+    'kimre-marketing-agent': {
+      'trade-show-followup': {
+        label: 'Marketing Agent \u2014 Trade Show Follow-up',
+        mode: 'Mode: Trade Show Follow-up',
+        steps: [
+          'Load trade show contacts (AIChE, Ammonia Forum, METALS USA)',
+          'Filter contacts not followed up in > 7 days',
+          'Rank by product interest + days since contact',
+          'Draft personalized outreach email per contact',
+          'Queue for review (HITL \u2014 do not auto-send)'
+        ],
+        results: [
+          'Draft outreach \u2014 Dr. Sarah Chen / Mosaic Fertilizer (18 days, B-GON\u00ae)',
+          'Draft outreach \u2014 James Kowalski / Nucor Steel (16 days, Fiber Bed)',
+          'Draft outreach \u2014 Priya Patel / OCI Nitrogen (14 days, DRIFTOR\u00ae)'
+        ]
+      },
+      'installed-base': {
+        label: 'Marketing Agent \u2014 Installed Base Campaign',
+        mode: 'Mode: Installed Base Outreach',
+        steps: [
+          'Load installed base accounts (15 total)',
+          'Compute months since last order per account',
+          'Compare to typical reorder interval by product',
+          'Score reorder likelihood (overdue \u00d7 product lifecycle)',
+          'Draft personalized outreach referencing specific product + application'
+        ],
+        results: [
+          'High priority: Valero Corpus Christi (B-GON\u00ae, 19mo, media replacement)',
+          'High priority: CF Industries Donaldsonville (B-GON\u00ae, 16mo, turnaround)',
+          'High priority: Chemours Beaumont TX (B-GON\u00ae, 15mo, media wear)',
+          'High priority: Nucor Hertford NC (Fiber Bed, 14mo, cage signal)'
+        ]
+      }
+    },
+    'kimre-research-agent': {
+      'plant-intelligence': {
+        label: 'Research Agent \u2014 EPA Plant Intelligence',
+        mode: 'Mode: Plant Intelligence',
+        steps: [
+          'Query EPA ECHO API (NAICS: 325181, 325311, 331110 \u2014 Gulf Coast + SE states)',
+          'Parse facility records (name, state, permit status, last inspection date)',
+          'Score each facility (violation flag +3, permit renewal +2, inspection >365d +2)',
+          'Rank by lead score',
+          'Output prospect list with recommended outreach trigger'
+        ],
+        results: [
+          'Nucor Steel Hertford NC \u2014 Score 9/10 (violation flag)',
+          'Chemours Washington Works WV \u2014 Score 8/10 (inspection overdue 18mo)',
+          'Valero Corpus Christi TX \u2014 Score 8/10 (major permit renewal)',
+          'Mosaic Fertilizer New Wales FL \u2014 Score 7/10 (permit renewal)'
+        ]
+      }
+    }
+  };
+
+  function openRunDrawer(slug, mode) {
+    var config = (AGENT_STEPS[slug] || {})[mode];
+    if (!config) {
+      showToast('Agent config not found', 'red');
+      return;
+    }
+
+    document.getElementById('drawer-title').textContent = config.label;
+    document.getElementById('drawer-mode').textContent = config.mode;
+    document.getElementById('run-result-area').style.display = 'none';
+    document.getElementById('drawer-status').textContent = 'Running\u2026';
+
+    var stepsList = document.getElementById('run-steps-list');
+    stepsList.innerHTML = '';
+    config.steps.forEach(function(stepText, i) {
+      var div = document.createElement('div');
+      div.className = 'run-step';
+      div.id = 'run-step-' + i;
+      div.innerHTML =
+        '<div class="step-icon">' + (i + 1) + '</div>' +
+        '<div class="step-text">' + stepText + '</div>';
+      stepsList.appendChild(div);
+    });
+
+    document.getElementById('run-overlay').classList.add('open');
+
+    if (runTimer) clearTimeout(runTimer);
+    animateSteps(config.steps.length, 0, slug, mode, config);
+  }
+
+  function animateSteps(total, idx, slug, mode, config) {
+    if (idx >= total) {
+      document.getElementById('drawer-status').textContent = 'Complete';
+      renderRunResults(config);
+      return;
+    }
+    var stepEl = document.getElementById('run-step-' + idx);
+    if (!stepEl) return;
+    if (idx > 0) {
+      var prev = document.getElementById('run-step-' + (idx - 1));
+      if (prev) {
+        prev.classList.remove('step-active');
+        prev.classList.add('step-done');
+        var prevIcon = prev.querySelector('.step-icon');
+        if (prevIcon) prevIcon.textContent = '\u2713';
+      }
+    }
+    stepEl.classList.add('step-active');
+    var delay = 550 + Math.random() * 400;
+    runTimer = setTimeout(function() {
+      animateSteps(total, idx + 1, slug, mode, config);
+    }, delay);
+  }
+
+  function renderRunResults(config) {
+    var resultArea = document.getElementById('run-result-area');
+    var resultItems = document.getElementById('run-result-items');
+    resultItems.innerHTML = '';
+    config.results.forEach(function(item) {
+      var div = document.createElement('div');
+      div.className = 'run-result-item';
+      div.innerHTML =
+        '<span>' + item + '</span>' +
+        '<div class="run-result-item-actions">' +
+          '<button class="btn btn-green btn-sm" onclick="approveRunResult(this)">Accept</button>' +
+          '<button class="btn btn-red btn-sm" onclick="rejectRunResult(this)">Reject</button>' +
+        '</div>';
+      resultItems.appendChild(div);
+    });
+    resultArea.style.display = 'block';
+
+    try {
+      fetch(API + '/api/run/' + 'kimre-marketing-agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dry_run: true, mode: config.mode })
+      }).catch(function() {});
+    } catch(e) {}
+  }
+
+  function approveRunResult(btn) {
+    var item = btn.closest('.run-result-item');
+    item.style.borderLeft = '3px solid var(--green)';
+    item.style.background = 'rgba(34,197,94,0.06)';
+    btn.disabled = true;
+    btn.textContent = 'Approved';
+    btn.nextElementSibling.disabled = true;
+    showToast('Recommendation approved', 'green');
+  }
+
+  function rejectRunResult(btn) {
+    var item = btn.closest('.run-result-item');
+    item.style.opacity = '0.35';
+    item.style.pointerEvents = 'none';
+    showToast('Recommendation rejected', 'red');
+  }
+
+  function closeRunDrawer(event) {
+    if (event && event.target !== document.getElementById('run-overlay')) return;
+    if (runTimer) clearTimeout(runTimer);
+    document.getElementById('run-overlay').classList.remove('open');
+    document.getElementById('drawer-status').textContent = '';
+  }
+
+  /* ── Fetch recommendations (non-blocking, fallback silently) ── */
+  try {
+    fetch(API + '/api/recommendations/pending?persona=sales')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data && data.length) {
+          showToast(data.length + ' pending recommendations available', 'cyan');
+        }
+      })
+      .catch(function() {});
+  } catch(e) {}
+</script>
+
+</body>
+</html>

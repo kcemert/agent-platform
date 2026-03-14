@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kimre Inc. — Agent Platform Engagement Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0f1117;
+      --card:         #161b2e;
+      --card-alt:     #1a2035;
+      --border:       #1e293b;
+      --border-light: #253047;
+      --text:         #f1f5f9;
+      --text-sec:     #94a3b8;
+      --text-muted:   #64748b;
+      --orange:       #f97316;
+      --orange-dim:   rgba(249,115,22,0.12);
+      --orange-glow:  rgba(249,115,22,0.25);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.12);
+      --indigo:       #6366f1;
+      --indigo-dim:   rgba(99,102,241,0.12);
+      --amber:        #f59e0b;
+      --amber-dim:    rgba(245,158,11,0.12);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.12);
+      --cyan:         #06b6d4;
+      --cyan-dim:     rgba(6,182,212,0.12);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    h2.section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 28px;
+    }
+    .header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--orange-dim);
+      border: 1.5px solid var(--orange);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .logo-text h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .logo-text .subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .header-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+    .badge-orange { background: var(--orange-dim); border-color: var(--orange); color: var(--orange); }
+    .badge-green  { background: var(--green-dim);  border-color: var(--green);  color: var(--green); }
+    .badge-indigo { background: var(--indigo-dim); border-color: var(--indigo); color: var(--indigo); }
+    .badge-amber  { background: var(--amber-dim);  border-color: var(--amber);  color: var(--amber); }
+    .badge-red    { background: var(--red-dim);    border-color: var(--red);    color: var(--red); }
+    .badge-muted  { background: rgba(100,116,139,0.12); border-color: var(--border-light); color: var(--text-sec); }
+    .badge-cyan   { background: var(--cyan-dim);   border-color: var(--cyan);   color: var(--cyan); }
+    .company-tagline {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .company-tagline .pill {
+      font-size: 11px;
+      color: var(--text-sec);
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+    .company-tagline .sep {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .card-alt {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    /* ── Executive Summary ── */
+    .exec-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 768px) { .exec-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .exec-grid { grid-template-columns: 1fr; } }
+
+    .exec-stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .exec-stat::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .exec-stat.orange::before { background: var(--orange); }
+    .exec-stat.green::before  { background: var(--green); }
+    .exec-stat.indigo::before { background: var(--indigo); }
+    .exec-stat.amber::before  { background: var(--amber); }
+
+    .exec-stat .stat-number {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .exec-stat.orange .stat-number { color: var(--orange); }
+    .exec-stat.green  .stat-number { color: var(--green); }
+    .exec-stat.indigo .stat-number { color: var(--indigo); }
+    .exec-stat.amber  .stat-number { color: var(--amber); }
+
+    .exec-stat .stat-label {
+      font-size: 12px;
+      color: var(--text-sec);
+      line-height: 1.4;
+    }
+
+    /* ── Company Profile: Two columns ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 720px) { .profile-grid { grid-template-columns: 1fr; } }
+
+    .scorecard-row {
+      margin-bottom: 18px;
+    }
+    .scorecard-row:last-child { margin-bottom: 0; }
+
+    .scorecard-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .scorecard-dim {
+      font-size: 12px;
+      color: var(--text-sec);
+      font-weight: 500;
+    }
+    .scorecard-val {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .scorecard-note {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .bar-track {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.6s ease;
+    }
+    .bar-orange { background: var(--orange); }
+    .bar-green  { background: var(--green); }
+    .bar-amber  { background: var(--amber); }
+    .bar-indigo { background: var(--indigo); }
+    .bar-red    { background: var(--red); }
+
+    .eto-explainer h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+    .eto-explainer p {
+      font-size: 13px;
+      color: var(--text-sec);
+      margin-bottom: 12px;
+      line-height: 1.65;
+    }
+    .eto-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+    .eto-table th {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .eto-table td {
+      font-size: 12px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-sec);
+      vertical-align: top;
+    }
+    .eto-table tr:last-child td { border-bottom: none; }
+    .eto-table td:first-child { font-weight: 600; color: var(--text); }
+
+    /* ── Agent Opportunity Cards ── */
+    .agent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .agent-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: start;
+      transition: border-color 0.2s;
+    }
+    .agent-card:hover { border-color: var(--border-light); }
+    .agent-card.pilot-card {
+      border-color: var(--orange);
+      background: linear-gradient(135deg, var(--card) 0%, rgba(249,115,22,0.04) 100%);
+    }
+    .rank-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .rank-1 { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+    .rank-2 { background: var(--indigo-dim); color: var(--indigo); border: 1px solid var(--indigo); }
+    .rank-3 { background: var(--green-dim);  color: var(--green);  border: 1px solid var(--green); }
+    .rank-4 { background: var(--cyan-dim);   color: var(--cyan);   border: 1px solid var(--cyan); }
+    .rank-5 { background: rgba(100,116,139,0.12); color: var(--text-sec); border: 1px solid var(--border-light); }
+
+    .agent-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .agent-process {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .agent-rationale {
+      font-size: 12.5px;
+      color: var(--text-sec);
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .agent-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .meta-label {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+    .agent-value-col {
+      text-align: right;
+      flex-shrink: 0;
+      min-width: 100px;
+    }
+    .value-hrs {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: -0.02em;
+    }
+    .value-unit {
+      font-size: 10px;
+      color: var(--text-muted);
+      display: block;
+    }
+    .value-annual {
+      font-size: 11.5px;
+      color: var(--text-sec);
+      margin-top: 4px;
+    }
+    .priority-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .priority-pilot   { background: var(--orange-dim); color: var(--orange); }
+    .priority-next    { background: var(--indigo-dim); color: var(--indigo); }
+    .priority-platform{ background: rgba(100,116,139,0.12); color: var(--text-sec); }
+
+    /* ── Recommended Pilot ── */
+    .pilot-section-card {
+      background: linear-gradient(135deg, var(--card) 0%, rgba(245,158,11,0.06) 100%);
+      border: 1.5px solid var(--amber);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .pilot-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .start-here-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--amber);
+      color: #000;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .pilot-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .pilot-description {
+      font-size: 13.5px;
+      color: var(--text-sec);
+      line-height: 1.7;
+      margin-bottom: 28px;
+      max-width: 720px;
+    }
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 600px) { .before-after { grid-template-columns: 1fr; } }
+    .ba-col h4 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ba-col.before h4 { color: var(--red); }
+    .ba-col.after  h4 { color: var(--green); }
+    .ba-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 12.5px;
+      color: var(--text-sec);
+      line-height: 1.5;
+    }
+    .ba-row .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .before .dot { background: var(--red); }
+    .after  .dot { background: var(--green); }
+
+    /* Timeline */
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 600px) { .timeline { grid-template-columns: 1fr; } }
+    .timeline-block {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .timeline-week {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 6px;
+    }
+    .timeline-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .timeline-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Success metrics */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 600px) { .metrics-row { grid-template-columns: 1fr; } }
+    .metric-block {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .metric-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--amber);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ── Persona Cards ── */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 640px) { .persona-grid { grid-template-columns: 1fr; } }
+    .persona-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+    }
+    .persona-role {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .persona-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .persona-impact-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 8px;
+    }
+    .persona-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 12.5px;
+      color: var(--text-sec);
+      line-height: 1.5;
+    }
+    .persona-item .arrow {
+      color: var(--green);
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    /* ── Engagement Model ── */
+    .engagement-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 720px) { .engagement-grid { grid-template-columns: 1fr; } }
+    .engagement-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+    }
+    .engagement-card.recommended {
+      border-color: var(--amber);
+      background: linear-gradient(135deg, var(--card) 0%, rgba(245,158,11,0.05) 100%);
+    }
+    .recommended-tag {
+      position: absolute;
+      top: -1px; right: 20px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--amber);
+      color: #000;
+      padding: 3px 8px;
+      border-radius: 0 0 6px 6px;
+    }
+    .eng-tier-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .eng-price {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 12px 0 4px;
+    }
+    .eng-duration {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .eng-deliverable {
+      font-size: 12.5px;
+      color: var(--text-sec);
+      line-height: 1.6;
+    }
+    .eng-deliverable li {
+      margin-bottom: 6px;
+      padding-left: 4px;
+      list-style: none;
+      display: flex;
+      gap: 8px;
+    }
+    .eng-deliverable li::before {
+      content: '→';
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .site-footer span { color: var(--text-sec); }
+
+    /* ── Section headers ── */
+    .section-intro {
+      max-width: 680px;
+      margin-bottom: 32px;
+    }
+    .section-intro h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .section-intro p {
+      font-size: 13.5px;
+      color: var(--text-sec);
+      line-height: 1.65;
+    }
+
+    /* Blueprint chip */
+    .blueprint-chip {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Divider label */
+    .divider-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .divider-label span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .divider-label::before,
+    .divider-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="header-logo">
+        <div class="logo-icon">⚙</div>
+        <div class="logo-text">
+          <h1>Kimre Inc. &times; Agent Platform</h1>
+          <div class="subtitle">Agentic AI opportunity assessment &mdash; prepared March 2026</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="badge-row">
+          <span class="badge badge-orange">MFG &mdash; Industrial Manufacturing</span>
+          <span class="badge badge-amber">Pilot Tier</span>
+          <span class="badge badge-muted">Confidential</span>
+        </div>
+      </div>
+    </div>
+    <div class="company-tagline">
+      <span class="pill">Engineer-to-Order Manufacturing</span>
+      <span class="sep">&middot;</span>
+      <span class="pill">Homestead, FL &amp; Philadelphia, PA</span>
+      <span class="sep">&middot;</span>
+      <span class="pill">Est. 1973</span>
+      <span class="sep">&middot;</span>
+      <span class="pill">21&ndash;50 employees</span>
+      <span class="sep">&middot;</span>
+      <span class="pill">kimre.com</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════
+     EXECUTIVE SUMMARY
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <h2 class="section-title">Executive Summary</h2>
+    <div class="exec-grid">
+      <div class="exec-stat orange">
+        <div class="stat-number">5</div>
+        <div class="stat-label">Agent opportunities identified across Kimre&rsquo;s core processes</div>
+      </div>
+      <div class="exec-stat green">
+        <div class="stat-number">34</div>
+        <div class="stat-label">Hours per week of manual work automatable across all 5 agents</div>
+      </div>
+      <div class="exec-stat indigo">
+        <div class="stat-number">&pound;190K</div>
+        <div class="stat-label">Estimated annual value at full deployment (34 hrs &times; &pound;110/hr blended)</div>
+      </div>
+      <div class="exec-stat amber">
+        <div class="stat-number">6 wks</div>
+        <div class="stat-label">From kickoff to first agent live against real Kimre orders</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     COMPANY PROFILE
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-intro">
+      <h2 class="section-title">Company Profile</h2>
+      <h2>Framework Assessment</h2>
+      <p>Eight dimensions scored against our client profile framework. These scores determine which agents are highest-value, what integration approach to use, and which engagement tier to recommend.</p>
+    </div>
+    <div class="profile-grid">
+
+      <!-- Left: Scorecard -->
+      <div class="card">
+
+        <!-- Company Size -->
+        <div class="scorecard-row">
+          <div class="scorecard-label">
+            <span class="scorecard-dim">Company Size</span>
+            <span class="scorecard-val">MID</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill bar-indigo" style="width:50%"></div></div>
+          <div class="scorecard-note">21&ndash;50 employees, privately held, family-led</div>
+        </div>
+
+        <!-- Industry -->
+        <div class="scorecard-row">
+          <div class="scorecard-label">
+            <span class="scorecard-dim">Industry</span>
+            <span class="scorecard-val">MFG</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill bar-orange" style="width:65%"></div></div>
+          <div class="scorecard-note">Industrial Manufacturing &mdash; fertilizer, petrochemical, power</div>
+        </div>
+
+        <!-- Business Model -->
+        <div class="scorecard-row">
+          <div class="scorecard-label">
+            <span class="scorecard-dim">Business Model</span>
+            <span class="scorecard-val">ETO</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill bar-orange" style="width:100%"></div></div>
+          <div class="scorecard-note">Engineer-to-Order &mdash; every product custom-designed per client spec</div>
+        </div>
+
+        <!-- Regulatory Complexity -->
+        <div class="scorecard-row">
+          <div class="scorecard-label">
+            <span class="scorecard-dim">Regulatory Complexity</span>
+            <span class="scorecard-val">4 / 5 &mdash; High</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill bar-red" style="width:80%"></div></div>
+          <div class="scorecard-note">Products must meet EPA/OSHA emissions standards for client facilities</div>
+        </div>
+
+        <!-- Integration Tier -->
+        <div class="scorecard-row">
+          <div class="scorecard-label">
+            <span class="scorecard-dim">Integration Complexity</span>
+            <span class="scorecard-val">T2 &mdash; Moderate</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill bar-amber" style="width:50%"></div></div>
+          <div class="scorecard-note">Mid-tier ERP (Sage / QuickBooks), custom quoting tool, batch/JDBC access</div>
+        </div>
+
+        <!-- Data Readiness -->
+        <div class="scorecard-row">
+          <div class="scorecard-label">
+            <span class="scorecard-dim">Data Readiness</span>
+            <span class="scorecard-val">14 / 25</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill bar-amber" style="width:56%"></div></div>
+          <div class="scorecard-note">Strong order &amp; product data; limited demand forecasting (lumpy project demand)</div>
+        </div>
+
+        <!-- Engagement Tier -->
+        <div class="scorecard-row" style="margin-bottom:0">
+          <div class="scorecard-label">
+            <span class="scorecard-dim">Recommended Engagement</span>
+            <span class="scorecard-val" style="color:var(--amber)">Pilot</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill bar-amber" style="width:66%"></div></div>
+          <div class="scorecard-note">6-week pilot &mdash; 1 live agent, real data, measurable value from week 5</div>
+        </div>
+
+      </div>
+
+      <!-- Right: ETO explainer -->
+      <div class="card eto-explainer">
+        <h3>Why ETO changes everything for agent design</h3>
+        <p>Most agent blueprints are built for Make-to-Stock (MTS) manufacturers &mdash; companies with standard SKUs, predictable demand, and replenishment cycles. Kimre is the opposite.</p>
+        <p>In Engineer-to-Order, no two products are identical. Every order triggers a custom design, a one-off bill of materials, and specialty material procurement. There are no stock replenishment cycles. Demand cannot be forecast in the traditional sense.</p>
+        <p>This fundamentally shifts which agents are high-value for Kimre:</p>
+        <table class="eto-table">
+          <thead>
+            <tr>
+              <th>Agent Type</th>
+              <th>ETO Value</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>RFQ-to-Quote</td>
+              <td><span class="badge badge-orange" style="font-size:10px">Very High</span></td>
+              <td>Days to quote manually; agent reduces to hours</td>
+            </tr>
+            <tr>
+              <td>Material Requisition</td>
+              <td><span class="badge badge-orange" style="font-size:10px">Very High</span></td>
+              <td>Each order triggers unique specialty purchases</td>
+            </tr>
+            <tr>
+              <td>Quality Compliance</td>
+              <td><span class="badge badge-amber" style="font-size:10px">High</span></td>
+              <td>EPA spec must be validated pre-fab, not post-ship</td>
+            </tr>
+            <tr>
+              <td>Order Milestone Notifier</td>
+              <td><span class="badge badge-amber" style="font-size:10px">High</span></td>
+              <td>ETO customers wait weeks; proactive comms reduce inbound</td>
+            </tr>
+            <tr>
+              <td>Standard Replenishment</td>
+              <td><span class="badge badge-muted" style="font-size:10px">Low</span></td>
+              <td>No standard SKUs &mdash; replenishment model doesn&rsquo;t apply</td>
+            </tr>
+            <tr>
+              <td>Demand Forecast</td>
+              <td><span class="badge badge-muted" style="font-size:10px">Low</span></td>
+              <td>Project-based lumpy demand; statistical forecast unreliable</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     AGENT OPPORTUNITIES
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-intro">
+      <h2 class="section-title">Agent Opportunity Shortlist</h2>
+      <h2>5 Agents Ranked for Kimre</h2>
+      <p>Ranked by value impact, integration readiness, and closeness to existing blueprints. Each agent maps directly to a Kimre process that currently requires manual effort.</p>
+    </div>
+
+    <div class="agent-list">
+
+      <!-- Agent 1 -->
+      <div class="agent-card pilot-card">
+        <div class="rank-badge rank-1">01</div>
+        <div>
+          <div class="agent-name">Material Requisition Agent</div>
+          <div class="agent-process">Process: Specialty Material Procurement</div>
+          <div class="agent-rationale">Each confirmed order triggers unique specialty purchases &mdash; polypropylene mesh, fiber media, metal frames. Agent reads the confirmed order, generates purchase requisitions automatically, and flags long lead-time items before they delay fabrication.</div>
+          <div class="agent-meta">
+            <span class="blueprint-chip">cg-replenishment-pr-agent</span>
+            <span class="badge badge-amber">T2 Integration</span>
+            <span class="badge badge-orange">MEDIUM Authority</span>
+            <span class="priority-tag priority-pilot">Pilot Now</span>
+          </div>
+        </div>
+        <div class="agent-value-col">
+          <div class="value-hrs">8</div>
+          <span class="value-unit">hrs / week</span>
+          <div class="value-annual">&pound;46K / yr</div>
+        </div>
+      </div>
+
+      <!-- Agent 2 -->
+      <div class="agent-card">
+        <div class="rank-badge rank-2">02</div>
+        <div>
+          <div class="agent-name">RFQ-to-Quote Agent</div>
+          <div class="agent-process">Process: Customer Quote Generation</div>
+          <div class="agent-rationale">RFQs currently take days to quote manually as engineers review specs and build BOMs from scratch. Agent reads incoming RFQ, maps to product configuration rules, generates a preliminary BOM and lead time estimate, and drafts the quote for engineer review.</div>
+          <div class="agent-meta">
+            <span class="blueprint-chip">new blueprint</span>
+            <span class="badge badge-amber">T2 Integration</span>
+            <span class="badge badge-green">LOW Authority</span>
+            <span class="priority-tag priority-next">Next Wave</span>
+          </div>
+        </div>
+        <div class="agent-value-col">
+          <div class="value-hrs">12</div>
+          <span class="value-unit">hrs / week</span>
+          <div class="value-annual">&pound;69K / yr</div>
+        </div>
+      </div>
+
+      <!-- Agent 3 -->
+      <div class="agent-card">
+        <div class="rank-badge rank-3">03</div>
+        <div>
+          <div class="agent-name">Quality Compliance Checker</div>
+          <div class="agent-process">Process: Pre-Fabrication EPA Spec Validation</div>
+          <div class="agent-rationale">Kimre products must meet EPA emissions performance specs for the client&rsquo;s specific application. Post-fabrication rework is expensive. Agent validates product configuration against applicable EPA standards before fabrication begins, flagging any non-conformances for engineering review.</div>
+          <div class="agent-meta">
+            <span class="blueprint-chip">cg-quality-capa-agent</span>
+            <span class="badge badge-green">T1 Integration</span>
+            <span class="badge badge-amber">MEDIUM Authority</span>
+            <span class="priority-tag priority-next">Next Wave</span>
+          </div>
+        </div>
+        <div class="agent-value-col">
+          <div class="value-hrs">5</div>
+          <span class="value-unit">hrs / week</span>
+          <div class="value-annual">&pound;29K / yr</div>
+        </div>
+      </div>
+
+      <!-- Agent 4 -->
+      <div class="agent-card">
+        <div class="rank-badge rank-4">04</div>
+        <div>
+          <div class="agent-name">Order Milestone Notifier</div>
+          <div class="agent-process">Process: Customer Order Status Communication</div>
+          <div class="agent-rationale">ETO customers wait weeks and call frequently for status updates. Agent tracks order milestones (design complete &rarr; materials ordered &rarr; fabrication started &rarr; QC passed &rarr; shipped) and sends proactive status emails at each stage &mdash; reducing inbound &ldquo;where&rsquo;s my order?&rdquo; calls by an estimated 70%.</div>
+          <div class="agent-meta">
+            <span class="blueprint-chip">new blueprint</span>
+            <span class="badge badge-green">T1 Integration</span>
+            <span class="badge badge-green">LOW Authority</span>
+            <span class="priority-tag priority-platform">Platform Scale</span>
+          </div>
+        </div>
+        <div class="agent-value-col">
+          <div class="value-hrs">3</div>
+          <span class="value-unit">hrs / week</span>
+          <div class="value-annual">&pound;17K / yr</div>
+        </div>
+      </div>
+
+      <!-- Agent 5 -->
+      <div class="agent-card">
+        <div class="rank-badge rank-5">05</div>
+        <div>
+          <div class="agent-name">Retrofit Reorder Agent</div>
+          <div class="agent-process">Process: Proactive Customer Reorder Outreach</div>
+          <div class="agent-rationale">Kimre products have known service lives of 3&ndash;7 years. Agent identifies customers whose products are approaching end-of-life, generates a personalised outreach with the original order details and a replacement recommendation, and queues it for sales review &mdash; capturing repeat revenue that currently goes unaddressed.</div>
+          <div class="agent-meta">
+            <span class="blueprint-chip">retail-customer-churn-agent</span>
+            <span class="badge badge-green">T1 Integration</span>
+            <span class="badge badge-green">LOW Authority</span>
+            <span class="priority-tag priority-platform">Platform Scale</span>
+          </div>
+        </div>
+        <div class="agent-value-col">
+          <div class="value-hrs">6</div>
+          <span class="value-unit">hrs / week</span>
+          <div class="value-annual">&pound;35K / yr</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     RECOMMENDED PILOT
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <h2 class="section-title">Recommended Pilot</h2>
+    <div class="pilot-section-card">
+
+      <div class="pilot-header">
+        <span class="start-here-badge">Start Here</span>
+        <span class="pilot-title">Material Requisition Agent</span>
+      </div>
+
+      <p class="pilot-description">
+        Reads each confirmed customer order &rarr; identifies the required specialty materials (polypropylene mesh, fiber media, metal frames, gasket materials) from the engineering BOM &rarr; auto-generates purchase requisitions in your ERP system &rarr; flags any items with lead times exceeding the production schedule for immediate action. Engineers are notified and can review before POs are committed.
+      </p>
+
+      <div class="divider-label"><span>Before &amp; After</span></div>
+
+      <div class="before-after">
+        <div class="ba-col before">
+          <h4>Manual Process Today</h4>
+          <div class="ba-row"><div class="dot"></div><span>3&ndash;4 hours per order to manually identify materials and create POs</span></div>
+          <div class="ba-row"><div class="dot"></div><span>BOM lookup errors from working across multiple documents</span></div>
+          <div class="ba-row"><div class="dot"></div><span>Long lead-time items discovered late, delaying fabrication</span></div>
+          <div class="ba-row"><div class="dot"></div><span>No systematic visibility into materials across orders in parallel</span></div>
+          <div class="ba-row"><div class="dot"></div><span>8+ hours per week of engineering time on procurement admin</span></div>
+        </div>
+        <div class="ba-col after">
+          <h4>With Material Requisition Agent</h4>
+          <div class="ba-row"><div class="dot"></div><span>Under 5 minutes per order &mdash; agent runs on order confirmation</span></div>
+          <div class="ba-row"><div class="dot"></div><span>Spec-accurate BOM mapped directly from confirmed order data</span></div>
+          <div class="ba-row"><div class="dot"></div><span>Long lead-time items flagged immediately, procurement starts same day</span></div>
+          <div class="ba-row"><div class="dot"></div><span>Full material visibility across all live orders in one view</span></div>
+          <div class="ba-row"><div class="dot"></div><span>Engineers review exceptions only &mdash; 8 hours reclaimed per week</span></div>
+        </div>
+      </div>
+
+      <div class="divider-label"><span>6-Week Delivery Timeline</span></div>
+
+      <div class="timeline">
+        <div class="timeline-block">
+          <div class="timeline-week">Weeks 1&ndash;2</div>
+          <div class="timeline-label">Integration Setup</div>
+          <div class="timeline-desc">ERP read access configured. Order and BOM data mapped. Material catalogue loaded. T2 connector tested against sample orders.</div>
+        </div>
+        <div class="timeline-block">
+          <div class="timeline-week">Weeks 3&ndash;4</div>
+          <div class="timeline-label">Sandbox Testing</div>
+          <div class="timeline-desc">Agent runs against historical orders. BOM accuracy validated by engineering team. PO output format reviewed and approved by finance. Authority level confirmed.</div>
+        </div>
+        <div class="timeline-block">
+          <div class="timeline-week">Weeks 5&ndash;6</div>
+          <div class="timeline-label">Live Pilot</div>
+          <div class="timeline-desc">Agent live against 5 real incoming orders. Engineer reviews each output. Value measurement baseline captured. Go/no-go for full deployment.</div>
+        </div>
+      </div>
+
+      <div class="divider-label"><span>Success Metrics</span></div>
+
+      <div class="metrics-row">
+        <div class="metric-block">
+          <div class="metric-value">&gt; 5</div>
+          <div class="metric-label">POs auto-generated per week without manual entry</div>
+        </div>
+        <div class="metric-block">
+          <div class="metric-value">8 hrs</div>
+          <div class="metric-label">Engineering time saved per week on procurement admin</div>
+        </div>
+        <div class="metric-block">
+          <div class="metric-value">0</div>
+          <div class="metric-label">Material stockouts caused by missed long lead-time flags</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     PERSONA IMPACT
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-intro">
+      <h2 class="section-title">Persona Impact</h2>
+      <h2>What Changes for Each Role</h2>
+      <p>Agents don&rsquo;t just automate tasks &mdash; they change what each person focuses on. Here&rsquo;s the before-and-after for each Kimre stakeholder.</p>
+    </div>
+    <div class="persona-grid">
+
+      <div class="persona-card">
+        <div class="persona-role">President</div>
+        <div class="persona-name">Mary Gaston</div>
+        <div class="persona-impact-label">What agents change</div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Real-time view of agent actions and value delivered &mdash; no manual reporting required</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Portfolio dashboard showing all 5 agents: live status, hours saved this week, POs raised, exceptions flagged</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Risk visibility: every agent action logged with authority level, reviewable on demand</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Measurable ROI against the business case from week 5 of the pilot</span></div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-role">Operations Manager</div>
+        <div class="persona-name">TBD &mdash; identify in kickoff</div>
+        <div class="persona-impact-label">What agents change</div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Material availability alerts arrive before fabrication begins, not after a delay is already locked in</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Order pipeline view: design status, materials ordered, fabrication queue, QC stage &mdash; all in one place</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Fabrication schedule driven by real material lead times, not manual tracking</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Exceptions only &mdash; standard orders handled automatically, attention focused on non-standard</span></div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-role">Sales / Engineering Lead</div>
+        <div class="persona-name">TBD &mdash; identify in kickoff</div>
+        <div class="persona-impact-label">What agents change</div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>RFQ queue with auto-drafted preliminary BOMs and lead time estimates &mdash; quote turnaround from days to hours</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Quote status visibility: which RFQs are pending, drafted, sent, won, or lost</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Retrofit alerts: customers with products approaching end-of-life, pre-drafted outreach ready to send</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Engineering time freed from BOM lookup &mdash; redirected to complex or novel configurations</span></div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-role">Finance / Admin</div>
+        <div class="persona-name">TBD &mdash; identify in kickoff</div>
+        <div class="persona-impact-label">What agents change</div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Zero-touch PO generation for standard specialty materials &mdash; review exceptions only</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Per-project cost tracking: materials committed vs. budget at the order level</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>Invoicing status linked to order milestone data &mdash; easier to track billing triggers</span></div>
+        <div class="persona-item"><span class="arrow">&rarr;</span><span>PO approval workflow for above-threshold purchases, with full material context in one view</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     ENGAGEMENT MODEL
+═══════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-intro">
+      <h2 class="section-title">Engagement Model</h2>
+      <h2>Three Paths to Deployment</h2>
+      <p>Based on Kimre&rsquo;s data readiness score (14/25), integration tier (T2), and the strength of the Material Requisition opportunity, we recommend starting at the <strong style="color:var(--amber)">Pilot</strong> tier.</p>
+    </div>
+    <div class="engagement-grid">
+
+      <div class="engagement-card">
+        <div class="eng-tier-name">Discovery Sprint</div>
+        <div class="eng-price" style="color:var(--text-sec)">&pound;8K</div>
+        <div class="eng-duration">2 weeks &mdash; process mapping + scoring</div>
+        <ul class="eng-deliverable">
+          <li>Full process map across Kimre&rsquo;s ETO workflow</li>
+          <li>Opportunity scoring across all 5 agents</li>
+          <li>One blueprint proof-of-concept (no integration)</li>
+          <li>Readiness assessment and integration scoping</li>
+        </ul>
+      </div>
+
+      <div class="engagement-card recommended">
+        <div class="recommended-tag">Recommended</div>
+        <div class="eng-tier-name">Pilot</div>
+        <div class="eng-price" style="color:var(--amber)">&pound;25K</div>
+        <div class="eng-duration">6 weeks &mdash; 1 agent live against real data</div>
+        <ul class="eng-deliverable">
+          <li>Material Requisition Agent integrated with ERP</li>
+          <li>Live against 5 real Kimre orders in week 5</li>
+          <li>Value dashboard: POs raised, hours saved, stockouts prevented</li>
+          <li>Go/no-go gate with measurable ROI at week 6</li>
+          <li>Foundation for Agent 2 (RFQ-to-Quote) scoped and ready</li>
+        </ul>
+      </div>
+
+      <div class="engagement-card">
+        <div class="eng-tier-name">Platform</div>
+        <div class="eng-price" style="color:var(--indigo)">From &pound;80K</div>
+        <div class="eng-duration">3&ndash;6 months &mdash; 3+ agents, full dashboard</div>
+        <ul class="eng-deliverable">
+          <li>All 5 agents deployed and integrated</li>
+          <li>Persona dashboards for Mary Gaston, Ops, Sales/Eng, Finance</li>
+          <li>Full audit trail and authority governance</li>
+          <li>Ongoing agent optimization and new opportunity identification</li>
+          <li>Estimated &pound;190K/yr value at full deployment</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════ -->
+<footer class="site-footer">
+  Prepared by <span>Business Agents Platform</span> &middot; March 2026 &middot; <span>Confidential &mdash; for Kimre Inc. only</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RFQ Application Intake — Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --kimre: #f97316;
+      --kimre-hover: #ea6c0a;
+      --kimre-dim: rgba(249,115,22,0.1);
+      --input-bg: #0d1120;
+      --input-border: #2d3748;
+      --input-focus: #f97316;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Nav */
+    .kimre-nav {
+      background: #161b2e;
+      border-bottom: 1px solid #1e293b;
+      padding: 12px 24px;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .kimre-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .kimre-nav a:hover, .kimre-nav a.active {
+      color: #f97316;
+      background: rgba(249,115,22,0.1);
+    }
+    .kimre-nav a:first-child {
+      color: #f1f5f9;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* Page header */
+    .page-header {
+      padding: 48px 24px 32px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .header-accent {
+      width: 48px;
+      height: 4px;
+      background: var(--kimre);
+      border-radius: 2px;
+      margin-bottom: 16px;
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .page-header p {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 640px;
+      line-height: 1.7;
+    }
+
+    /* Form container */
+    .form-container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* Section */
+    .form-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-number {
+      width: 32px;
+      height: 32px;
+      background: var(--kimre-dim);
+      border: 1px solid var(--kimre);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--kimre);
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Form fields */
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .field-grid.three-col {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .field-full {
+      grid-column: 1 / -1;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: 0.02em;
+    }
+    .field label .req {
+      color: var(--kimre);
+      margin-left: 2px;
+    }
+    .field .hint {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 10px 14px;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: #374151;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    select option {
+      background: #1e293b;
+      color: var(--text);
+    }
+
+    textarea {
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    /* Unit input group */
+    .unit-group {
+      display: flex;
+      gap: 0;
+    }
+    .unit-group input {
+      border-radius: 8px 0 0 8px;
+      border-right: none;
+      flex: 1;
+    }
+    .unit-group select {
+      border-radius: 0 8px 8px 0;
+      width: auto;
+      min-width: 110px;
+      background-color: #1a2236;
+      border-left: 1px solid var(--input-border);
+    }
+    .unit-group input:focus {
+      z-index: 1;
+    }
+
+    /* Generate button */
+    .generate-area {
+      text-align: center;
+      margin: 36px 0 28px;
+    }
+    .btn-generate {
+      background: var(--kimre);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 40px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, opacity 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .btn-generate:hover:not(:disabled) {
+      background: var(--kimre-hover);
+      transform: translateY(-1px);
+    }
+    .btn-generate:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .generate-hint {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    /* RFQ Output */
+    .rfq-output {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-top: 8px;
+      display: none;
+    }
+    .rfq-output.visible {
+      display: block;
+    }
+    .rfq-output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .rfq-output-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .rfq-output-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-copy, .btn-email {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-copy {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-copy:hover {
+      background: rgba(255,255,255,0.12);
+    }
+    .btn-email {
+      background: var(--kimre-dim);
+      border: 1px solid var(--kimre);
+      color: var(--kimre);
+    }
+    .btn-email:hover {
+      background: rgba(249,115,22,0.18);
+    }
+
+    pre#rfq-text {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: auto;
+    }
+
+    .response-note {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .response-note::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Validation error highlight */
+    .field input.invalid,
+    .field select.invalid,
+    .field textarea.invalid {
+      border-color: var(--error);
+    }
+
+    /* Required fields note */
+    .required-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .required-note span {
+      color: var(--kimre);
+    }
+
+    @media (max-width: 640px) {
+      .field-grid { grid-template-columns: 1fr; }
+      .field-grid.three-col { grid-template-columns: 1fr; }
+      .form-section { padding: 20px; }
+      .page-header h1 { font-size: 22px; }
+      .kimre-nav { gap: 8px; padding: 10px 16px; }
+      .kimre-nav a { font-size: 12px; padding: 5px 8px; }
+      .rfq-output-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="kimre-nav">
+    <a href="../index.html">Kimre</a>
+    <a href="../sales.html">Sales</a>
+    <a href="../engineering.html">Engineering</a>
+    <a href="../customer-service.html">Customer Service</a>
+    <a href="../executive.html">Executive</a>
+    <a href="../quality.html">Quality</a>
+    <a href="./index.html" class="active">Tools</a>
+  </nav>
+
+  <div class="page-header">
+    <div class="header-accent"></div>
+    <h1>RFQ Application Intake</h1>
+    <p>Complete this structured technical intake form to submit an accurate Request for Quotation. All information captured here will be compiled into a formatted RFQ for our Applications Engineering team.</p>
+  </div>
+
+  <div class="form-container">
+
+    <p class="required-note">Fields marked <span>*</span> are required to generate your RFQ.</p>
+
+    <!-- Section 1: Company & Contact -->
+    <div class="form-section">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <div>
+          <div class="section-title">Company &amp; Contact</div>
+          <div class="section-subtitle">Who is submitting this RFQ</div>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="company">Company Name <span class="req">*</span></label>
+          <input type="text" id="company" name="company" placeholder="e.g. Acme Chemical Corp." required>
+        </div>
+        <div class="field">
+          <label for="contact">Contact Name <span class="req">*</span></label>
+          <input type="text" id="contact" name="contact" placeholder="e.g. Jane Smith" required>
+        </div>
+        <div class="field">
+          <label for="email">Email Address <span class="req">*</span></label>
+          <input type="email" id="email" name="email" placeholder="e.g. j.smith@acmechem.com" required>
+        </div>
+        <div class="field">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="e.g. +1 (713) 555-0100">
+        </div>
+        <div class="field field-full">
+          <label for="country">Country / Location</label>
+          <input type="text" id="country" name="country" placeholder="e.g. United States — Houston, TX">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Application Classification -->
+    <div class="form-section">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <div>
+          <div class="section-title">Application Classification</div>
+          <div class="section-subtitle">Process type and context</div>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="app-type">Application Type <span class="req">*</span></label>
+          <select id="app-type" name="app-type" required>
+            <option value="">Select application type...</option>
+            <option>Sulfuric Acid Manufacturing</option>
+            <option>Fertilizer (HNO&#x2083;/NH&#x2083;)</option>
+            <option>Steel Pickling / HCl Recovery</option>
+            <option>Cooling Tower Drift Control</option>
+            <option>Petrochemical / Refinery</option>
+            <option>Power Generation (FGD/Flue Gas)</option>
+            <option>Chemical Processing (Other)</option>
+            <option>Mining / Hydrometallurgy</option>
+            <option>Other (specify below)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="industry">Industry</label>
+          <select id="industry" name="industry">
+            <option value="">Select industry...</option>
+            <option>Chemical</option>
+            <option>Power Gen</option>
+            <option>Steel</option>
+            <option>Fertilizer</option>
+            <option>Petrochemical</option>
+            <option>Mining</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field field-full">
+          <label for="app-desc">Application Description</label>
+          <textarea id="app-desc" name="app-desc" rows="3" placeholder="Describe the process context — vessel purpose, where mist is generated, any downstream equipment at risk."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Process Chemistry -->
+    <div class="form-section">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <div>
+          <div class="section-title">Process Chemistry</div>
+          <div class="section-subtitle">Chemical composition and material compatibility</div>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="primary-chem">Primary Chemical / Mist Composition</label>
+          <input type="text" id="primary-chem" name="primary-chem" placeholder="e.g. H&#x2082;SO&#x2084; 98%">
+        </div>
+        <div class="field">
+          <label for="concentration">Concentration</label>
+          <input type="text" id="concentration" name="concentration" placeholder="e.g. 93&#x2013;98 wt%">
+        </div>
+        <div class="field">
+          <label for="secondary-chem">Secondary Chemicals Present</label>
+          <input type="text" id="secondary-chem" name="secondary-chem" placeholder="e.g. SO&#x2083;, SO&#x2082; traces">
+        </div>
+        <div class="field">
+          <label for="material-incompat">Known Material Incompatibilities</label>
+          <input type="text" id="material-incompat" name="material-incompat" placeholder="e.g. Avoid stainless above 80&#xB0;C">
+        </div>
+        <div class="field field-full">
+          <label for="regulatory">Any Regulatory / EPA Constraints?</label>
+          <textarea id="regulatory" name="regulatory" rows="2" placeholder="e.g. EPA 40 CFR Part 63 NESHAP compliance required. State permit limits apply."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Operating Conditions -->
+    <div class="form-section">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <div>
+          <div class="section-title">Operating Conditions</div>
+          <div class="section-subtitle">Process flow, temperature, pressure, and performance targets</div>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="gas-flow">Gas Flow Rate</label>
+          <div class="unit-group">
+            <input type="number" id="gas-flow" name="gas-flow" placeholder="e.g. 15000" min="0" step="any">
+            <select id="gas-flow-unit" name="gas-flow-unit">
+              <option>Nm&#xB3;/hr</option>
+              <option>ACFM</option>
+              <option>m&#xB3;/hr</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="gas-temp">Gas Temperature</label>
+          <div class="unit-group">
+            <input type="number" id="gas-temp" name="gas-temp" placeholder="e.g. 85" step="any">
+            <select id="gas-temp-unit" name="gas-temp-unit">
+              <option>&#xB0;C</option>
+              <option>&#xB0;F</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="pressure">Operating Pressure</label>
+          <div class="unit-group">
+            <input type="number" id="pressure" name="pressure" placeholder="e.g. 1.05" step="any">
+            <select id="pressure-unit" name="pressure-unit" style="min-width:80px;">
+              <option>bar(a)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="mist-loading">Mist Loading (if known)</label>
+          <div class="unit-group">
+            <input type="number" id="mist-loading" name="mist-loading" placeholder="Leave blank if unknown" step="any" min="0">
+            <select id="mist-loading-unit" name="mist-loading-unit" style="min-width:90px;">
+              <option>g/Nm&#xB3;</option>
+            </select>
+          </div>
+          <span class="hint">Leave blank if unknown — Kimre will estimate</span>
+        </div>
+        <div class="field">
+          <label for="droplet-size">Estimated Droplet Size (if known)</label>
+          <div class="unit-group">
+            <input type="number" id="droplet-size" name="droplet-size" placeholder="Leave blank if unknown" step="any" min="0">
+            <select id="droplet-size-unit" name="droplet-size-unit" style="min-width:60px;">
+              <option>&#x3BC;m</option>
+            </select>
+          </div>
+          <span class="hint">From separator study or estimate</span>
+        </div>
+        <div class="field">
+          <label for="efficiency">Required Outlet Efficiency</label>
+          <div class="unit-group">
+            <input type="number" id="efficiency" name="efficiency" placeholder="e.g. 99.5" step="any" min="0" max="100">
+            <select id="efficiency-unit" name="efficiency-unit" style="min-width:60px;">
+              <option>%</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="pressure-drop">Allowable Pressure Drop</label>
+          <div class="unit-group">
+            <input type="number" id="pressure-drop" name="pressure-drop" placeholder="e.g. 25" step="any" min="0">
+            <select id="pressure-drop-unit" name="pressure-drop-unit" style="min-width:70px;">
+              <option>mbar</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Vessel / Physical Constraints -->
+    <div class="form-section">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <div>
+          <div class="section-title">Vessel / Physical Constraints</div>
+          <div class="section-subtitle">Installation type and dimensional limits</div>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="vessel-type">Vessel Type</label>
+          <select id="vessel-type" name="vessel-type">
+            <option value="">Select vessel type...</option>
+            <option>New vessel (Kimre to size)</option>
+            <option>Retrofit into existing vessel</option>
+            <option>Canister/tower internal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="vessel-id">Vessel Internal Diameter (if retrofit)</label>
+          <input type="text" id="vessel-id" name="vessel-id" placeholder="e.g. 2.4 m or 96 inches">
+        </div>
+        <div class="field">
+          <label for="available-height">Available Height for Mist Eliminator Element</label>
+          <div class="unit-group">
+            <input type="number" id="available-height" name="available-height" placeholder="e.g. 1.5" step="any" min="0">
+            <select id="available-height-unit" name="available-height-unit" style="min-width:60px;">
+              <option>m</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="nozzle-orientation">Inlet / Outlet Nozzle Orientation</label>
+          <select id="nozzle-orientation" name="nozzle-orientation">
+            <option value="">Select orientation...</option>
+            <option>Top inlet / bottom outlet</option>
+            <option>Bottom inlet / top outlet</option>
+            <option>Side inlet</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field field-full">
+          <label for="access-constraints">Any Physical Access Constraints?</label>
+          <textarea id="access-constraints" name="access-constraints" rows="2" placeholder="e.g. Limited manway access (18&quot; nozzle), installation must occur during planned shutdown, outdoor exposure to weather."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 6: Efficiency & Performance Requirements -->
+    <div class="form-section">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <div>
+          <div class="section-title">Efficiency &amp; Performance Requirements</div>
+          <div class="section-subtitle">Target performance metrics and compliance drivers</div>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="outlet-conc">Target Outlet Mist Concentration</label>
+          <input type="text" id="outlet-conc" name="outlet-conc" placeholder="e.g. &lt;1 mg/Nm&#xB3;">
+        </div>
+        <div class="field">
+          <label for="product-spec">Product Specification Driving This?</label>
+          <input type="text" id="product-spec" name="product-spec" placeholder="e.g. EPA 40 CFR Part 63 NESHAP">
+        </div>
+        <div class="field">
+          <label for="perf-test">Performance Test Required?</label>
+          <select id="perf-test" name="perf-test">
+            <option value="">Select...</option>
+            <option>Yes &#x2014; third party</option>
+            <option>Yes &#x2014; Kimre to witness</option>
+            <option>No</option>
+            <option>TBD</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="replacement">Replacement of Existing Equipment?</label>
+          <select id="replacement" name="replacement">
+            <option value="">Select...</option>
+            <option>Yes &#x2014; upgrading existing ME</option>
+            <option>Yes &#x2014; replacing another technology</option>
+            <option>No &#x2014; new installation</option>
+          </select>
+        </div>
+        <div class="field field-full">
+          <label for="existing-tech">If Replacing: What Technology Currently Installed?</label>
+          <input type="text" id="existing-tech" name="existing-tech" placeholder="e.g. Wire mesh demister, chevron vane separator, candle filter">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 7: Project Details -->
+    <div class="form-section">
+      <div class="section-header">
+        <div class="section-number">7</div>
+        <div>
+          <div class="section-title">Project Details</div>
+          <div class="section-subtitle">Schedule, budget, and preferences</div>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="proj-status">Project Status</label>
+          <select id="proj-status" name="proj-status">
+            <option value="">Select project stage...</option>
+            <option>Conceptual / Feasibility</option>
+            <option>Front-End Engineering (FEED)</option>
+            <option>Detailed Engineering</option>
+            <option>Ready to Order</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="budget">Budget Indication</label>
+          <select id="budget" name="budget">
+            <option value="">Select budget range...</option>
+            <option>&lt; &#xA3;10K</option>
+            <option>&#xA3;10&#x2013;50K</option>
+            <option>&#xA3;50&#x2013;200K</option>
+            <option>&gt; &#xA3;200K</option>
+            <option>Not yet defined</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="order-date">Target Order Date</label>
+          <input type="date" id="order-date" name="order-date">
+        </div>
+        <div class="field">
+          <label for="delivery-date">Target Delivery Date</label>
+          <input type="date" id="delivery-date" name="delivery-date">
+        </div>
+        <div class="field field-full">
+          <label for="product-pref">Any Specific Kimre Product Preference?</label>
+          <input type="text" id="product-pref" name="product-pref" placeholder="e.g. B-GON&#xAE; based on previous experience">
+        </div>
+        <div class="field field-full">
+          <label for="notes">Additional Notes</label>
+          <textarea id="notes" name="notes" rows="4" placeholder="Any additional context, constraints, drawings available, or questions for our engineering team."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <div class="generate-area">
+      <button class="btn-generate" id="btn-generate" disabled onclick="generateRFQ()">Generate RFQ</button>
+      <p class="generate-hint">Fill in required fields (Company, Contact, Email, Application Type) to enable.</p>
+    </div>
+
+    <!-- RFQ Output -->
+    <div class="rfq-output" id="rfq-output">
+      <div class="rfq-output-header">
+        <div class="rfq-output-title">Your Formatted RFQ</div>
+        <div class="rfq-output-actions">
+          <button class="btn-copy" id="btn-copy" onclick="copyRFQ()">&#x1F4CB; Copy to Clipboard</button>
+          <a class="btn-email" id="btn-email" href="#">&#x2709; Email to Kimre</a>
+        </div>
+      </div>
+      <pre id="rfq-text"></pre>
+      <div class="response-note">Our engineering team typically responds within 24&#x2013;48 hours.</div>
+    </div>
+
+  </div>
+
+  <script>
+    // Required field IDs for button enable logic
+    var REQUIRED = ['company', 'contact', 'email', 'app-type'];
+
+    function checkRequired() {
+      var allFilled = REQUIRED.every(function(id) {
+        var el = document.getElementById(id);
+        return el && el.value.trim() !== '';
+      });
+      document.getElementById('btn-generate').disabled = !allFilled;
+    }
+
+    REQUIRED.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', checkRequired);
+        el.addEventListener('change', checkRequired);
+      }
+    });
+
+    function val(id) {
+      var el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
+
+    function valOrNA(id, fallback) {
+      var v = val(id);
+      return v !== '' ? v : (fallback || 'Not specified');
+    }
+
+    function valOrNone(id) {
+      var v = val(id);
+      return v !== '' ? v : 'Not measured — estimate required';
+    }
+
+    function valOrNAPlain(id) {
+      var v = val(id);
+      return v !== '' ? v : 'N/A';
+    }
+
+    function unitVal(numId, unitId) {
+      var n = val(numId);
+      var u = val(unitId);
+      return n !== '' ? (n + ' ' + u) : 'Not specified';
+    }
+
+    function todayStr() {
+      var d = new Date();
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    }
+
+    function generateRFQ() {
+      var company = val('company');
+      var contact = val('contact');
+      var email = val('email');
+      var phone = valOrNAPlain('phone');
+      var country = valOrNAPlain('country');
+
+      var appType = val('app-type');
+      var appDesc = valOrNA('app-desc');
+      var industry = valOrNA('industry');
+
+      var primaryChem = valOrNA('primary-chem');
+      var concentration = valOrNA('concentration');
+      var secondaryChem = valOrNA('secondary-chem');
+      var materialIncompat = valOrNA('material-incompat');
+      var regText = valOrNA('regulatory');
+
+      var gasFlow = unitVal('gas-flow', 'gas-flow-unit');
+      var gasTemp = unitVal('gas-temp', 'gas-temp-unit');
+      var pressure = val('pressure') !== '' ? val('pressure') + ' bar(a)' : 'Not specified';
+      var mistLoading = val('mist-loading') !== '' ? val('mist-loading') + ' ' + val('mist-loading-unit') : 'Not measured — estimate required';
+      var dropletSize = val('droplet-size') !== '' ? val('droplet-size') + ' ' + val('droplet-size-unit') : 'Not specified';
+      var efficiency = val('efficiency') !== '' ? val('efficiency') + '%' : 'Not specified';
+      var pressureDrop = val('pressure-drop') !== '' ? val('pressure-drop') + ' mbar' : 'Not specified';
+
+      var vesselType = valOrNA('vessel-type');
+      var vesselID = val('vessel-id') !== '' ? val('vessel-id') : 'N/A — new vessel';
+      var availHeight = val('available-height') !== '' ? val('available-height') + ' m' : 'Not specified';
+      var nozzleOri = valOrNA('nozzle-orientation');
+      var accessNotes = valOrNA('access-constraints');
+
+      var outletConc = valOrNA('outlet-conc');
+      var productSpec = valOrNA('product-spec');
+      var perfTest = valOrNA('perf-test');
+      var replacement = valOrNA('replacement');
+      var existingTech = val('existing-tech') !== '' ? val('existing-tech') : 'N/A';
+
+      var projStatus = valOrNA('proj-status');
+      var orderDate = val('order-date') !== '' ? val('order-date') : 'Not specified';
+      var deliveryDate = val('delivery-date') !== '' ? val('delivery-date') : 'Not specified';
+      var budget = valOrNA('budget');
+      var productPref = val('product-pref') !== '' ? val('product-pref') : 'No preference';
+      var notes = valOrNA('notes');
+
+      var rfq = [
+        'REQUEST FOR QUOTATION \u2014 MIST ELIMINATOR',
+        '=========================================',
+        'Submitted via Kimre RFQ Intake Tool',
+        '',
+        'COMPANY:  ' + company,
+        'CONTACT:  ' + contact + '  |  ' + email + '  |  ' + phone,
+        'LOCATION: ' + country,
+        'DATE:     ' + todayStr(),
+        '',
+        'APPLICATION',
+        '-----------',
+        'Application Type:    ' + appType,
+        'Industry:            ' + industry,
+        'Process Description: ' + appDesc,
+        '',
+        'PROCESS CHEMISTRY',
+        '-----------------',
+        'Primary Chemical:            ' + primaryChem,
+        'Concentration:               ' + concentration,
+        'Secondary Chemicals Present: ' + secondaryChem,
+        'Material Incompatibilities:  ' + materialIncompat,
+        'Regulatory Constraints:      ' + regText,
+        '',
+        'OPERATING CONDITIONS',
+        '--------------------',
+        'Gas Flow Rate:          ' + gasFlow,
+        'Gas Temperature:        ' + gasTemp,
+        'Operating Pressure:     ' + pressure,
+        'Mist Loading:           ' + mistLoading,
+        'Est. Droplet Size:      ' + dropletSize,
+        'Required Efficiency:    ' + efficiency,
+        'Max Pressure Drop:      ' + pressureDrop,
+        '',
+        'PHYSICAL CONSTRAINTS',
+        '--------------------',
+        'Vessel Type:            ' + vesselType,
+        'Vessel I.D. (retrofit): ' + vesselID,
+        'Available Height:       ' + availHeight,
+        'Nozzle Configuration:   ' + nozzleOri,
+        'Access Notes:           ' + accessNotes,
+        '',
+        'PERFORMANCE REQUIREMENTS',
+        '------------------------',
+        'Target Outlet Concentration: ' + outletConc,
+        'Applicable Regulation:       ' + productSpec,
+        'Performance Test:            ' + perfTest,
+        'Installation Type:           ' + replacement,
+        'Existing Equipment:          ' + existingTech,
+        '',
+        'PROJECT DETAILS',
+        '---------------',
+        'Project Stage:       ' + projStatus,
+        'Target Order Date:   ' + orderDate,
+        'Target Delivery:     ' + deliveryDate,
+        'Budget Indication:   ' + budget,
+        'Product Preference:  ' + productPref,
+        'Additional Notes:    ' + notes,
+        '',
+        '=========================================',
+        'Please send quotation to: ' + email
+      ].join('\n');
+
+      document.getElementById('rfq-text').textContent = rfq;
+
+      // Email link
+      var subject = 'RFQ Inquiry \u2014 ' + company + ' \u2014 ' + appType;
+      var emailLink = 'mailto:applications@kimre.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(rfq);
+      document.getElementById('btn-email').href = emailLink;
+
+      // Show output
+      var outputEl = document.getElementById('rfq-output');
+      outputEl.classList.add('visible');
+      outputEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function copyRFQ() {
+      var text = document.getElementById('rfq-text').textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          var btn = document.getElementById('btn-copy');
+          btn.textContent = '\u2713 Copied!';
+          setTimeout(function() { btn.textContent = '\uD83D\uDCCB Copy to Clipboard'; }, 2000);
+        });
+      } else {
+        // Fallback
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        var btn = document.getElementById('btn-copy');
+        btn.textContent = '\u2713 Copied!';
+        setTimeout(function() { btn.textContent = '\uD83D\uDCCB Copy to Clipboard'; }, 2000);
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Built for Kimre — Introduction Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --kimre: #f97316;
+      --kimre-dim: rgba(249, 115, 22, 0.12);
+      --kimre-glow: rgba(249, 115, 22, 0.25);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: var(--bg);
+    }
+
+    .reveal-viewport {
+      background: var(--bg);
+    }
+
+    .reveal {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .reveal .slides {
+      text-align: left;
+    }
+
+    .reveal section {
+      padding: 60px 80px;
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    /* Typography resets */
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: -0.02em;
+      margin-bottom: 0;
+      line-height: 1.15;
+    }
+
+    .reveal h1 { font-size: 52px; font-weight: 800; }
+    .reveal h2 { font-size: 32px; font-weight: 700; }
+    .reveal h3 { font-size: 20px; font-weight: 700; }
+    .reveal p  { font-size: 15px; color: var(--muted); line-height: 1.7; margin: 0; }
+
+    .reveal ul { list-style: none; padding: 0; margin: 0; }
+    .reveal li { margin-bottom: 8px; }
+
+    /* Accent bar */
+    .accent-bar {
+      width: 60px;
+      height: 4px;
+      background: var(--kimre);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Slide heading block */
+    .slide-heading {
+      margin-bottom: 36px;
+      flex-shrink: 0;
+    }
+    .slide-heading .accent-bar { margin-bottom: 16px; }
+    .slide-heading h2 { color: var(--text); }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .card-orange {
+      background: var(--kimre-dim);
+      border: 1px solid var(--kimre);
+      border-radius: 10px;
+      padding: 20px 24px;
+    }
+
+    /* Grid layouts */
+    .cols-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+    }
+    .cols-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      flex: 1;
+    }
+
+    /* Column card for Slide 2 / 3 */
+    .col-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .col-card h3 {
+      color: var(--kimre);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .col-card p {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.75;
+    }
+
+    /* Lane badge */
+    .lane-badge {
+      display: inline-block;
+      background: var(--kimre);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      align-self: flex-start;
+      margin-bottom: 4px;
+    }
+
+    /* Stat strip (Slide 4) */
+    .stat-strip {
+      display: flex;
+      gap: 24px;
+      background: #0c0f1a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 24px;
+      flex-shrink: 0;
+    }
+    .stat-item { font-size: 12px; color: var(--muted); }
+    .stat-item strong { color: var(--kimre); font-weight: 700; }
+
+    /* Day-in-life block (Slide 4) */
+    .day-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      flex: 1;
+    }
+    .day-metric {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .day-metric .num {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--kimre);
+      line-height: 1;
+    }
+    .day-metric .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .day-breakdown {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .day-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .day-row .step-label {
+      font-size: 13px;
+      color: #94a3b8;
+      width: 220px;
+      flex-shrink: 0;
+    }
+    .time-bar-wrap {
+      flex: 1;
+      background: #0c0f1a;
+      border-radius: 4px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .time-bar {
+      height: 100%;
+      background: var(--kimre);
+      border-radius: 4px;
+    }
+    .day-row .time-label {
+      font-size: 12px;
+      color: var(--kimre);
+      font-weight: 600;
+      width: 60px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Flow diagram (Slide 5) */
+    .flow-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+    .flow-panels {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1fr;
+      gap: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .flow-panel {
+      background: var(--card);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-right: 1px solid var(--border);
+    }
+    .flow-panel:last-child { border-right: none; }
+    .flow-panel.highlight {
+      background: var(--kimre-dim);
+      border-right-color: var(--kimre);
+      border-left: 2px solid var(--kimre);
+    }
+    .flow-panel .fp-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .flow-panel.highlight .fp-label { color: var(--kimre); }
+    .flow-panel .fp-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .flow-panel .fp-steps {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.8;
+    }
+    .flow-panel .fp-steps span {
+      display: block;
+      padding-left: 14px;
+      position: relative;
+    }
+    .flow-panel .fp-steps span::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--kimre);
+    }
+    .flow-agents {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .flow-agent-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .flow-agent-card .fa-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .flow-agent-card .fa-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .flow-agent-card .fa-detail {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .flow-footer {
+      background: var(--kimre-dim);
+      border: 1px solid var(--kimre);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* Value chain (Slide 6) */
+    .vc-scroll {
+      overflow-x: auto;
+      flex: 1;
+      padding-bottom: 8px;
+    }
+    .vc-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: max-content;
+    }
+    .vc-agent-row {
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+    .vc-chain-row {
+      display: flex;
+      gap: 0;
+      align-items: stretch;
+    }
+    .vc-stage {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: center;
+      min-width: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .vc-stage.active {
+      border-color: var(--kimre);
+      color: var(--text);
+    }
+    .vc-arrow {
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      color: var(--border);
+      font-size: 14px;
+    }
+    .vc-fork-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      justify-content: center;
+    }
+    .vc-fork-stage {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .vc-badge {
+      background: var(--kimre);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .vc-badge-empty {
+      height: 22px;
+    }
+    .vc-agent-slot {
+      display: flex;
+      justify-content: center;
+      min-width: 88px;
+      padding: 0 4px;
+    }
+    .vc-agent-gap {
+      min-width: 22px;
+    }
+    .vc-fork-slot {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 100px;
+      padding: 0 4px;
+    }
+    .vc-note {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* Table (Slide 7) */
+    .agent-table {
+      width: 100%;
+      border-collapse: collapse;
+      flex: 1;
+    }
+    .agent-table thead tr {
+      background: var(--kimre);
+    }
+    .agent-table thead th {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      text-align: left;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .agent-table tbody tr {
+      border-bottom: 1px solid var(--border);
+    }
+    .agent-table tbody tr:nth-child(even) {
+      background: rgba(255,255,255,0.02);
+    }
+    .agent-table tbody tr:hover {
+      background: var(--kimre-dim);
+    }
+    .agent-table tbody td {
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .agent-table tbody td.muted {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .status-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #4ade80;
+    }
+    .status-mock {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fbbf24;
+    }
+    .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; display: inline-block; }
+    .dot-amber { width: 8px; height: 8px; background: #fbbf24; border-radius: 50%; display: inline-block; }
+    .val-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--kimre);
+    }
+    .table-footer {
+      background: var(--kimre-dim);
+      border: 1px solid var(--kimre);
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Architecture (Slide 8) */
+    .arch-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+    .arch-layer {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .arch-layer.layer-top {
+      border-color: var(--kimre);
+    }
+    .arch-layer-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .arch-layer.layer-top .arch-layer-label { color: var(--kimre); }
+    .arch-items {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .arch-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .arch-item.orange {
+      background: var(--kimre-dim);
+      border-color: var(--kimre);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .arch-item.persona {
+      background: rgba(255,255,255,0.05);
+      border-color: #334155;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .arch-arrows {
+      text-align: center;
+      color: var(--kimre);
+      font-size: 18px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .arch-callout {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .arch-callout strong { color: var(--kimre); }
+
+    /* Demo stops (Slide 9) */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      flex: 1;
+    }
+    .demo-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .demo-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--kimre);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .demo-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .demo-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+    }
+    .demo-link {
+      font-size: 11px;
+      color: #334155;
+      font-family: monospace;
+    }
+    .demo-footer {
+      background: var(--kimre-dim);
+      border: 1px solid var(--kimre);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    /* Discovery (Slide 10) */
+    .disc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .disc-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .disc-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--kimre);
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+    .disc-text {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.65;
+    }
+    .disc-text strong { color: var(--text); }
+    .persona-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .persona-card .pname {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .persona-card .prole {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .cta-box {
+      background: var(--kimre);
+      border-radius: 10px;
+      padding: 20px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .cta-box .cta-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+    .cta-box .cta-main {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .cta-box .cta-detail {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 4px;
+    }
+
+    /* Slide 1 specific */
+    .title-slide {
+      justify-content: center;
+      align-items: flex-start;
+      background: var(--bg);
+    }
+    .title-slide h1 {
+      font-size: 64px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .title-slide .subtitle {
+      font-size: 20px;
+      font-weight: 400;
+      color: #94a3b8;
+      max-width: 560px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+    .title-footer {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      margin-top: auto;
+    }
+
+    /* Slide number override */
+    .reveal .slide-number {
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="reveal">
+  <div class="slides">
+
+    <!-- SLIDE 1: Opening -->
+    <section class="title-slide">
+      <div class="accent-bar"></div>
+      <h1>Built for Kimre</h1>
+      <div class="subtitle">AI Agents for Specialty Industrial Manufacturers</div>
+      <div class="title-footer">Confidential — For Discussion Purposes Only</div>
+    </section>
+
+    <!-- SLIDE 2: Strategy -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>A Defensible Market Position</h2>
+      </div>
+      <div class="cols-3" style="margin-bottom: 20px;">
+        <div class="col-card">
+          <h3>The Market</h3>
+          <p>$50–150M addressable in high-performance, corrosion-resistant custom separation equipment. New H&#x2082;SO&#x2084; capacity coming online in Africa and Asia. EPA tailwinds accelerating domestic compliance spending. 20–30 year retrofit cycles create durable recurring demand.</p>
+        </div>
+        <div class="col-card">
+          <h3>Where Kimre Wins</h3>
+          <p>Application depth — Kimre will engineer for your specific chemistry. 50+ years of proprietary IP. B-GON&#xAE; fiber technology with demonstrated performance. Responsiveness and accountability that Koch-Glitsch structurally cannot match at this scale.</p>
+        </div>
+        <div class="col-card">
+          <h3>The Gap</h3>
+          <p>Koch-Glitsch has 50 dedicated sales engineers. Kimre has 2. Coverage — not capability — is the binding constraint. Every uncovered opportunity, slow quote, and missed follow-up costs revenue that belongs to Kimre.</p>
+        </div>
+      </div>
+      <div class="card-orange" style="margin-top: auto;">
+        <span style="font-size: 14px; font-weight: 700; color: var(--text);">The platform closes the coverage gap without adding headcount.</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: Hybrid Business Model -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>Three Revenue Lanes, One Platform</h2>
+      </div>
+      <div class="cols-3" style="flex: 1;">
+        <div class="col-card">
+          <div class="lane-badge">ETO Custom</div>
+          <h3 style="color: var(--text); font-size: 16px; text-transform: none; letter-spacing: 0;">B-GON&#xAE; Mist Eliminators &amp; LIQUI-NOMIX&#xAE; Coalescers</h3>
+          <p>Custom-engineered per project to exact process chemistry. 4–14 week lead time. $5K–$500K per unit. The highest-margin lane and Kimre's core identity.</p>
+        </div>
+        <div class="col-card">
+          <div class="lane-badge">MTO / MTS Catalog</div>
+          <h3 style="color: var(--text); font-size: 16px; text-transform: none; letter-spacing: 0;">Fiber Bed Cages &amp; KON-TANE&#xAE; Packing</h3>
+          <p>Standard diameters ship in days to weeks. Bulk scrubber packing ships same week. Recurring revenue with lower engineering overhead — and a natural entry point for new customers.</p>
+        </div>
+        <div class="col-card">
+          <div class="lane-badge">Expansion</div>
+          <h3 style="color: var(--text); font-size: 16px; text-transform: none; letter-spacing: 0;">Service, Digital Tools &amp; Performance Contracts</h3>
+          <p>Maintenance agreements against installed base. Customer-facing digital spec tools. Performance-based pricing as agents generate trackable outcomes. Stage 1 &#x2192; Stage 5 maturity path.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Where Time Goes -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>The Bottleneck Is Engineering Capacity</h2>
+      </div>
+      <div class="day-block" style="margin-bottom: 16px;">
+        <div class="day-metric">
+          <div class="num">8</div>
+          <div class="label">RFQs<br>per day</div>
+        </div>
+        <div style="width: 1px; background: var(--border); align-self: stretch; flex-shrink: 0;"></div>
+        <div class="day-breakdown" style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Per RFQ — Alex Torres, Sales / Apps Engineer</div>
+          <div class="day-row">
+            <div class="step-label">Read application description</div>
+            <div class="time-bar-wrap"><div class="time-bar" style="width: 33%;"></div></div>
+            <div class="time-label">30 min</div>
+          </div>
+          <div class="day-row">
+            <div class="step-label">Select product + size + price</div>
+            <div class="time-bar-wrap"><div class="time-bar" style="width: 55%;"></div></div>
+            <div class="time-label">50 min</div>
+          </div>
+          <div class="day-row">
+            <div class="step-label">Draft scope paragraph + flag gaps</div>
+            <div class="time-bar-wrap"><div class="time-bar" style="width: 44%;"></div></div>
+            <div class="time-label">40 min</div>
+          </div>
+          <div style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px; display: flex; gap: 24px;">
+            <div style="font-size: 13px; color: var(--muted);">Per RFQ: <strong style="color: var(--kimre);">~2 hours</strong></div>
+            <div style="font-size: 13px; color: var(--muted);">8 RFQs &#xD7; 2 engineers: <strong style="color: var(--kimre);">16 hours</strong></div>
+            <div style="font-size: 13px; color: var(--muted);">Available capacity: <strong style="color: #f87171;">0 hours left</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-strip" style="margin-bottom: 14px;">
+        <div class="stat-item">Avg quote age: <strong>4.2 days</strong></div>
+        <div class="stat-item">Stale quotes (&gt;5d): <strong>3</strong></div>
+        <div class="stat-item">Follow-ups missed this week: <strong>2</strong></div>
+      </div>
+      <div class="card-orange" style="font-size: 13px; color: #94a3b8;">
+        Sam Rivera faces the same constraint on the BOM and materials side.
+      </div>
+    </section>
+
+    <!-- SLIDE 5: What the Platform Does -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>Agents as a Capacity Multiplier</h2>
+      </div>
+      <div class="flow-wrap">
+        <div class="flow-panels">
+          <div class="flow-panel">
+            <div class="fp-label">Step 1</div>
+            <div class="fp-title">RFQ Arrives</div>
+            <div class="fp-steps">
+              <span>Application description</span>
+              <span>Process chemistry specs</span>
+              <span>Vessel / flow parameters</span>
+            </div>
+          </div>
+          <div class="flow-panel highlight">
+            <div class="fp-label">Step 2 — Agent</div>
+            <div class="fp-title">RFQ-to-Quote Agent</div>
+            <div class="fp-steps">
+              <span>Reads RFQ in full</span>
+              <span>Matches application profile</span>
+              <span>Selects B-GON&#xAE; / LIQUI-NOMIX&#xAE;</span>
+              <span>Drafts scope paragraph</span>
+              <span>Flags gaps for Alex</span>
+            </div>
+          </div>
+          <div class="flow-panel">
+            <div class="fp-label">Step 3 — Human</div>
+            <div class="fp-title">Alex Reviews</div>
+            <div class="fp-steps">
+              <span>15 min to review</span>
+              <span>Approve or edit</span>
+              <span>Quote sent</span>
+            </div>
+          </div>
+        </div>
+        <div class="flow-agents">
+          <div class="flow-agent-card">
+            <div class="fa-icon">&#x1F4E6;</div>
+            <div>
+              <div class="fa-name">Material Requisition Agent</div>
+              <div class="fa-detail">Sam reviews PRs &#x2192; approves in 5 min</div>
+            </div>
+          </div>
+          <div class="flow-agent-card">
+            <div class="fa-icon">&#x1F514;</div>
+            <div>
+              <div class="fa-name">Order Milestone Notifier</div>
+              <div class="fa-detail">Jordan reviews notifications &#x2192; sends in 2 min</div>
+            </div>
+          </div>
+        </div>
+        <div class="flow-footer">
+          Same 2 engineers. 2&#xD7; the output. Every decision stays human-approved.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Value Chain -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>Where Agents Plug Into Your Business</h2>
+      </div>
+      <div class="vc-scroll">
+        <div class="vc-container">
+          <!-- Agent badge row -->
+          <div class="vc-agent-row">
+            <!-- STRATEGY: empty -->
+            <div class="vc-agent-slot"><div class="vc-badge-empty"></div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- MARKETING: empty -->
+            <div class="vc-agent-slot"><div class="vc-badge-empty"></div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- LEAD INTEL: Research Agent -->
+            <div class="vc-agent-slot" style="min-width: 100px;"><div class="vc-badge">Research Agent (planned)</div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- Fork: empty -->
+            <div class="vc-fork-slot"><div class="vc-badge-empty"></div><div class="vc-badge-empty"></div><div class="vc-badge-empty"></div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- QUOTE -->
+            <div class="vc-agent-slot" style="min-width: 110px;"><div class="vc-badge">RFQ-to-Quote Agent</div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- ORDER: empty -->
+            <div class="vc-agent-slot" style="min-width: 90px;"><div class="vc-badge-empty"></div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- BOM -->
+            <div class="vc-agent-slot" style="min-width: 120px;"><div class="vc-badge">Material Requisition Agent</div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- FABRICATION: empty -->
+            <div class="vc-agent-slot" style="min-width: 96px;"><div class="vc-badge-empty"></div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- QC -->
+            <div class="vc-agent-slot" style="min-width: 96px;"><div class="vc-badge">Quality Compliance Agent</div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- SHIP -->
+            <div class="vc-agent-slot" style="min-width: 90px;"><div class="vc-badge">Order Notifier Agent</div></div>
+            <div class="vc-agent-gap"></div>
+            <!-- INSTALLED BASE -->
+            <div class="vc-agent-slot" style="min-width: 110px;"><div class="vc-badge">Retrofit Reorder Agent</div></div>
+          </div>
+
+          <!-- Chain row -->
+          <div class="vc-chain-row">
+            <div class="vc-stage">STRATEGY</div>
+            <div class="vc-arrow">&#x2192;</div>
+            <div class="vc-stage">MARKETING</div>
+            <div class="vc-arrow">&#x2192;</div>
+            <div class="vc-stage active" style="min-width: 100px;">LEAD INTEL</div>
+            <div class="vc-arrow">&#x21C9;</div>
+            <div class="vc-fork-box">
+              <div class="vc-fork-stage">Greenfield: App Consult</div>
+              <div class="vc-fork-stage">Retrofit: Installed Base &#x2192; Outreach</div>
+              <div class="vc-fork-stage">Catalog: Quick PO (MTS)</div>
+            </div>
+            <div class="vc-arrow">&#x21C8;</div>
+            <div class="vc-stage active" style="min-width: 110px;">QUOTE</div>
+            <div class="vc-arrow">&#x2192;</div>
+            <div class="vc-stage" style="min-width: 90px;">ORDER</div>
+            <div class="vc-arrow">&#x2192;</div>
+            <div class="vc-stage active" style="min-width: 120px;">BOM / MATERIALS</div>
+            <div class="vc-arrow">&#x2192;</div>
+            <div class="vc-stage" style="min-width: 96px;">FABRICATION</div>
+            <div class="vc-arrow">&#x2192;</div>
+            <div class="vc-stage active" style="min-width: 96px;">QC</div>
+            <div class="vc-arrow">&#x2192;</div>
+            <div class="vc-stage active" style="min-width: 90px;">SHIP / CS</div>
+            <div class="vc-arrow">&#x21BA;</div>
+            <div class="vc-stage active" style="min-width: 110px;">INSTALLED BASE</div>
+          </div>
+
+          <div class="vc-note">&#x21BA; Installed Base loops back to Lead Intel — retrofit cycles re-enter the funnel</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Five Agents, Five Personas -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>Mapped to the People Who Use Them</h2>
+      </div>
+      <table class="agent-table" style="margin-bottom: 16px;">
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Persona</th>
+            <th>Status</th>
+            <th>Annual Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Material Requisition Agent</strong></td>
+            <td class="muted">Sam Rivera — Engineering Lead</td>
+            <td><span class="status-live"><span class="dot-green"></span>Live Pilot</span></td>
+            <td class="val-label">&#xA3;24K / yr</td>
+          </tr>
+          <tr>
+            <td><strong>RFQ-to-Quote Agent</strong></td>
+            <td class="muted">Alex Torres — Sales / Apps Eng</td>
+            <td><span class="status-mock"><span class="dot-amber"></span>Mock / Demo Ready</span></td>
+            <td class="val-label">&#xA3;38K / yr</td>
+          </tr>
+          <tr>
+            <td><strong>Quality Compliance Checker</strong></td>
+            <td class="muted">Pat Chen — QA / Compliance</td>
+            <td><span class="status-mock"><span class="dot-amber"></span>Mock / Demo Ready</span></td>
+            <td class="val-label">&#xA3;18K / yr</td>
+          </tr>
+          <tr>
+            <td><strong>Order Milestone Notifier</strong></td>
+            <td class="muted">Jordan Kim — Customer Service</td>
+            <td><span class="status-mock"><span class="dot-amber"></span>Mock / Demo Ready</span></td>
+            <td class="val-label">&#xA3;22K / yr</td>
+          </tr>
+          <tr>
+            <td><strong>Retrofit Reorder Agent</strong></td>
+            <td class="muted">Mary Gaston — President</td>
+            <td><span class="status-mock"><span class="dot-amber"></span>Mock / Demo Ready</span></td>
+            <td class="val-label">&#xA3;31K / yr</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="table-footer">
+        Total platform value at scale: <strong style="color: var(--kimre);">&#xA3;133K / year</strong> &nbsp;|&nbsp; Discovery investment: <strong>&#xA3;8K</strong>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: Platform Architecture -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>Three Layers. One Platform.</h2>
+      </div>
+      <div class="arch-layers">
+        <!-- Decision Layer (top) -->
+        <div class="arch-layer layer-top">
+          <div class="arch-layer-label">Decision Layer — Human Review &amp; Approval</div>
+          <div class="arch-items">
+            <div class="arch-item persona">Alex Torres — Sales</div>
+            <div class="arch-item persona">Sam Rivera — Engineering</div>
+            <div class="arch-item persona">Jordan Kim — Customer Service</div>
+            <div class="arch-item persona">Mary Gaston — President</div>
+            <div class="arch-item persona">Pat Chen — QA</div>
+          </div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Persona dashboards · approval queues · run theater · HITL override at every step</div>
+        </div>
+
+        <div class="arch-arrows">&#x21D5; &#x21D5; &#x21D5; &#x21D5; &#x21D5;</div>
+
+        <!-- Agent Layer (middle) -->
+        <div class="arch-layer">
+          <div class="arch-layer-label">Agent Layer — Autonomous Reasoning &amp; Recommendation</div>
+          <div class="arch-items">
+            <div class="arch-item orange">RFQ-to-Quote Agent</div>
+            <div class="arch-item orange">Material Requisition Agent</div>
+            <div class="arch-item orange">Quality Compliance Agent</div>
+            <div class="arch-item orange">Order Milestone Notifier</div>
+            <div class="arch-item orange">Retrofit Reorder Agent</div>
+          </div>
+        </div>
+
+        <div class="arch-arrows">&#x21D5; &#x21D5; &#x21D5; &#x21D5; &#x21D5;</div>
+
+        <!-- Data Layer (bottom) -->
+        <div class="arch-layer">
+          <div class="arch-layer-label">Data Layer — Live System Connections</div>
+          <div class="arch-items">
+            <div class="arch-item">ERP / MRP</div>
+            <div class="arch-item">Email &amp; CRM</div>
+            <div class="arch-item">Engineering Drawings</div>
+            <div class="arch-item">Supplier Portals</div>
+            <div class="arch-item">EPA ECHO</div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-callout" style="margin-top: 14px;">
+        <strong>Authority level: MEDIUM</strong> — agents recommend, humans decide. No agent action executes without explicit approval.
+      </div>
+    </section>
+
+    <!-- SLIDE 9: Live Demo -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>Let's Walk Through It Together</h2>
+      </div>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="demo-num">Stop 01</div>
+          <div class="demo-title">Business Case Calculator</div>
+          <div class="demo-desc">"How much is mist carryover costing you?" Input your operating conditions and get an estimated annual savings value and payback period for a Kimre mist eliminator.</div>
+          <div class="demo-link">tools/business-case.html</div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-num">Stop 02</div>
+          <div class="demo-title">Engineering Spec Generator</div>
+          <div class="demo-desc">"30 seconds from RFQ to spec sheet." Input process conditions, get a formatted Equipment Specification Sheet with product selection, sizing, and performance guarantee.</div>
+          <div class="demo-link">tools/spec-gen.html</div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-num">Stop 03</div>
+          <div class="demo-title">Engineering Dashboard</div>
+          <div class="demo-desc">Sam's production queue, material alerts, and agent recommendations — live. See how the Material Requisition Agent surfaces PRs and flags gaps in real time.</div>
+          <div class="demo-link">engineering.html</div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-num">Stop 04</div>
+          <div class="demo-title">Executive Dashboard</div>
+          <div class="demo-desc">Mary's business health at a glance — pipeline OTD, agent ROI, and portfolio status. A single view across all five agents with no spreadsheets required.</div>
+          <div class="demo-link">executive.html</div>
+        </div>
+      </div>
+      <div class="demo-footer" style="margin-top: 16px;">
+        All tools are live and accessible at the Kimre portal.
+      </div>
+    </section>
+
+    <!-- SLIDE 10: Discovery Workshop -->
+    <section>
+      <div class="slide-heading">
+        <div class="accent-bar"></div>
+        <h2>Next Step: A 2-Hour Working Session</h2>
+      </div>
+      <div class="cols-2" style="gap: 28px; margin-bottom: 20px;">
+        <!-- Left: What we'll do -->
+        <div>
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--kimre); margin-bottom: 14px;">What We'll Do Together</div>
+          <div class="disc-list">
+            <div class="disc-item">
+              <div class="disc-dot"></div>
+              <div class="disc-text"><strong>Map your current RFQ-to-quote process</strong> step by step — no assumptions, just your actual workflow</div>
+            </div>
+            <div class="disc-item">
+              <div class="disc-dot"></div>
+              <div class="disc-text"><strong>Identify the 3 biggest time drains</strong> for Alex and Sam with specific time estimates</div>
+            </div>
+            <div class="disc-item">
+              <div class="disc-dot"></div>
+              <div class="disc-text"><strong>Prioritize agent sequence</strong> — which to pilot first, which to keep in mock mode, which to defer</div>
+            </div>
+            <div class="disc-item">
+              <div class="disc-dot"></div>
+              <div class="disc-text"><strong>Define success metrics</strong> — what does "working" look like at 30, 60, and 90 days?</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Who should be in the room -->
+        <div>
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--kimre); margin-bottom: 14px;">Who Should Be in the Room</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="persona-card">
+              <div class="pname">Mary Gaston</div>
+              <div class="prole">President — strategic alignment and final scope decisions</div>
+            </div>
+            <div class="persona-card">
+              <div class="pname">Alex Torres</div>
+              <div class="prole">Sales / Applications — process authority on quoting workflow</div>
+            </div>
+            <div class="persona-card">
+              <div class="pname">Sam Rivera</div>
+              <div class="prole">Engineering Lead — fabrication reality check and data access</div>
+            </div>
+            <div class="persona-card">
+              <div class="pname">Frank Powers</div>
+              <div class="prole">VP Engineering — systems and data readiness assessment</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-box">
+        <div class="cta-label">Schedule the Discovery Workshop</div>
+        <div class="cta-main">applications@kimre.com &nbsp;|&nbsp; +1 (713) 467-0900</div>
+        <div class="cta-detail">2 hours. Your process. Your people. A concrete pilot plan as the output.</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- Kimre Internal Nav -->
+<nav style="
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #161b2e;
+  border-top: 1px solid #1e293b;
+  padding: 10px 24px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  z-index: 9999;
+  flex-wrap: wrap;
+">
+  <a href="./index.html" style="color:#94a3b8;text-decoration:none;font-family:Inter,sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;transition:all 0.2s;" onmouseover="this.style.color='#f97316';this.style.background='rgba(249,115,22,0.1)'" onmouseout="this.style.color='#94a3b8';this.style.background='transparent'">Home</a>
+  <a href="./sales.html" style="color:#94a3b8;text-decoration:none;font-family:Inter,sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;transition:all 0.2s;" onmouseover="this.style.color='#f97316';this.style.background='rgba(249,115,22,0.1)'" onmouseout="this.style.color='#94a3b8';this.style.background='transparent'">Sales</a>
+  <a href="./engineering.html" style="color:#94a3b8;text-decoration:none;font-family:Inter,sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;transition:all 0.2s;" onmouseover="this.style.color='#f97316';this.style.background='rgba(249,115,22,0.1)'" onmouseout="this.style.color='#94a3b8';this.style.background='transparent'">Engineering</a>
+  <a href="./customer-service.html" style="color:#94a3b8;text-decoration:none;font-family:Inter,sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;transition:all 0.2s;" onmouseover="this.style.color='#f97316';this.style.background='rgba(249,115,22,0.1)'" onmouseout="this.style.color='#94a3b8';this.style.background='transparent'">Customer Service</a>
+  <a href="./executive.html" style="color:#94a3b8;text-decoration:none;font-family:Inter,sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;transition:all 0.2s;" onmouseover="this.style.color='#f97316';this.style.background='rgba(249,115,22,0.1)'" onmouseout="this.style.color='#94a3b8';this.style.background='transparent'">Executive</a>
+  <a href="./quality.html" style="color:#94a3b8;text-decoration:none;font-family:Inter,sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;transition:all 0.2s;" onmouseover="this.style.color='#f97316';this.style.background='rgba(249,115,22,0.1)'" onmouseout="this.style.color='#94a3b8';this.style.background='transparent'">Quality</a>
+  <a href="./tools/index.html" style="color:#94a3b8;text-decoration:none;font-family:Inter,sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;transition:all 0.2s;" onmouseover="this.style.color='#f97316';this.style.background='rgba(249,115,22,0.1)'" onmouseout="this.style.color='#94a3b8';this.style.background='transparent'">Tools</a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    center: false,
+    slideNumber: 'c/t',
+    hash: true,
+    autoSlide: 0,
+    controls: true,
+    progress: true,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    margin: 0.04,
+    width: 1280,
+    height: 720,
+    minScale: 0.5,
+    maxScale: 1.5
+  });
+</script>
+
+</body>
+</html>

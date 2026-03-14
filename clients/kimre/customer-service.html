@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jordan Kim — Customer Service Dashboard | Kimre Inc.</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #161b2e;
+  --border: #1e293b;
+  --text: #f1f5f9;
+  --muted: #64748b;
+  --kimre: #f97316;
+  --kimre-dark: #c2510a;
+  --kimre-light: rgba(249,115,22,0.15);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.12);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245,158,11,0.12);
+  --green: #22c55e;
+  --green-bg: rgba(34,197,94,0.12);
+  --blue: #3b82f6;
+  --blue-bg: rgba(59,130,246,0.12);
+  --card-hover: #1e2640;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ===== NAV ===== */
+.kimre-nav {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.kimre-nav-inner {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 56px;
+}
+.kimre-nav-brand {
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--kimre);
+  letter-spacing: -0.3px;
+  flex-shrink: 0;
+}
+.kimre-nav-links {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.kimre-nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.15s, background 0.15s;
+}
+.kimre-nav-link:hover { color: var(--text); background: var(--border); }
+.kimre-nav-link.active { color: var(--kimre); background: var(--kimre-light); }
+
+/* ===== LAYOUT ===== */
+.page-wrap {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+}
+.page-header {
+  margin-bottom: 24px;
+}
+.page-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.page-header .sub {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+/* ===== KPI STRIP ===== */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.kpi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card.urgent {
+  border-color: var(--red);
+  background: linear-gradient(135deg, var(--card) 70%, rgba(239,68,68,0.08));
+}
+.kpi-card.urgent::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--red);
+}
+.kpi-card.warning {
+  border-color: var(--amber);
+  background: linear-gradient(135deg, var(--card) 70%, rgba(245,158,11,0.08));
+}
+.kpi-card.warning::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--amber);
+}
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.kpi-value {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+}
+.kpi-card.urgent .kpi-value { color: var(--red); }
+.kpi-card.warning .kpi-value { color: var(--amber); }
+.kpi-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ===== IMPACT NARRATIVE ===== */
+.narrative-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--kimre);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.narrative-text {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.narrative-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pill {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.pill:hover { opacity: 0.85; }
+.pill-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+.pill-orange { background: var(--kimre-light); color: var(--kimre); border: 1px solid rgba(249,115,22,0.3); }
+.pill-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+
+/* ===== SECTION HEADER ===== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.section-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.btn-primary { background: var(--kimre); color: #fff; }
+.btn-primary:hover { background: var(--kimre-dark); }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--border); color: var(--text); }
+.btn-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+.btn-red:hover { background: rgba(239,68,68,0.2); }
+.btn-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+.btn-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.btn-green:hover { background: rgba(34,197,94,0.2); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-xs { padding: 3px 8px; font-size: 11px; }
+
+/* ===== ORDER TABLE ===== */
+.table-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.table-wrap {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead {
+  background: rgba(30,41,59,0.5);
+}
+th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+th:hover { color: var(--text); }
+th .sort-icon { margin-left: 4px; opacity: 0.4; }
+th.sorted .sort-icon { opacity: 1; color: var(--kimre); }
+td {
+  padding: 12px 14px;
+  border-top: 1px solid rgba(30,41,59,0.6);
+  vertical-align: middle;
+  font-size: 13px;
+}
+tr.table-row {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+tr.table-row:hover { background: var(--card-hover); }
+tr.table-row.selected { background: rgba(249,115,22,0.08); border-left: 3px solid var(--kimre); }
+.delay-flag {
+  font-size: 16px;
+  display: block;
+  text-align: center;
+}
+.order-id {
+  font-weight: 700;
+  color: var(--kimre);
+  font-family: 'JetBrains Mono', monospace;
+}
+.customer-name { font-weight: 600; }
+.product-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(59,130,246,0.1);
+  color: #93c5fd;
+  font-size: 11px;
+  font-weight: 500;
+}
+.milestone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(100,116,139,0.15);
+  color: var(--muted);
+}
+.days-cell {
+  font-weight: 700;
+}
+.days-cell.urgent { color: var(--red); }
+.days-cell.warning { color: var(--amber); }
+.days-cell.ok { color: var(--green); }
+.notif-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.notif-not-sent { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+.notif-sent { background: var(--amber-bg); color: var(--amber); }
+.notif-on-track { background: var(--green-bg); color: var(--green); }
+
+/* ===== SIDE PANEL ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: -640px;
+  width: 640px;
+  height: 100vh;
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: -8px 0 40px rgba(0,0,0,0.5);
+}
+.side-panel.open { right: 0; }
+.panel-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.panel-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+.panel-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.panel-close:hover { background: var(--border); color: var(--text); }
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+.panel-body::-webkit-scrollbar { width: 4px; }
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Panel sections */
+.panel-section {
+  margin-bottom: 28px;
+}
+.panel-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.panel-order-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.info-item label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.info-item span {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Milestone step bar */
+.milestone-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  padding: 4px 0 8px;
+}
+.milestone-steps::-webkit-scrollbar { height: 3px; }
+.milestone-steps::-webkit-scrollbar-thumb { background: var(--border); }
+.ms-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 60px;
+  position: relative;
+}
+.ms-step::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.ms-step:first-child::before { display: none; }
+.ms-step.done::before { background: var(--green); }
+.ms-step.active::before { background: var(--kimre); }
+.ms-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  z-index: 1;
+  position: relative;
+  border: 2px solid var(--border);
+  transition: all 0.2s;
+}
+.ms-step.done .ms-dot { background: var(--green); border-color: var(--green); color: #fff; }
+.ms-step.active .ms-dot { background: var(--kimre); border-color: var(--kimre); color: #fff; box-shadow: 0 0 0 4px var(--kimre-light); }
+.ms-label {
+  font-size: 9px;
+  text-align: center;
+  margin-top: 5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.ms-step.active .ms-label { color: var(--kimre); font-weight: 700; }
+.ms-step.done .ms-label { color: var(--green); }
+
+/* Timeline */
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(30,41,59,0.5);
+}
+.timeline-item:last-child { border-bottom: none; }
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--kimre);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.timeline-content { flex: 1; }
+.timeline-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+.timeline-text {
+  font-size: 13px;
+  color: var(--text);
+}
+.add-note-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.add-note-row input, .add-note-row textarea {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: inherit;
+}
+.add-note-row input:focus, .add-note-row textarea:focus {
+  outline: none;
+  border-color: var(--kimre);
+}
+
+/* ===== DELAY NOTIFICATION DRAWER ===== */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.delay-drawer {
+  position: fixed;
+  top: 0;
+  right: -800px;
+  width: min(800px, 100vw);
+  height: 100vh;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: -12px 0 60px rgba(0,0,0,0.7);
+}
+.delay-drawer.open { right: 0; }
+.drawer-header {
+  padding: 20px 28px;
+  background: var(--red-bg);
+  border-bottom: 1px solid rgba(239,68,68,0.3);
+  flex-shrink: 0;
+}
+.drawer-header h2 {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--red);
+  margin-bottom: 4px;
+}
+.drawer-header .drawer-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+}
+.drawer-mandatory-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--red);
+  font-weight: 600;
+}
+.drawer-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  overflow: hidden;
+}
+.drawer-form {
+  padding: 24px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+.drawer-preview {
+  padding: 24px;
+  overflow-y: auto;
+  background: rgba(15,17,23,0.5);
+}
+.drawer-preview h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.email-preview-box {
+  background: #fff;
+  color: #1a1a1a;
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  font-size: 13px;
+  line-height: 1.7;
+  font-family: system-ui, sans-serif;
+  white-space: pre-wrap;
+}
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--kimre);
+  box-shadow: 0 0 0 3px var(--kimre-light);
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 200px;
+}
+.form-select option { background: var(--card); }
+.drawer-footer {
+  padding: 16px 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--card);
+  flex-shrink: 0;
+}
+.drawer-footer .spacer { flex: 1; }
+.drawer-no-close {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ===== CHANGE REQUEST PANEL ===== */
+.change-req-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.change-req-type {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--kimre);
+  margin-bottom: 4px;
+}
+.change-req-desc {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.change-req-meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+.cr-form {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+.cr-form h4 {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.radio-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text);
+}
+.cr-warning {
+  background: var(--amber-bg);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--amber);
+  margin-top: 8px;
+  display: none;
+}
+.cr-warning.show { display: block; }
+
+/* ===== SHIPPING TRACKER ===== */
+.shipping-tracker {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.shipping-tracker h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+.track-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+.track-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.carrier-badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--blue-bg);
+  color: #93c5fd;
+  border: 1px solid rgba(59,130,246,0.2);
+  white-space: nowrap;
+}
+.track-info { flex: 1; }
+.track-order { font-weight: 700; font-size: 13px; color: var(--kimre); }
+.track-num { font-size: 11px; color: var(--muted); font-family: monospace; margin-top: 2px; }
+.track-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.track-status.in-transit { background: var(--blue-bg); color: #93c5fd; }
+.track-status.label { background: rgba(100,116,139,0.15); color: var(--muted); }
+.track-status.delivered { background: var(--green-bg); color: var(--green); }
+.track-link {
+  font-size: 11px;
+  color: var(--kimre);
+  text-decoration: none;
+  margin-top: 4px;
+  display: block;
+}
+.track-link:hover { text-decoration: underline; }
+
+/* ===== ACCOUNT HEALTH SIDEBAR ===== */
+.main-with-sidebar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+.account-sidebar {
+  width: 260px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.account-sidebar.collapsed { width: 40px; }
+.sidebar-toggle {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.sidebar-toggle-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.account-sidebar.collapsed .sidebar-toggle-title { display: none; }
+.sidebar-content { padding: 8px; }
+.account-sidebar.collapsed .sidebar-content { display: none; }
+.account-row {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 2px;
+}
+.account-row:hover { background: var(--bg); }
+.account-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.account-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+.account-meta-text {
+  font-size: 10px;
+  color: var(--muted);
+}
+.health-dot { font-size: 12px; }
+
+/* ===== AGENT RUN THEATER ===== */
+.run-theater {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.run-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+.run-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(249,115,22,0.12);
+  color: var(--kimre);
+  border: 1px solid rgba(249,115,22,0.3);
+}
+.run-steps {
+  margin: 16px 0 0;
+  display: none;
+}
+.run-steps.visible { display: block; }
+.run-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(30,41,59,0.4);
+  font-size: 13px;
+  color: var(--muted);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s;
+}
+.run-step.visible { opacity: 1; transform: translateX(0); }
+.run-step.done { color: var(--green); }
+.run-step.running { color: var(--kimre); }
+.step-icon { font-size: 14px; flex-shrink: 0; }
+.run-recs {
+  margin-top: 16px;
+  display: none;
+}
+.run-recs.visible { display: block; }
+.run-recs-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.rec-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.rec-card.high { border-left: 3px solid var(--red); }
+.rec-card.medium { border-left: 3px solid var(--amber); }
+.rec-card.low { border-left: 3px solid var(--green); }
+.rec-urgency {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.rec-urgency.high { background: var(--red-bg); color: var(--red); }
+.rec-urgency.medium { background: var(--amber-bg); color: var(--amber); }
+.rec-urgency.low { background: var(--green-bg); color: var(--green); }
+.rec-body { flex: 1; }
+.rec-order { font-size: 11px; color: var(--kimre); font-weight: 700; }
+.rec-text { font-size: 13px; color: var(--text); margin-top: 2px; }
+.rec-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ===== OTD REPORT ===== */
+.otd-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.otd-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border);
+}
+.otd-header:hover { background: var(--card-hover); }
+.otd-body {
+  padding: 20px;
+  display: none;
+}
+.otd-body.open { display: block; }
+.otd-chart-area {
+  margin-bottom: 20px;
+}
+.otd-chart-title {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.otd-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.otd-summary-item {
+  text-align: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+.otd-summary-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+}
+.otd-summary-val.green { color: var(--green); }
+.otd-summary-val.red { color: var(--red); }
+.otd-summary-val.amber { color: var(--amber); }
+.otd-summary-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ===== TOAST ===== */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  min-width: 300px;
+  max-width: 420px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  animation: toast-in 0.3s ease;
+  transform-origin: bottom right;
+}
+.toast.success { border-left: 4px solid var(--green); }
+.toast.error { border-left: 4px solid var(--red); }
+.toast.info { border-left: 4px solid var(--blue); }
+.toast-text { flex: 1; font-size: 13px; }
+.toast-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  font-family: inherit;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(20px) scale(0.95); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* ===== SPINNER ===== */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(249,115,22,0.2);
+  border-top-color: var(--kimre);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+  .drawer-body { grid-template-columns: 1fr; }
+  .drawer-preview { display: none; }
+}
+@media (max-width: 1100px) {
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .main-with-sidebar { grid-template-columns: 1fr; }
+  .account-sidebar { width: 100%; }
+  .otd-summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .kpi-strip { grid-template-columns: 1fr 1fr; }
+  .side-panel { width: 100vw; }
+  .delay-drawer { width: 100vw; }
+  .kimre-nav-links { gap: 2px; }
+  .kimre-nav-link { padding: 5px 8px; font-size: 12px; }
+}
+
+/* Collapse icon */
+.collapse-icon { transition: transform 0.2s; }
+.collapsed .collapse-icon { transform: rotate(-90deg); }
+.otd-header.open .collapse-icon { transform: rotate(180deg); }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+
+/* Status indicator */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+}
+.status-dot.red { background: var(--red); }
+.status-dot.amber { background: var(--amber); }
+.status-dot.green { background: var(--green); }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Checkbox */
+input[type="checkbox"] { accent-color: var(--kimre); width: 14px; height: 14px; }
+input[type="radio"] { accent-color: var(--kimre); }
+input[type="date"] {
+  color-scheme: dark;
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-red { background: var(--red-bg); color: var(--red); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); }
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-blue { background: var(--blue-bg); color: #93c5fd; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="kimre-nav">
+  <div class="kimre-nav-inner">
+    <span class="kimre-nav-brand">Kimre Inc.</span>
+    <div class="kimre-nav-links">
+      <a href="./index.html" class="kimre-nav-link">Home</a>
+      <a href="./sales.html" class="kimre-nav-link">Sales</a>
+      <a href="./engineering.html" class="kimre-nav-link">Engineering</a>
+      <a href="./customer-service.html" class="kimre-nav-link active">Customer Service</a>
+      <a href="./executive.html" class="kimre-nav-link">Executive</a>
+      <a href="./quality.html" class="kimre-nav-link">Quality</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>Jordan Kim &mdash; Customer Service Dashboard</h1>
+    <div class="sub">Kimre Inc. &mdash; Order Monitoring &amp; Proactive Customer Communication &mdash; Updated <span id="last-updated"></span></div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip" id="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-label">Open Orders</div>
+      <div class="kpi-value">11</div>
+      <div class="kpi-sub">Active manufacturing orders</div>
+    </div>
+    <div class="kpi-card urgent">
+      <div class="kpi-label">&#x1F534; Delayed &mdash; Not Notified</div>
+      <div class="kpi-value">2</div>
+      <div class="kpi-sub">Action required immediately</div>
+    </div>
+    <div class="kpi-card warning">
+      <div class="kpi-label">&#x1F7E1; Delayed &mdash; Notified</div>
+      <div class="kpi-value">1</div>
+      <div class="kpi-sub">Customer informed</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">OTD Rate 30d</div>
+      <div class="kpi-value">87%</div>
+      <div class="kpi-sub">Target: 90%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Cycle Days</div>
+      <div class="kpi-value">18.4</div>
+      <div class="kpi-sub">Days order-to-ship</div>
+    </div>
+  </div>
+
+  <!-- IMPACT NARRATIVE -->
+  <div class="narrative-card">
+    <div class="narrative-text">
+      <strong>Jordan:</strong> 11 open orders. <strong style="color:var(--red)">2 are delayed with NO proactive notification sent &mdash; act now before customers call.</strong> 3 orders ship this week. OTD this month: 87% (target 90%). Order Milestone Notifier ran at 8:00am &mdash; 4 milestone notifications generated, 2 delay alerts queued for review.
+    </div>
+    <div class="narrative-pills">
+      <span class="pill pill-red" onclick="filterByStatus('delayed_not_notified')">&#x1F534; 2 Urgent &mdash; Notify Now</span>
+      <span class="pill pill-orange" onclick="filterShipping()">&#x1F4E6; 3 Shipping This Week</span>
+      <span class="pill pill-blue" onclick="openOTD()">&#x1F4CA; 87% OTD</span>
+    </div>
+  </div>
+
+  <!-- AGENT RUN THEATER -->
+  <div class="run-theater">
+    <div class="run-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="section-title">&#9654; Order Milestone Notifier</span>
+        <span class="run-badge">&#9679; MOCK</span>
+      </div>
+      <button class="btn btn-primary" id="run-btn" onclick="runAgent()">&#9654; Run Order Milestone Notifier</button>
+    </div>
+    <div class="run-steps" id="run-steps">
+      <div class="run-step" id="step-0"><span class="step-icon">&#8635;</span> Checking all 11 open orders...</div>
+      <div class="run-step" id="step-1"><span class="step-icon">&#128270;</span> Identifying milestones reached since last run...</div>
+      <div class="run-step" id="step-2"><span class="step-icon">&#9888;</span> Detecting delay risk &mdash; due dates vs. current stage...</div>
+      <div class="run-step" id="step-3"><span class="step-icon">&#128393;</span> Drafting customer notifications...</div>
+      <div class="run-step" id="step-4"><span class="step-icon">&#128229;</span> Queueing notifications for review...</div>
+    </div>
+    <div class="run-recs" id="run-recs">
+      <div class="run-recs-title">&#127381; Agent Recommendations &mdash; 4 Actions Generated</div>
+      <div id="rec-cards-container"></div>
+    </div>
+  </div>
+
+  <!-- SHIPPING TRACKER -->
+  <div class="shipping-tracker">
+    <h3>&#128230; Active Shipments &mdash; Tracking</h3>
+    <div class="track-cards">
+      <div class="track-card">
+        <span class="carrier-badge">FedEx Freight</span>
+        <div class="track-info">
+          <div class="track-order">KIM-046 &mdash; Rhine Energy GmbH</div>
+          <div class="track-num">796123456789</div>
+          <span class="track-status label">Label Created</span>
+          <a class="track-link" href="https://www.fedex.com/fedextrack/?trknbr=796123456789" target="_blank">&#10697; View Tracking</a>
+        </div>
+      </div>
+      <div class="track-card">
+        <span class="carrier-badge">FedEx Freight</span>
+        <div class="track-info">
+          <div class="track-order">KIM-013 &mdash; Rhine Energy GmbH</div>
+          <div class="track-num">796987654321</div>
+          <span class="track-status in-transit">In Transit &mdash; Out for Delivery</span>
+          <a class="track-link" href="https://www.fedex.com/fedextrack/?trknbr=796987654321" target="_blank">&#10697; View Tracking</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN TABLE + SIDEBAR -->
+  <div class="main-with-sidebar">
+    <div>
+      <div class="section-header">
+        <span class="section-title">Open Orders</span>
+        <div class="section-actions">
+          <button class="btn btn-ghost btn-sm" onclick="resetFilter()" id="clear-filter-btn" style="display:none">&#10005; Clear Filter</button>
+          <button class="btn btn-ghost btn-sm" onclick="sortByField('days_until_due')">Sort by Days Due</button>
+          <button class="btn btn-ghost btn-sm" onclick="sortByField('delay_status')">Sort by Status</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap">
+          <table id="orders-table">
+            <thead>
+              <tr>
+                <th style="width:40px">Flag</th>
+                <th onclick="sortByField('id')">Order # <span class="sort-icon">&#8597;</span></th>
+                <th onclick="sortByField('customer')">Customer <span class="sort-icon">&#8597;</span></th>
+                <th>Product Family</th>
+                <th onclick="sortByField('original_ship')">Original Ship <span class="sort-icon">&#8597;</span></th>
+                <th>Current Milestone</th>
+                <th onclick="sortByField('days_until_due')">Days Until Due <span class="sort-icon">&#8597;</span></th>
+                <th>Notification Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT HEALTH SIDEBAR -->
+    <div class="account-sidebar" id="account-sidebar">
+      <div class="sidebar-toggle" onclick="toggleSidebar()">
+        <span class="sidebar-toggle-title">Account Health</span>
+        <span>&#9654;</span>
+      </div>
+      <div class="sidebar-content" id="sidebar-content">
+        <div id="account-health-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTD REPORT -->
+  <div class="otd-section" id="otd-section">
+    <div class="otd-header" id="otd-header" onclick="toggleOTD()">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="section-title">&#128202; OTD Report &mdash; Weekly Summary</span>
+        <span class="badge badge-amber">87% this month</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();downloadCSV()">&#128229; Download CSV</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();copyBoardReport()">&#128203; Copy for Board Report</button>
+        <span class="collapse-icon">&#9660;</span>
+      </div>
+    </div>
+    <div class="otd-body" id="otd-body">
+      <div class="otd-chart-area">
+        <div class="otd-chart-title">8-Week OTD History (%)</div>
+        <svg id="otd-chart" viewBox="0 0 640 160" width="100%" style="display:block"></svg>
+      </div>
+      <div class="otd-summary-grid">
+        <div class="otd-summary-item">
+          <div class="otd-summary-val green">7</div>
+          <div class="otd-summary-label">On-Time This Week</div>
+        </div>
+        <div class="otd-summary-item">
+          <div class="otd-summary-val amber">1</div>
+          <div class="otd-summary-label">Delayed (Notified)</div>
+        </div>
+        <div class="otd-summary-item">
+          <div class="otd-summary-val red">2</div>
+          <div class="otd-summary-label">Delayed Not Notified</div>
+        </div>
+        <div class="otd-summary-item">
+          <div class="otd-summary-val">18.4d</div>
+          <div class="otd-summary-label">Avg Cycle Time</div>
+        </div>
+      </div>
+      <div style="color:var(--muted);font-size:12px;padding-top:8px;border-top:1px solid var(--border);">
+        &#9888; OTD is below 90% target. 2 unnotified delays must be resolved before end of day. Report ready for Mary (President) review.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeSidePanel()"></div>
+
+<!-- ORDER DETAIL SIDE PANEL -->
+<div class="side-panel" id="side-panel">
+  <div class="panel-header">
+    <h2 id="panel-title">Order Detail</h2>
+    <button class="panel-close" onclick="closeSidePanel()">&#10005;</button>
+  </div>
+  <div class="panel-body" id="panel-body">
+    <!-- Dynamically populated -->
+  </div>
+</div>
+
+<!-- DELAY NOTIFICATION DRAWER BACKDROP -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+<!-- DELAY NOTIFICATION DRAWER -->
+<div class="delay-drawer" id="delay-drawer">
+  <div class="drawer-header">
+    <h2 id="drawer-title">&#9888; Delay Notification</h2>
+    <div class="drawer-subtitle" id="drawer-subtitle">Review and send customer delay notification</div>
+    <div class="drawer-mandatory-notice">
+      &#128274; Mandatory action required &mdash; this drawer cannot be closed without sending a notification or escalating to manager
+    </div>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-form">
+      <div class="form-group">
+        <label>To (Customer Email)</label>
+        <input type="email" class="form-input" id="email-to">
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" class="form-input" id="email-subject">
+      </div>
+      <div class="form-group">
+        <label>Delay Reason</label>
+        <select class="form-select" id="email-reason" onchange="updateEmailPreview()">
+          <option value="Material Delay">Material Delay</option>
+          <option value="Capacity Constraint">Capacity Constraint</option>
+          <option value="Engineering Change">Engineering Change</option>
+          <option value="Shipping Delay">Shipping Delay</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>New Estimated Ship Date</label>
+        <input type="date" class="form-input" id="email-new-date" onchange="updateEmailPreview()">
+      </div>
+      <div class="form-group">
+        <label>Email Body (editable)</label>
+        <textarea class="form-textarea" id="email-body" rows="12" oninput="syncPreview(this.value)" style="min-height:260px"></textarea>
+      </div>
+    </div>
+    <div class="drawer-preview">
+      <h3>&#128366; Email Preview</h3>
+      <div class="email-preview-box" id="email-preview-box"></div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <span class="drawer-no-close">&#128274; Must send or escalate to close</span>
+    <div class="spacer"></div>
+    <button class="btn btn-ghost" onclick="escalateToManager()">&#128316; Escalate to Manager</button>
+    <button class="btn btn-primary" onclick="sendNotification()">&#128231; Send Email</button>
+  </div>
+</div>
+
+<!-- CHANGE REQUEST MODAL (within side panel, using a contained form) -->
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:8500';
+
+// ===== DATA =====
+const ORDERS = [
+  {id:'KIM-052', customer:'Gulf Fertilizers Co.', customer_contact:'Ahmed Al-Rashid', customer_email:'a.alrashid@gulfert.com', product_family:'B-GON® Mist Eliminator', original_ship:'2026-03-18', current_milestone:'Fabrication', milestone_idx:3, days_until_due:5, delay_status:'delayed_not_notified', delay_reason:'Material Delay', delay_days:3, notifications:[], milestone_notes:['2026-03-05: Order received','2026-03-07: BOM created','2026-03-10: Materials pulled — PP mesh short, waiting supplier'], carrier:null, tracking:null},
+  {id:'KIM-051', customer:'Pacific Chemicals Inc', customer_contact:'David Park', customer_email:'d.park@pchem.com', product_family:'DRIFTOR® Drift Eliminator', original_ship:'2026-03-20', current_milestone:'QC Check', milestone_idx:4, days_until_due:7, delay_status:'on_track', delay_reason:null, delay_days:0, notifications:['2026-03-08: Order confirmation sent','2026-03-12: Fabrication complete notification sent'], carrier:null, tracking:null},
+  {id:'KIM-050', customer:'Petrochem Solutions Ltd', customer_contact:'Lisa Chen', customer_email:'l.chen@petrochsol.com', product_family:'LIQUI-NOMIX® Coalescer', original_ship:'2026-03-22', current_milestone:'Materials Pulled', milestone_idx:2, days_until_due:9, delay_status:'delayed_not_notified', delay_reason:'Capacity Constraint', delay_days:4, notifications:[], milestone_notes:['2026-03-06: Order received','2026-03-09: BOM created'], carrier:null, tracking:null},
+  {id:'KIM-049', customer:'Atlas Fertilizer Corp', customer_contact:'Robert Kim', customer_email:'r.kim@atlasfert.com', product_family:'B-GON® Mist Eliminator', original_ship:'2026-03-25', current_milestone:'BOM Created', milestone_idx:1, days_until_due:12, delay_status:'delayed_notified', delay_reason:'Material Delay', delay_days:2, notifications:['2026-03-11: Delay notification sent — new ETA 3/27'], milestone_notes:['2026-03-04: Order received','2026-03-08: BOM created'], carrier:null, tracking:null},
+  {id:'KIM-048', customer:'Southern Power Generation', customer_contact:'Maria Santos', customer_email:'m.santos@southernpwr.com', product_family:'Fiber Bed Filter', original_ship:'2026-03-28', current_milestone:'Fabrication', milestone_idx:3, days_until_due:15, delay_status:'on_track', delay_reason:null, delay_days:0, notifications:['2026-03-10: Order confirmation sent'], carrier:null, tracking:null},
+  {id:'KIM-047', customer:'Mosaic Steel Works', customer_contact:'James Thornton', customer_email:'j.thornton@mosaicsteel.com', product_family:'B-GON® Mist Eliminator', original_ship:'2026-04-02', current_milestone:'BOM Pending', milestone_idx:0, days_until_due:20, delay_status:'on_track', delay_reason:null, delay_days:0, notifications:['2026-03-12: Order received confirmation sent'], carrier:null, tracking:null},
+  {id:'KIM-046', customer:'Rhine Energy GmbH', customer_contact:'Klaus Weber', customer_email:'k.weber@rhineenergy.de', product_family:'LIQUI-NOMIX® Coalescer', original_ship:'2026-04-05', current_milestone:'Packed', milestone_idx:5, days_until_due:23, delay_status:'on_track', delay_reason:null, delay_days:0, notifications:['2026-03-11: Ready to ship notification sent'], carrier:'FedEx Freight', tracking:'796123456789', tracking_status:'Label Created'},
+  {id:'KIM-045', customer:'Gulf Chemicals Trading', customer_contact:'Sarah Ahmed', customer_email:'s.ahmed@gulfchem.com', product_family:'KON-TANE® Scrubber Packing', original_ship:'2026-04-08', current_milestone:'BOM Pending', milestone_idx:0, days_until_due:26, delay_status:'on_track', delay_reason:null, delay_days:0, notifications:['2026-03-12: Order confirmation sent'], carrier:null, tracking:null},
+  {id:'KIM-044', customer:'Horizon Petrochemicals', customer_contact:'Anna Williams', customer_email:'a.williams@horizonpetro.com', product_family:'B-GON® Mist Eliminator', original_ship:'2026-04-12', current_milestone:'BOM Pending', milestone_idx:0, days_until_due:30, delay_status:'on_track', delay_reason:null, delay_days:0, notifications:[], carrier:null, tracking:null},
+  {id:'KIM-043', customer:'Coastal Refineries Ltd', customer_contact:'Michael Torres', customer_email:'m.torres@coastalref.com', product_family:'Fiber Bed Filter', original_ship:'2026-04-15', current_milestone:'Materials Pulled', milestone_idx:2, days_until_due:33, delay_status:'on_track', delay_reason:null, delay_days:0, notifications:['2026-03-09: Order confirmation sent'], carrier:null, tracking:null},
+  {id:'KIM-013', customer:'Rhine Energy GmbH', customer_contact:'Klaus Weber', customer_email:'k.weber@rhineenergy.de', product_family:'LIQUI-NOMIX® Coalescer', original_ship:'2026-03-13', current_milestone:'Shipped', milestone_idx:6, days_until_due:0, delay_status:'on_track', delay_reason:null, delay_days:0, notifications:['2026-03-12: Shipped — FedEx tracking sent'], carrier:'FedEx Freight', tracking:'796987654321', tracking_status:'In Transit - Out for Delivery'}
+];
+
+const MILESTONES = ['BOM Pending','BOM Created','Materials Pulled','Fabrication','QC Check','Packed','Shipped','Delivered'];
+
+const CHANGE_REQUESTS = {}; // keyed by order id
+
+const ACCOUNT_HEALTH = [
+  {account:'Gulf Fertilizers Co.', open:2, delayed:1, health:'amber'},
+  {account:'Atlas Fertilizer Corp', open:1, delayed:1, health:'amber'},
+  {account:'Rhine Energy GmbH', open:2, delayed:0, health:'green'},
+  {account:'Petrochem Solutions Ltd', open:1, delayed:1, health:'red'},
+  {account:'Pacific Chemicals Inc', open:1, delayed:0, health:'green'},
+  {account:'Southern Power Generation', open:1, delayed:0, health:'green'},
+  {account:'Coastal Refineries Ltd', open:1, delayed:0, health:'green'},
+  {account:'Mosaic Steel Works', open:1, delayed:0, health:'green'}
+];
+
+const REC_CARDS = [
+  {order_id:'KIM-051', urgency:'low', text:'Fabrication complete — ready to notify Pacific Chemicals of QC start', delay:false},
+  {order_id:'KIM-052', urgency:'high', text:'⚠️ DELAY: Gulf Fertilizers — material delay — ship date slipping 3 days', delay:true},
+  {order_id:'KIM-050', urgency:'high', text:'⚠️ DELAY: Petrochem Solutions — capacity constraint — ship date slipping 4 days', delay:true},
+  {order_id:'KIM-046', urgency:'medium', text:'Rhine Energy — order packed and ready to ship — notify pickup schedule', delay:false}
+];
+
+// ===== STATE =====
+let currentFilter = null;
+let selectedOrderId = null;
+let drawerOrderId = null;
+let sidebarOpen = true;
+let otdOpen = false;
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('last-updated').textContent = new Date().toLocaleString();
+  renderTable(ORDERS);
+  renderAccountHealth();
+  renderOTDChart();
+  initChangeRequests();
+  initSidebarState();
+});
+
+// ===== TABLE RENDERING =====
+function delayStatusSortKey(s) {
+  if (s === 'delayed_not_notified') return 0;
+  if (s === 'delayed_notified') return 1;
+  return 2;
+}
+
+function renderTable(orders) {
+  const tbody = document.getElementById('orders-tbody');
+  if (!orders || orders.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">No orders match current filter.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = orders.map(o => {
+    const flag = o.delay_status === 'delayed_not_notified' ? '🔴' :
+                 o.delay_status === 'delayed_notified' ? '🟡' : '🟢';
+    const daysClass = o.days_until_due <= 5 ? 'urgent' : o.days_until_due <= 14 ? 'warning' : 'ok';
+    const notifBadge = buildNotifBadge(o);
+    const actionBtn = buildActionBtn(o);
+    const selected = selectedOrderId === o.id ? 'selected' : '';
+    return `<tr class="table-row ${selected}" data-id="${o.id}" onclick="openOrderPanel('${o.id}')">
+      <td><span class="delay-flag">${flag}</span></td>
+      <td><span class="order-id">${o.id}</span></td>
+      <td>
+        <div class="customer-name">${o.customer}</div>
+        <div style="font-size:11px;color:var(--muted)">${o.customer_contact}</div>
+      </td>
+      <td><span class="product-tag">${o.product_family}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${formatDate(o.original_ship)}</td>
+      <td><span class="milestone-badge">${o.current_milestone}</span></td>
+      <td><span class="days-cell ${daysClass}">${o.days_until_due === 0 ? '&mdash;' : o.days_until_due + 'd'}</span></td>
+      <td>${notifBadge}</td>
+      <td onclick="event.stopPropagation()">${actionBtn}</td>
+    </tr>`;
+  }).join('');
+}
+
+function buildNotifBadge(o) {
+  if (o.delay_status === 'delayed_not_notified') {
+    return '<span class="notif-badge notif-not-sent">Not Sent</span>';
+  } else if (o.delay_status === 'delayed_notified') {
+    const lastNotif = o.notifications[o.notifications.length - 1] || '';
+    const dateStr = lastNotif.split(':')[0] || '';
+    return `<span class="notif-badge notif-sent">Sent ${dateStr}</span>`;
+  } else {
+    return '<span class="notif-badge notif-on-track">On Track</span>';
+  }
+}
+
+function buildActionBtn(o) {
+  if (o.delay_status === 'delayed_not_notified' || o.delay_status === 'delayed_notified') {
+    return `<button class="btn btn-red btn-sm" onclick="openDelayDrawer('${o.id}')">&#128231; Send Notification</button>`;
+  } else if (o.current_milestone === 'Shipped' || o.current_milestone === 'Delivered') {
+    return `<button class="btn btn-green btn-sm" onclick="openOrderPanel('${o.id}')">&#128230; Confirm Delivery</button>`;
+  } else {
+    return `<button class="btn btn-ghost btn-sm" onclick="openOrderPanel('${o.id}')">&#128065; View</button>`;
+  }
+}
+
+// ===== SORT / FILTER =====
+let sortField = null;
+let sortAsc = true;
+
+function sortByField(field) {
+  if (sortField === field) sortAsc = !sortAsc;
+  else { sortField = field; sortAsc = true; }
+  const sorted = getFilteredOrders().slice().sort((a, b) => {
+    let av = a[field], bv = b[field];
+    if (field === 'delay_status') { av = delayStatusSortKey(av); bv = delayStatusSortKey(bv); }
+    if (typeof av === 'string') return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    return sortAsc ? av - bv : bv - av;
+  });
+  renderTable(sorted);
+}
+
+function getFilteredOrders() {
+  if (!currentFilter) return sortedDefault(ORDERS);
+  if (currentFilter === 'delayed_not_notified') return ORDERS.filter(o => o.delay_status === 'delayed_not_notified');
+  if (currentFilter === 'shipping') return ORDERS.filter(o => o.days_until_due <= 7 && o.delay_status === 'on_track');
+  return ORDERS;
+}
+
+function sortedDefault(orders) {
+  return orders.slice().sort((a, b) => {
+    const ds = delayStatusSortKey(a.delay_status) - delayStatusSortKey(b.delay_status);
+    if (ds !== 0) return ds;
+    return a.days_until_due - b.days_until_due;
+  });
+}
+
+function filterByStatus(status) {
+  currentFilter = status;
+  document.getElementById('clear-filter-btn').style.display = 'inline-flex';
+  renderTable(getFilteredOrders());
+}
+
+function filterShipping() {
+  currentFilter = 'shipping';
+  document.getElementById('clear-filter-btn').style.display = 'inline-flex';
+  renderTable(getFilteredOrders());
+}
+
+function resetFilter() {
+  currentFilter = null;
+  document.getElementById('clear-filter-btn').style.display = 'none';
+  renderTable(sortedDefault(ORDERS));
+}
+
+// ===== ORDER DETAIL PANEL =====
+function openOrderPanel(orderId) {
+  const order = ORDERS.find(o => o.id === orderId);
+  if (!order) return;
+  selectedOrderId = orderId;
+  document.querySelectorAll('.table-row').forEach(r => r.classList.remove('selected'));
+  const row = document.querySelector(`.table-row[data-id="${orderId}"]`);
+  if (row) row.classList.add('selected');
+
+  document.getElementById('panel-title').textContent = `${order.id} — ${order.customer}`;
+  document.getElementById('panel-body').innerHTML = buildPanelContent(order);
+  document.getElementById('overlay').classList.add('active');
+  document.getElementById('side-panel').classList.add('open');
+}
+
+function closeSidePanel() {
+  document.getElementById('overlay').classList.remove('active');
+  document.getElementById('side-panel').classList.remove('open');
+  selectedOrderId = null;
+  document.querySelectorAll('.table-row').forEach(r => r.classList.remove('selected'));
+}
+
+function buildPanelContent(o) {
+  const flag = o.delay_status === 'delayed_not_notified' ? '<span class="badge badge-red">🔴 Delayed — Not Notified</span>' :
+               o.delay_status === 'delayed_notified' ? '<span class="badge badge-amber">🟡 Delayed — Notified</span>' :
+               '<span class="badge badge-green">🟢 On Track</span>';
+  const milestoneBar = buildMilestoneBar(o.milestone_idx);
+  const notes = (o.milestone_notes || []).map(n => {
+    const parts = n.split(':');
+    const date = parts[0];
+    const text = parts.slice(1).join(':').trim();
+    return `<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-date">${date}</div><div class="timeline-text">${text}</div></div></div>`;
+  }).join('') || '<div class="empty-state">No milestone notes yet.</div>';
+
+  const comms = (o.notifications || []).map(n => {
+    const parts = n.split(':');
+    const date = parts[0];
+    const text = parts.slice(1).join(':').trim();
+    return `<div class="timeline-item"><div class="timeline-dot" style="background:var(--blue)"></div><div class="timeline-content"><div class="timeline-date">${date}</div><div class="timeline-text">${text}</div></div></div>`;
+  }).join('') || '<div class="empty-state" style="padding:10px 0;text-align:left">No communications logged yet.</div>';
+
+  const changeReqs = buildChangeRequestsForOrder(o.id);
+
+  const delayBtn = (o.delay_status === 'delayed_not_notified' || o.delay_status === 'delayed_notified') ?
+    `<button class="btn btn-red" onclick="openDelayDrawer('${o.id}')">&#128231; Send Delay Notification</button>` : '';
+  const deliverBtn = (o.current_milestone === 'Shipped' || o.current_milestone === 'Delivered') ?
+    `<button class="btn btn-green" onclick="confirmDelivery('${o.id}')">&#128230; Confirm Delivery</button>` : '';
+
+  const trackSection = o.tracking ? `
+    <div class="panel-section">
+      <div class="panel-section-title">&#128230; Shipment Tracking</div>
+      <div class="track-card" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;">
+        <span class="carrier-badge">${o.carrier}</span>
+        <div class="track-info">
+          <div class="track-num">${o.tracking}</div>
+          <span class="track-status ${o.tracking_status && o.tracking_status.includes('Transit') ? 'in-transit' : 'label'}">${o.tracking_status}</span>
+          <a class="track-link" href="https://www.fedex.com/fedextrack/?trknbr=${o.tracking}" target="_blank">&#10697; View Tracking</a>
+        </div>
+      </div>
+    </div>` : '';
+
+  return `
+    <div class="panel-section">
+      <div class="panel-order-info">
+        <div class="info-item"><label>Order</label><span class="order-id" style="font-size:16px">${o.id}</span></div>
+        <div class="info-item"><label>Customer</label><span>${o.customer}</span></div>
+        <div class="info-item"><label>Contact</label><span>${o.customer_contact}</span></div>
+        <div class="info-item"><label>Email</label><span style="font-size:12px;color:var(--muted)">${o.customer_email}</span></div>
+        <div class="info-item"><label>Product</label><span>${o.product_family}</span></div>
+        <div class="info-item"><label>Original Ship</label><span>${formatDate(o.original_ship)}</span></div>
+        <div class="info-item"><label>Days Until Due</label><span style="color:${o.days_until_due <= 5 ? 'var(--red)' : o.days_until_due <= 14 ? 'var(--amber)' : 'var(--green)'}">${o.days_until_due === 0 ? 'Shipped' : o.days_until_due + ' days'}</span></div>
+        <div class="info-item"><label>Status</label>${flag}</div>
+        ${o.delay_reason ? `<div class="info-item"><label>Delay Reason</label><span style="color:var(--amber)">${o.delay_reason} (${o.delay_days}d)</span></div>` : ''}
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">&#128203; Milestone Progress</div>
+      ${milestoneBar}
+    </div>
+
+    ${trackSection}
+
+    <div class="panel-section">
+      <div class="panel-section-title">&#128221; Milestone Notes</div>
+      <div id="panel-notes-list">${notes}</div>
+      <div class="add-note-row" style="margin-top:10px">
+        <input type="text" id="new-note-input" placeholder="Add milestone note..." />
+        <button class="btn btn-ghost btn-sm" onclick="addMilestoneNote('${o.id}')">Add</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">&#128172; Communication Timeline</div>
+      <div id="panel-comms-list">${comms}</div>
+      <div class="add-note-row" style="margin-top:10px">
+        <input type="text" id="new-comm-input" placeholder="Log a contact note..." />
+        <button class="btn btn-ghost btn-sm" onclick="addCommNote('${o.id}')">Log</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">&#128295; Change Requests</div>
+      <div id="change-reqs-list">${changeReqs}</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="toggleCRForm('${o.id}')">+ New Change Request</button>
+      <div id="cr-form-container" style="margin-top:10px;display:none">
+        ${buildCRForm(o.id)}
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="display:flex;gap:10px;padding-bottom:16px">
+      ${delayBtn}
+      ${deliverBtn}
+    </div>
+  `;
+}
+
+function buildMilestoneBar(currentIdx) {
+  return `<div class="milestone-steps">
+    ${MILESTONES.map((m, i) => {
+      const cls = i < currentIdx ? 'done' : i === currentIdx ? 'active' : '';
+      const icon = i < currentIdx ? '&#10003;' : i === currentIdx ? '&#9679;' : '';
+      return `<div class="ms-step ${cls}"><div class="ms-dot">${icon}</div><div class="ms-label">${m}</div></div>`;
+    }).join('')}
+  </div>`;
+}
+
+function addMilestoneNote(orderId) {
+  const input = document.getElementById('new-note-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const order = ORDERS.find(o => o.id === orderId);
+  if (!order) return;
+  const today = new Date().toISOString().slice(0,10);
+  const note = `${today}: ${text}`;
+  if (!order.milestone_notes) order.milestone_notes = [];
+  order.milestone_notes.push(note);
+  input.value = '';
+  // Re-render just the notes list
+  const listEl = document.getElementById('panel-notes-list');
+  if (listEl) {
+    listEl.innerHTML = order.milestone_notes.map(n => {
+      const parts = n.split(':');
+      const date = parts[0];
+      const t = parts.slice(1).join(':').trim();
+      return `<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-date">${date}</div><div class="timeline-text">${t}</div></div></div>`;
+    }).join('');
+  }
+  showToast('Milestone note added.', 'success');
+}
+
+function addCommNote(orderId) {
+  const input = document.getElementById('new-comm-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const order = ORDERS.find(o => o.id === orderId);
+  if (!order) return;
+  const today = new Date().toISOString().slice(0,10);
+  const note = `${today}: ${text}`;
+  if (!order.notifications) order.notifications = [];
+  order.notifications.push(note);
+  input.value = '';
+  const listEl = document.getElementById('panel-comms-list');
+  if (listEl) {
+    listEl.innerHTML = order.notifications.map(n => {
+      const parts = n.split(':');
+      const date = parts[0];
+      const t = parts.slice(1).join(':').trim();
+      return `<div class="timeline-item"><div class="timeline-dot" style="background:var(--blue)"></div><div class="timeline-content"><div class="timeline-date">${date}</div><div class="timeline-text">${t}</div></div></div>`;
+    }).join('');
+  }
+  showToast('Communication logged.', 'success');
+}
+
+function confirmDelivery(orderId) {
+  const order = ORDERS.find(o => o.id === orderId);
+  if (!order) return;
+  order.current_milestone = 'Delivered';
+  order.milestone_idx = 7;
+  const today = new Date().toISOString().slice(0,10);
+  order.notifications.push(`${today}: Delivery confirmed by Jordan Kim`);
+  showToast(`Delivery confirmed for ${orderId}.`, 'success');
+  renderTable(getFilteredOrders());
+  if (selectedOrderId === orderId) openOrderPanel(orderId);
+}
+
+// ===== CHANGE REQUESTS =====
+function initChangeRequests() {
+  ORDERS.forEach(o => { if (!CHANGE_REQUESTS[o.id]) CHANGE_REQUESTS[o.id] = []; });
+}
+
+function buildChangeRequestsForOrder(orderId) {
+  const reqs = CHANGE_REQUESTS[orderId] || [];
+  if (reqs.length === 0) return '<div class="empty-state" style="padding:8px 0;text-align:left;font-size:12px">No change requests for this order.</div>';
+  return reqs.map((cr, i) => `
+    <div class="change-req-card">
+      <div class="change-req-type">${cr.type}</div>
+      <div class="change-req-desc">${cr.description}</div>
+      <div class="change-req-meta">Acknowledgement: ${cr.acknowledgement} &bull; ${cr.date}</div>
+    </div>`).join('');
+}
+
+function buildCRForm(orderId) {
+  return `<div class="cr-form">
+    <h4>New Change Request</h4>
+    <div class="form-group">
+      <label>Type</label>
+      <select class="form-select" id="cr-type">
+        <option>Delivery Date Change</option>
+        <option>Ship-to Address</option>
+        <option>Spec Revision</option>
+        <option>Quantity Change</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea class="form-textarea" id="cr-desc" style="min-height:80px" placeholder="Describe the change request..."></textarea>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:13px;font-weight:500">
+        <input type="checkbox" id="cr-bom" onchange="toggleBOMWarning()"> Does this affect the BOM?
+      </label>
+      <div class="cr-warning" id="cr-bom-warning">&#9888; Sam Rivera (Engineering) will be notified of BOM impact.</div>
+    </div>
+    <div class="form-group">
+      <label>Customer Acknowledgement</label>
+      <div class="radio-group">
+        <label class="radio-label"><input type="radio" name="cr-ack" value="Pending" checked> Pending</label>
+        <label class="radio-label"><input type="radio" name="cr-ack" value="Acknowledged"> Acknowledged</label>
+        <label class="radio-label"><input type="radio" name="cr-ack" value="Accepted"> Accepted</label>
+        <label class="radio-label"><input type="radio" name="cr-ack" value="Rejected"> Rejected</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea class="form-textarea" id="cr-notes" style="min-height:60px" placeholder="Additional notes..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary btn-sm" onclick="saveCR('${orderId}')">Save Change Request</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleCRForm('${orderId}')">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function toggleCRForm(orderId) {
+  const container = document.getElementById('cr-form-container');
+  if (!container) return;
+  container.style.display = container.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleBOMWarning() {
+  const cb = document.getElementById('cr-bom');
+  const warn = document.getElementById('cr-bom-warning');
+  if (cb && warn) warn.classList.toggle('show', cb.checked);
+}
+
+function saveCR(orderId) {
+  const type = document.getElementById('cr-type')?.value;
+  const desc = document.getElementById('cr-desc')?.value?.trim();
+  if (!desc) { showToast('Please enter a description.', 'error'); return; }
+  const ackEl = document.querySelector('input[name="cr-ack"]:checked');
+  const acknowledgement = ackEl ? ackEl.value : 'Pending';
+  const notes = document.getElementById('cr-notes')?.value?.trim();
+  const today = new Date().toISOString().slice(0,10);
+  if (!CHANGE_REQUESTS[orderId]) CHANGE_REQUESTS[orderId] = [];
+  CHANGE_REQUESTS[orderId].push({ type, description: desc, acknowledgement, notes, date: today });
+  document.getElementById('change-reqs-list').innerHTML = buildChangeRequestsForOrder(orderId);
+  document.getElementById('cr-form-container').style.display = 'none';
+  showToast('Change request saved.', 'success');
+}
+
+// ===== DELAY NOTIFICATION DRAWER =====
+function openDelayDrawer(orderId) {
+  const order = ORDERS.find(o => o.id === orderId);
+  if (!order) return;
+  drawerOrderId = orderId;
+
+  document.getElementById('drawer-title').textContent = `⚠️ Delay Notification — ${order.id} — ${order.customer}`;
+  document.getElementById('drawer-subtitle').textContent = `${order.customer_contact} · ${order.customer_email} · ${order.product_family}`;
+  document.getElementById('email-to').value = order.customer_email;
+  document.getElementById('email-subject').value = `Order ${order.id} Update — Revised Delivery Schedule`;
+
+  // Reason
+  const reasonSel = document.getElementById('email-reason');
+  if (order.delay_reason) {
+    for (let i = 0; i < reasonSel.options.length; i++) {
+      if (reasonSel.options[i].value === order.delay_reason) { reasonSel.selectedIndex = i; break; }
+    }
+  }
+
+  // New date
+  const origDate = new Date(order.original_ship);
+  const newDate = new Date(origDate);
+  newDate.setDate(newDate.getDate() + (order.delay_days || 0) + 2);
+  document.getElementById('email-new-date').value = newDate.toISOString().slice(0,10);
+
+  // Body
+  const body = buildEmailBody(order, newDate);
+  document.getElementById('email-body').value = body;
+  document.getElementById('email-preview-box').textContent = body;
+
+  document.getElementById('drawer-backdrop').classList.add('active');
+  document.getElementById('delay-drawer').classList.add('open');
+}
+
+function buildEmailBody(order, newDate) {
+  const reason = document.getElementById('email-reason')?.value || order.delay_reason || 'unforeseen circumstances';
+  const newDateStr = newDate instanceof Date ? newDate.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'}) : newDate;
+  return `Dear ${order.customer_contact},
+
+I wanted to proactively update you on the status of your order ${order.id} for ${order.product_family}.
+
+Your original ship date was ${formatDate(order.original_ship)}. Due to ${reason}, we are now expecting to ship by ${newDateStr}.
+
+We apologize for this delay and appreciate your patience. Your order is currently at the ${order.current_milestone} stage and progressing well.
+
+If you have any questions, please don't hesitate to reach out.
+
+Best regards,
+Jordan Kim
+Customer Service — Kimre Inc.
+Phone: (555) 867-5309
+jordan.kim@kimreinc.com`;
+}
+
+function updateEmailPreview() {
+  const order = ORDERS.find(o => o.id === drawerOrderId);
+  if (!order) return;
+  const dateStr = document.getElementById('email-new-date').value;
+  const newDate = dateStr ? new Date(dateStr).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'}) : '';
+  const reason = document.getElementById('email-reason').value;
+  const body = `Dear ${order.customer_contact},
+
+I wanted to proactively update you on the status of your order ${order.id} for ${order.product_family}.
+
+Your original ship date was ${formatDate(order.original_ship)}. Due to ${reason}, we are now expecting to ship by ${newDate}.
+
+We apologize for this delay and appreciate your patience. Your order is currently at the ${order.current_milestone} stage and progressing well.
+
+If you have any questions, please don't hesitate to reach out.
+
+Best regards,
+Jordan Kim
+Customer Service — Kimre Inc.
+Phone: (555) 867-5309
+jordan.kim@kimreinc.com`;
+  document.getElementById('email-body').value = body;
+  document.getElementById('email-preview-box').textContent = body;
+}
+
+function syncPreview(val) {
+  document.getElementById('email-preview-box').textContent = val;
+}
+
+async function sendNotification() {
+  const order = ORDERS.find(o => o.id === drawerOrderId);
+  if (!order) return;
+  const emailTo = document.getElementById('email-to').value;
+  const body = document.getElementById('email-body').value;
+
+  // Try API first
+  try {
+    await fetch(`${API}/api/notifications/send`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({order_id: order.id, to: emailTo, body}),
+      signal: AbortSignal.timeout(3000)
+    });
+  } catch(e) { /* offline — continue with local update */ }
+
+  // Update local state
+  const today = new Date().toISOString().slice(0,10);
+  const shortDate = new Date().toLocaleDateString('en-US', {month:'numeric', day:'numeric'});
+  order.notifications.push(`${today}: Delay notification sent to ${emailTo}`);
+  order.delay_status = 'delayed_notified';
+
+  closeDelayDrawer();
+  renderTable(getFilteredOrders());
+  showToast(`Notification sent to ${emailTo} — logged in order record.`, 'success');
+
+  // Update KPI
+  updateKPIs();
+
+  // Refresh panel if open
+  if (selectedOrderId === order.id) openOrderPanel(order.id);
+}
+
+function escalateToManager() {
+  const order = ORDERS.find(o => o.id === drawerOrderId);
+  if (!order) return;
+  const today = new Date().toISOString().slice(0,10);
+  order.notifications.push(`${today}: Escalated to Manager — delay notification pending manager review`);
+  closeDelayDrawer();
+  showToast(`Order ${order.id} escalated to manager. Logged in order record.`, 'info');
+  renderTable(getFilteredOrders());
+}
+
+function closeDelayDrawer() {
+  document.getElementById('drawer-backdrop').classList.remove('active');
+  document.getElementById('delay-drawer').classList.remove('open');
+  drawerOrderId = null;
+}
+
+// ===== ACCOUNT HEALTH =====
+function renderAccountHealth() {
+  const container = document.getElementById('account-health-list');
+  container.innerHTML = ACCOUNT_HEALTH.map(a => {
+    const dot = a.health === 'red' ? '🔴' : a.health === 'amber' ? '🟡' : '🟢';
+    return `<div class="account-row">
+      <div class="account-name">${a.account}</div>
+      <div class="account-meta">
+        <span class="account-meta-text">${a.open} open &bull; ${a.delayed} delayed</span>
+        <span class="health-dot">${dot}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('account-sidebar');
+  sidebarOpen = !sidebarOpen;
+  sidebar.classList.toggle('collapsed', !sidebarOpen);
+}
+
+function initSidebarState() {
+  // Start open
+}
+
+// ===== AGENT RUN THEATER =====
+let agentRunning = false;
+
+async function runAgent() {
+  if (agentRunning) return;
+  agentRunning = true;
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Running...';
+
+  const stepsEl = document.getElementById('run-steps');
+  const recsEl = document.getElementById('run-recs');
+  stepsEl.classList.add('visible');
+  recsEl.classList.remove('visible');
+
+  // Reset steps
+  document.querySelectorAll('.run-step').forEach(s => { s.classList.remove('visible','done','running'); });
+
+  // Try API
+  let apiSuccess = false;
+  try {
+    const resp = await fetch(`${API}/api/run/kimre-order-notifier-agent`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({orders: ORDERS.length}),
+      signal: AbortSignal.timeout(5000)
+    });
+    if (resp.ok) apiSuccess = true;
+  } catch(e) { /* offline mock */ }
+
+  // Animate steps regardless
+  const steps = ['step-0','step-1','step-2','step-3','step-4'];
+  for (let i = 0; i < steps.length; i++) {
+    const el = document.getElementById(steps[i]);
+    el.classList.add('visible', 'running');
+    await delay(600 + Math.random() * 400);
+    el.classList.remove('running');
+    el.classList.add('done');
+    el.querySelector('.step-icon').innerHTML = '&#10003;';
+  }
+
+  await delay(400);
+  renderRecCards();
+  recsEl.classList.add('visible');
+
+  btn.disabled = false;
+  btn.innerHTML = '&#9654; Run Again';
+  agentRunning = false;
+}
+
+function renderRecCards() {
+  const container = document.getElementById('rec-cards-container');
+  container.innerHTML = REC_CARDS.map((rec, i) => `
+    <div class="rec-card ${rec.urgency}" id="rec-card-${i}">
+      <span class="rec-urgency ${rec.urgency}">${rec.urgency.toUpperCase()}</span>
+      <div class="rec-body">
+        <div class="rec-order">${rec.order_id}</div>
+        <div class="rec-text">${rec.text}</div>
+        <div class="rec-actions">
+          <button class="btn btn-primary btn-xs" onclick="acceptRec(${i})">${rec.delay ? '&#128231; Send Notification' : '&#10003; Accept'}</button>
+          <button class="btn btn-ghost btn-xs" onclick="editRec(${i})">&#9998; Edit</button>
+          <button class="btn btn-ghost btn-xs" onclick="rejectRec(${i})">&#10005; Reject</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function acceptRec(i) {
+  const rec = REC_CARDS[i];
+  if (rec.delay) {
+    openDelayDrawer(rec.order_id);
+  } else {
+    const card = document.getElementById(`rec-card-${i}`);
+    if (card) { card.style.opacity = '0.5'; card.style.pointerEvents = 'none'; }
+    showToast(`Recommendation for ${rec.order_id} accepted.`, 'success');
+  }
+}
+
+function editRec(i) {
+  const rec = REC_CARDS[i];
+  showToast(`Opening detail for ${rec.order_id}...`, 'info');
+  openOrderPanel(rec.order_id);
+}
+
+function rejectRec(i) {
+  const card = document.getElementById(`rec-card-${i}`);
+  if (card) { card.style.opacity = '0.35'; card.style.pointerEvents = 'none'; }
+  showToast('Recommendation rejected and dismissed.', 'info');
+}
+
+// ===== OTD REPORT =====
+const OTD_WEEKS = [92, 88, 95, 87, 83, 91, 89, 87];
+const WEEK_LABELS = ['Wk 6','Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13'];
+
+function renderOTDChart() {
+  const svg = document.getElementById('otd-chart');
+  const W = 640, H = 160;
+  const padL = 40, padR = 20, padT = 20, padB = 30;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const minVal = 75, maxVal = 100;
+
+  const xStep = chartW / (OTD_WEEKS.length - 1);
+  const yScale = v => padT + chartH - ((v - minVal) / (maxVal - minVal)) * chartH;
+
+  // Grid lines
+  let gridLines = '';
+  for (let v = 80; v <= 100; v += 5) {
+    const y = yScale(v);
+    gridLines += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#1e293b" stroke-width="1"/>`;
+    gridLines += `<text x="${padL - 6}" y="${y + 4}" text-anchor="end" fill="#64748b" font-size="10">${v}%</text>`;
+  }
+
+  // Target line (90%)
+  const targetY = yScale(90);
+  const targetLine = `<line x1="${padL}" y1="${targetY}" x2="${W - padR}" y2="${targetY}" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,3"/><text x="${W - padR + 4}" y="${targetY + 4}" fill="#f59e0b" font-size="9">Target</text>`;
+
+  // Bars
+  const barWidth = xStep * 0.5;
+  let bars = '';
+  OTD_WEEKS.forEach((v, i) => {
+    const x = padL + i * xStep;
+    const y = yScale(v);
+    const h = H - padB - y;
+    const color = v >= 90 ? '#22c55e' : v >= 85 ? '#f59e0b' : '#ef4444';
+    bars += `<rect x="${x - barWidth/2}" y="${y}" width="${barWidth}" height="${h}" fill="${color}" opacity="0.7" rx="2"/>`;
+    bars += `<text x="${x}" y="${y - 4}" text-anchor="middle" fill="${color}" font-size="9" font-weight="700">${v}%</text>`;
+  });
+
+  // Trend line
+  const linePoints = OTD_WEEKS.map((v, i) => `${padL + i * xStep},${yScale(v)}`).join(' ');
+  const trendLine = `<polyline points="${linePoints}" fill="none" stroke="#f97316" stroke-width="2" stroke-linejoin="round"/>`;
+
+  // Week labels
+  let labels = '';
+  WEEK_LABELS.forEach((lbl, i) => {
+    labels += `<text x="${padL + i * xStep}" y="${H - 4}" text-anchor="middle" fill="#64748b" font-size="10">${lbl}</text>`;
+  });
+
+  svg.innerHTML = gridLines + targetLine + bars + trendLine + labels;
+}
+
+function toggleOTD() {
+  otdOpen = !otdOpen;
+  const body = document.getElementById('otd-body');
+  const header = document.getElementById('otd-header');
+  body.classList.toggle('open', otdOpen);
+  header.classList.toggle('open', otdOpen);
+}
+
+function openOTD() {
+  if (!otdOpen) toggleOTD();
+  document.getElementById('otd-section').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ===== CSV DOWNLOAD =====
+function downloadCSV() {
+  const headers = ['Order ID','Customer','Product','Original Ship','Milestone','Days Until Due','Delay Status','Notifications Sent'];
+  const rows = ORDERS.map(o => [
+    o.id, o.customer, o.product_family, o.original_ship,
+    o.current_milestone, o.days_until_due, o.delay_status, o.notifications.length
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kimre-otd-report-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('OTD report downloaded as CSV.', 'success');
+}
+
+function copyBoardReport() {
+  const text = `Kimre Inc. — On-Time Delivery Report\n` +
+    `Generated: ${new Date().toLocaleDateString()}\n\n` +
+    `OTD Rate (30d): 87% (Target: 90%)\n` +
+    `Open Orders: 11\n` +
+    `On-Time This Week: 7\n` +
+    `Delayed (Notified): 1\n` +
+    `Delayed (Not Notified): 2 — Action Required\n` +
+    `Avg Cycle Time: 18.4 days\n\n` +
+    `8-Week Trend: 92%, 88%, 95%, 87%, 83%, 91%, 89%, 87%\n\n` +
+    `Priority Actions:\n` +
+    `• KIM-052 (Gulf Fertilizers) — Delay notification not sent — Material Delay\n` +
+    `• KIM-050 (Petrochem Solutions) — Delay notification not sent — Capacity Constraint`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Board report copied to clipboard.', 'success');
+  }).catch(() => {
+    showToast('Copy failed — check browser permissions.', 'error');
+  });
+}
+
+// ===== KPI UPDATE =====
+function updateKPIs() {
+  const notNotified = ORDERS.filter(o => o.delay_status === 'delayed_not_notified').length;
+  const notified = ORDERS.filter(o => o.delay_status === 'delayed_notified').length;
+  const kpiStrip = document.getElementById('kpi-strip');
+  const cards = kpiStrip.querySelectorAll('.kpi-card');
+  cards[1].querySelector('.kpi-value').textContent = notNotified;
+  cards[2].querySelector('.kpi-value').textContent = notified;
+}
+
+// ===== TOAST =====
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="toast-text">${message}</span><button class="toast-close" onclick="this.parentElement.remove()">&#10005;</button>`;
+  container.appendChild(toast);
+  setTimeout(() => { if (toast.parentElement) toast.remove(); }, 5000);
+}
+
+// ===== HELPERS =====
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Initial sort on load
+window.addEventListener('DOMContentLoaded', () => {
+  renderTable(sortedDefault(ORDERS));
+});
+</script>
+</body>
+</html>

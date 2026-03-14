@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Controller Dashboard — Business Agents</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #1c2128;
+      --card-hover: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+
+      --sandbox: #39d353;
+      --sandbox-dim: #39d35320;
+      --blueprint-col: #8b949e;
+      --blueprint-dim: #8b949e20;
+
+      --low: #3fb950;
+      --low-dim: #3fb95020;
+      --medium: #d29922;
+      --medium-dim: #d2992220;
+      --high: #f85149;
+      --high-dim: #f8514920;
+
+      --finance: #f0883e;
+      --finance-dim: #f0883e18;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+    }
+
+    .nav-tab:hover {
+      background: rgba(88, 166, 255, 0.08);
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: rgba(240, 136, 62, 0.12);
+      color: var(--finance);
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .persona-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--finance);
+      margin-bottom: 6px;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .persona-name {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .refresh-info {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .refresh-btn {
+      font-size: 0.75rem;
+      color: var(--finance);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      margin-left: 8px;
+      transition: background 120ms;
+    }
+
+    .refresh-btn:hover { background: var(--finance-dim); }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      padding: 32px 40px;
+    }
+
+    .main-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+    }
+
+    .main-left { display: flex; flex-direction: column; gap: 32px; }
+    .main-right { display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── Agent tiles grid ── */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .agent-tile {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .tile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tile-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .lifecycle-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 9px;
+    }
+
+    .lifecycle-badge.sandbox {
+      background: rgba(57, 211, 83, 0.15);
+      color: #56d364;
+      border: 1px solid rgba(57, 211, 83, 0.3);
+    }
+
+    .lifecycle-badge.blueprint {
+      background: var(--blueprint-dim);
+      color: var(--blueprint-col);
+      border: 1px solid rgba(139, 148, 158, 0.3);
+    }
+
+    .authority-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 9px;
+    }
+
+    .authority-pill.low {
+      background: var(--low-dim);
+      color: var(--low);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .authority-pill.medium {
+      background: var(--medium-dim);
+      color: var(--medium);
+      border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+
+    .authority-pill.high {
+      background: var(--high-dim);
+      color: var(--high);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+    }
+
+    .tile-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .tile-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.green { background: #3fb950; box-shadow: 0 0 6px rgba(63,185,80,0.5); }
+    .status-dot.gray { background: #6e7681; }
+
+    .tile-metric {
+      background: rgba(110, 118, 129, 0.06);
+      border: 1px solid rgba(110, 118, 129, 0.15);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .tile-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    .tile-schedule {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .tile-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--finance);
+      text-decoration: none;
+      opacity: 0.7;
+    }
+
+    /* ── Pipeline section ── */
+    .pipeline-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .pipeline-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 16px;
+    }
+
+    .pipeline-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .pipeline-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .pipeline-count {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .progress-bar-wrap {
+      margin-bottom: 20px;
+    }
+
+    .progress-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-bg {
+      background: var(--border);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--finance);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .value-highlight {
+      background: var(--finance-dim);
+      border: 1px solid rgba(240, 136, 62, 0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: var(--finance);
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .blueprint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .blueprint-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      gap: 12px;
+    }
+
+    .blueprint-info { flex: 1; }
+
+    .blueprint-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .blueprint-meta {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+    }
+
+    .blueprint-status {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--blueprint-col);
+      background: var(--blueprint-dim);
+      border: 1px solid rgba(139,148,158,0.2);
+      border-radius: 20px;
+      padding: 3px 9px;
+      white-space: nowrap;
+    }
+
+    .blueprint-link {
+      font-size: 0.75rem;
+      color: var(--finance);
+      text-decoration: none;
+      white-space: nowrap;
+      opacity: 0.8;
+    }
+
+    .blueprint-link:hover { opacity: 1; }
+
+    /* ── ROI section ── */
+    .roi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .roi-total {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--finance);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .roi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .roi-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .roi-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .roi-row-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .roi-bar-bg {
+      background: var(--border);
+      border-radius: 3px;
+      height: 6px;
+      overflow: hidden;
+    }
+
+    .roi-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .roi-bar-fill.invoice { background: var(--finance); width: 60%; }
+    .roi-bar-fill.forecast { background: var(--accent); width: 25%; }
+    .roi-bar-fill.variance { background: var(--low); width: 15%; }
+
+    /* ── Sidebar panels ── */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Approval items */
+    .approval-item {
+      padding: 14px;
+      background: rgba(248, 81, 73, 0.04);
+      border: 1px solid rgba(248, 81, 73, 0.15);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .approval-item:last-child { margin-bottom: 0; }
+
+    .approval-title {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .approval-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .approval-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-approve {
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--low);
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      cursor: default;
+    }
+
+    .btn-review {
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 14px;
+      cursor: default;
+    }
+
+    .approval-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    /* Footer */
+    footer {
+      padding: 16px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--finance);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 1024px) {
+      .main-inner { grid-template-columns: 1fr; }
+    }
+
+    /* ── Offline banner ── */
+    .offline-banner {
+      display: none;
+      background: rgba(248,81,73,0.1);
+      border-bottom: 1px solid rgba(248,81,73,0.25);
+      padding: 9px 40px;
+      font-size: 13px;
+      color: #f85149;
+      text-align: center;
+    }
+    .offline-banner.visible { display: block; }
+
+    /* ── Button interactivity ── */
+    .btn-approve { cursor: pointer; }
+    .btn-review  { cursor: pointer; }
+    .btn-approve:hover { opacity: 0.85; }
+    .btn-review:hover  { background: rgba(139,148,158,0.1); }
+
+    /* ── Run button on tiles ── */
+    .run-btn {
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 4px 10px;
+      border: 1px solid rgba(240,136,62,0.4);
+      background: rgba(240,136,62,0.12);
+      color: var(--finance);
+      cursor: pointer;
+      transition: background 120ms, opacity 120ms;
+      white-space: nowrap;
+    }
+    .run-btn:hover:not(:disabled) { background: rgba(240,136,62,0.25); }
+    .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Run Theater Drawer ── */
+    .run-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      backdrop-filter: blur(2px);
+    }
+    .run-overlay.active { display: block; }
+
+    .run-drawer {
+      position: fixed;
+      top: 0; right: -500px;
+      width: 480px; height: 100vh;
+      background: #1a1f2e;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      z-index: 201;
+      display: flex; flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -8px 0 32px rgba(0,0,0,0.4);
+    }
+    .run-drawer.active { right: 0; }
+
+    .drawer-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+    }
+    .drawer-agent-name { font-size: 1rem; font-weight: 700; color: #e2e8f0; }
+    .drawer-subtitle { font-size: 0.75rem; color: #64748b; margin-top: 3px; }
+    .drawer-close {
+      background: none; border: none; color: #64748b; font-size: 1.1rem;
+      cursor: pointer; padding: 2px 6px; border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .drawer-close:hover { color: #e2e8f0; background: rgba(255,255,255,0.06); }
+
+    .drawer-log {
+      flex: 0 0 auto;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      min-height: 140px; max-height: 280px;
+      overflow-y: auto;
+    }
+    .log-step {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 0;
+      font-size: 0.82rem; color: #94a3b8;
+      opacity: 0; transform: translateY(4px);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .log-step.visible { opacity: 1; transform: translateY(0); }
+    .log-step .step-icon { font-size: 0.9rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .log-step.done { color: #94a3b8; }
+    .log-step.done .step-icon::after { content: ' \2705'; }
+    .log-step.running { color: #e2e8f0; }
+    .log-step.running .step-icon { animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+    .drawer-results { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .drawer-results-header {
+      padding: 12px 20px 8px;
+      font-size: 0.8rem; font-weight: 600; color: #64748b;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .rec-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+    .rec-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s, opacity 0.3s;
+    }
+    .rec-row:hover { background: rgba(255,255,255,0.02); }
+    .rec-row.decided { opacity: 0.45; }
+
+    .urgency-badge {
+      flex-shrink: 0;
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      padding: 2px 6px; border-radius: 3px; margin-top: 2px;
+      letter-spacing: 0.05em;
+    }
+    .urgency-critical { background: rgba(239,68,68,0.2); color: #f87171; }
+    .urgency-high     { background: rgba(251,146,60,0.2); color: #fb923c; }
+    .urgency-medium   { background: rgba(234,179,8,0.2);  color: #facc15; }
+    .urgency-low      { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+    .rec-body { flex: 1; min-width: 0; }
+    .rec-item-id { font-size: 0.72rem; color: #64748b; font-family: monospace; }
+    .rec-label { font-size: 0.82rem; color: #cbd5e1; margin: 2px 0; font-weight: 500; }
+    .rec-action { font-size: 0.75rem; color: #94a3b8; line-height: 1.4; }
+
+    .rec-buttons { display: flex; gap: 6px; flex-shrink: 0; margin-top: 2px; }
+    .btn-accept, .btn-reject {
+      font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 4px;
+      border: none; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-accept { background: rgba(16,185,129,0.15); color: #10b981; }
+    .btn-accept:hover { background: rgba(16,185,129,0.3); }
+    .btn-accept.active { background: #10b981; color: #fff; }
+    .btn-reject { background: rgba(239,68,68,0.12); color: #f87171; }
+    .btn-reject:hover { background: rgba(239,68,68,0.25); }
+    .btn-reject.active { background: #ef4444; color: #fff; }
+
+    .drawer-footer {
+      padding: 14px 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(0,0,0,0.2);
+    }
+    .btn-submit-decisions {
+      background: #3b82f6; color: #fff; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-submit-decisions:hover { background: #2563eb; }
+    .btn-submit-decisions:disabled { background: #334155; color: #64748b; cursor: default; }
+    .decisions-summary { font-size: 0.75rem; color: #64748b; }
+
+    /* S41-2B Commitment Calendar */
+    .commitment-calendar { margin-bottom: 24px; }
+    .cal-grid { display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 4px; margin: 16px 0; font-size: 12px; }
+    .cal-header-cell { text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; }
+    .cal-row-label { display: flex; align-items: center; color: var(--text-muted); font-size: 11px; }
+    .cal-cell { padding: 8px 6px; border-radius: 6px; text-align: center; cursor: pointer; transition: transform 0.1s; }
+    .cal-cell:hover { transform: scale(1.05); }
+    .cal-low    { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .cal-medium { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .cal-high   { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .cal-empty  { background: rgba(100,116,139,0.08); color: var(--text-muted); }
+    .cal-legend { display: flex; gap: 16px; margin-top: 8px; }
+    .cal-leg-item { font-size: 11px; padding: 3px 10px; border-radius: 4px; }
+
+    /* S41-2C Budget Gate Modal */
+    .budget-gate-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; display: none; align-items: center; justify-content: center; }
+    .budget-gate-overlay.show { display: flex; }
+    .budget-gate-modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 480px; width: 90%; }
+    .budget-gate-modal h3 { color: #f97316; margin-bottom: 8px; }
+    .budget-gate-modal .amount { font-size: 32px; font-weight: 800; color: var(--text); margin: 16px 0; }
+    .budget-gate-modal .rationale { background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2); border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 13px; color: var(--text-secondary); }
+    .budget-gate-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 12px; font-size: 13px; font-family: inherit; margin-bottom: 16px; resize: vertical; }
+    .budget-gate-actions { display: flex; gap: 12px; justify-content: flex-end; }
+
+    /* S41-2E Exception Strip */
+    .exception-strip { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; margin-bottom: 16px; }
+    .exc-label { font-size: 12px; font-weight: 600; color: #ef4444; white-space: nowrap; }
+    .exc-pill { padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .exc-pill.critical { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .exc-pill.high     { background: rgba(249,115,22,0.15); color: #f97316; }
+    .exc-pill.medium   { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+    /* S41-2D ROI Chart Card */
+    .roi-chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .roi-chart-card .card-header { margin-bottom: 12px; }
+    .roi-chart-card .card-header h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .roi-chart-card .card-sub { font-size: 0.75rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Top Nav ── -->
+  <nav class="top-nav">
+    <span class="nav-brand">&#9889; Business Agents Platform</span>
+    <div class="nav-personas">
+      <a href="operations.html" class="nav-tab">Operations</a>
+      <a href="finance.html" class="nav-tab active">Finance</a>
+      <a href="compliance.html" class="nav-tab">Compliance</a>
+      <a href="it-health.html" class="nav-tab">IT</a>
+      <a href="pipeline.html" class="nav-tab">Pipeline</a>
+      <a href="action-queue.html" class="nav-tab">Action Queue</a>
+      <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>
+      <a href="eval.html" class="nav-tab">Eval <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>#9650;</a>
+    </div>
+  </nav>
+
+  <!-- ── Offline Banner ── -->
+  <div class="offline-banner" id="offline-banner">Server offline &mdash; showing cached data. Live updates unavailable.</div>
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <div class="persona-label">Finance Persona</div>
+        <h1>Finance Controller Dashboard</h1>
+        <div class="persona-name">Michael Torres, VP Finance &mdash; Consumer Goods</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="refresh-info">Last refreshed: March 13, 2026 &mdash; 6:02 AM
+          <a class="refresh-btn" href="finance.html">&#8635; Refresh</a>
+        </div>
+        <div style="margin-top:8px; font-size:0.75rem; color:var(--text-muted);" id="header-agent-status">0 agents deployed &middot; 3 blueprints ready</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <main>
+    <div class="main-inner">
+
+      <!-- LEFT COLUMN -->
+      <div class="main-left">
+
+        <!-- Agent Tiles (all blueprint / not deployed) -->
+        <div>
+          <div class="section-title">Agent Pipeline &mdash; 0 of 3 Deployed</div>
+          <div class="agent-grid">
+
+            <!-- Tile 1: AP Invoice Processing -->
+            <div class="agent-tile" data-slug="ap-invoice-processing">
+              <div class="tile-top">
+                <div class="tile-badges">
+                  <span class="lifecycle-badge sandbox">Sandbox</span>
+                  <span class="authority-pill medium">MEDIUM Authority</span>
+                </div>
+                <button class="run-btn" id="run-btn-ap-invoice-processing" onclick="openRunDrawer('ap-invoice-processing')">&#9654; Run</button>
+              </div>
+              <div class="tile-name">AP Invoice Processing Agent</div>
+              <div class="tile-status">
+                <span class="status-dot green"></span>
+                <span>Active &mdash; Scheduled</span>
+              </div>
+              <div class="tile-metric">Preview: $250K/month in invoices, 95% straight-through processing target</div>
+              <div class="tile-footer">
+                <span class="tile-schedule">Last run: 2h ago</span>
+                <a class="tile-link" href="../business-agents/blueprints/index.html">View Blueprint &rarr;</a>
+              </div>
+            </div>
+
+            <!-- Tile 2: Sales Forecast Accuracy -->
+            <div class="agent-tile" data-slug="sales-forecast-accuracy">
+              <div class="tile-top">
+                <div class="tile-badges">
+                  <span class="lifecycle-badge sandbox">Sandbox</span>
+                  <span class="authority-pill low">LOW Authority</span>
+                </div>
+                <button class="run-btn" id="run-btn-sales-forecast-accuracy" onclick="openRunDrawer('sales-forecast-accuracy')">&#9654; Run</button>
+              </div>
+              <div class="tile-name">Sales Forecast Accuracy Agent</div>
+              <div class="tile-status">
+                <span class="status-dot green"></span>
+                <span>Active &mdash; Scheduled</span>
+              </div>
+              <div class="tile-metric">Preview: Forecast bias reduction, weekly executive accuracy report</div>
+              <div class="tile-footer">
+                <span class="tile-schedule">Last run: 6h ago</span>
+                <a class="tile-link" href="../business-agents/blueprints/index.html">View Blueprint &rarr;</a>
+              </div>
+            </div>
+
+            <!-- Tile 3: Cost Variance Alert -->
+            <div class="agent-tile">
+              <div class="tile-top">
+                <div class="tile-badges">
+                  <span class="lifecycle-badge blueprint">Blueprint</span>
+                  <span class="authority-pill low">LOW Authority</span>
+                </div>
+              </div>
+              <div class="tile-name">Cost Variance Alert Agent</div>
+              <div class="tile-status">
+                <span class="status-dot gray"></span>
+                <span style="color:var(--text-muted);">Not yet deployed</span>
+              </div>
+              <div class="tile-metric">Preview: Budget variance alerts within 24h of period close</div>
+              <div class="tile-footer">
+                <span class="tile-schedule">Blueprint Ready</span>
+                <a class="tile-link" href="../business-agents/blueprints/index.html">View Blueprint &rarr;</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- S41-2B: Commitment Calendar -->
+        <section class="card commitment-calendar" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;">
+          <div class="card-header" style="margin-bottom:4px;">
+            <h3 style="font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:2px;">Commitment Calendar — Agent-Recommended Spend</h3>
+            <span class="card-sub" style="font-size:0.75rem;color:var(--text-muted);">4-week forward view · Agent-committed purchasing</span>
+          </div>
+          <div class="cal-grid" id="commitCalGrid">
+            <!-- Populated by buildCommitCalendar() -->
+          </div>
+          <div class="cal-legend">
+            <span class="cal-leg-item cal-low">Low (&lt; £5K)</span>
+            <span class="cal-leg-item cal-medium">Medium (£5–25K)</span>
+            <span class="cal-leg-item cal-high">High (&gt; £25K)</span>
+          </div>
+        </section>
+
+        <!-- Pipeline Progress -->
+        <div class="pipeline-card">
+          <div class="pipeline-header">
+            <div>
+              <div class="pipeline-title">Finance Agent Pipeline</div>
+              <div class="pipeline-subtitle">Deployment progress toward full Finance automation suite</div>
+            </div>
+            <div class="pipeline-count">0 / 3</div>
+          </div>
+
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-label">
+              <span>Deployment Progress</span>
+              <span>0%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="value-highlight">
+            Estimated value at full deployment: <strong>$420K/year</strong> in processing efficiency
+          </div>
+
+          <div class="blueprint-list">
+            <div class="blueprint-row">
+              <div class="blueprint-info">
+                <div class="blueprint-name">AP Invoice Processing Agent</div>
+                <div class="blueprint-meta">Est. 14 hrs/week saved &middot; MEDIUM authority</div>
+              </div>
+              <span class="blueprint-status">Blueprint Ready</span>
+              <a class="blueprint-link" href="../business-agents/blueprints/index.html">View &rarr;</a>
+            </div>
+            <div class="blueprint-row">
+              <div class="blueprint-info">
+                <div class="blueprint-name">Sales Forecast Accuracy Agent</div>
+                <div class="blueprint-meta">Est. 6 hrs/week saved &middot; LOW authority</div>
+              </div>
+              <span class="blueprint-status">Blueprint Ready</span>
+              <a class="blueprint-link" href="../business-agents/blueprints/index.html">View &rarr;</a>
+            </div>
+            <div class="blueprint-row">
+              <div class="blueprint-info">
+                <div class="blueprint-name">Cost Variance Alert Agent</div>
+                <div class="blueprint-meta">Est. 4 hrs/week saved &middot; LOW authority</div>
+              </div>
+              <span class="blueprint-status">Blueprint Ready</span>
+              <a class="blueprint-link" href="../business-agents/blueprints/index.html">View &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROI Forecast -->
+        <div class="roi-card">
+          <div class="section-title">ROI Forecast</div>
+          <div class="roi-total">$420K</div>
+          <div class="roi-label">Projected Annual Value at Full Deployment</div>
+          <div class="roi-breakdown">
+            <div class="roi-row">
+              <div class="roi-row-header">
+                <span>Invoice Processing (AP Agent)</span>
+                <span style="color:var(--finance); font-weight:600;">60% &mdash; $252K</span>
+              </div>
+              <div class="roi-bar-bg"><div class="roi-bar-fill invoice"></div></div>
+            </div>
+            <div class="roi-row">
+              <div class="roi-row-header">
+                <span>Forecast Improvement (Accuracy Agent)</span>
+                <span style="color:var(--accent); font-weight:600;">25% &mdash; $105K</span>
+              </div>
+              <div class="roi-bar-bg"><div class="roi-bar-fill forecast"></div></div>
+            </div>
+            <div class="roi-row">
+              <div class="roi-row-header">
+                <span>Variance Alerts (Cost Monitor Agent)</span>
+                <span style="color:var(--low); font-weight:600;">15% &mdash; $63K</span>
+              </div>
+              <div class="roi-bar-bg"><div class="roi-bar-fill variance"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- S41-2D: ROI Actuals vs Projection -->
+        <div class="roi-chart-card">
+          <div class="card-header">
+            <h3>ROI — Actuals vs. Projection</h3>
+            <span class="card-sub">Agent savings · Last 6 months</span>
+          </div>
+          <svg id="roiChart" width="100%" height="180" viewBox="0 0 600 180" preserveAspectRatio="none" style="display:block"></svg>
+          <div class="roi-legend" style="display:flex;gap:16px;margin-top:8px;font-size:11px">
+            <span><span style="display:inline-block;width:12px;height:12px;background:#22c55e;border-radius:2px;margin-right:4px"></span>Actual</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:#6366f1;border-radius:2px;margin-right:4px"></span>Projected</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="main-right">
+
+        <!-- S41-2E: Exception Flag Strip -->
+        <div id="exceptionStrip" class="exception-strip" style="display:none">
+          <span class="exc-label">&#9888; Exceptions:</span>
+          <div id="exceptionPills" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+
+        <!-- Pending Approvals -->
+        <div class="panel">
+          <div class="panel-title">Pending Approvals</div>
+
+          <div id="finance-approvals-list">
+            <div style="color:var(--text-muted);font-size:0.82rem;padding:12px 0;">Loading approvals...</div>
+          </div>
+        </div>
+
+        <!-- Deployment Status panel -->
+        <div class="panel">
+          <div class="panel-title">Deployment Status</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
+              <span style="font-size:0.82rem; color:var(--text-secondary);">Agents Deployed</span>
+              <span style="font-size:1rem; font-weight:700; color:var(--text-muted);">0 / 3</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
+              <span style="font-size:0.82rem; color:var(--text-secondary);">Live KPIs Available</span>
+              <span style="font-size:0.85rem; font-weight:600; color:var(--text-muted);">Pending Deployment</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
+              <span style="font-size:0.82rem; color:var(--text-secondary);">Est. Time to First Agent</span>
+              <span style="font-size:0.85rem; font-weight:600; color:var(--finance);">2&ndash;4 weeks</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span>Finance Controller Persona &mdash; Consumer Goods Pilot</span>
+    <span>
+      <a href="enterprise.html">Enterprise Dashboard &uarr;</a>
+      &nbsp;&middot;&nbsp;
+      <a href="finance.html">&#8635; Refresh Data</a>
+    </span>
+  </footer>
+
+  <!-- S41-2C: Budget Gate Modal -->
+  <div class="budget-gate-overlay" id="budgetGateOverlay">
+    <div class="budget-gate-modal">
+      <h3>&#128274; Budget Gate &mdash; High-Value Approval Required</h3>
+      <p style="color:var(--text-muted);font-size:13px">This recommendation exceeds the £50,000 auto-approval threshold.</p>
+      <div class="amount" id="gateAmount">£0</div>
+      <div class="rationale" id="gateRationale"></div>
+      <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px">Approval justification (required):</p>
+      <textarea class="budget-gate-input" id="gateJustification" rows="3" placeholder="Enter reason for approving this spend..."></textarea>
+      <div class="budget-gate-actions">
+        <button onclick="closeBudgetGate()" style="background:none;border:1px solid var(--border);color:var(--text-muted);padding:8px 16px;border-radius:8px;cursor:pointer">Cancel</button>
+        <button onclick="confirmBudgetGate()" style="background:#f97316;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-weight:600;cursor:pointer">Approve with Justification</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Run Theater Drawer -->
+  <div class="run-overlay" id="run-overlay" onclick="closeRunDrawer()"></div>
+  <div class="run-drawer" id="run-drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-agent-name" id="drawer-agent-name">Running Agent</div>
+        <div class="drawer-subtitle" id="drawer-subtitle">Initializing...</div>
+      </div>
+      <button class="drawer-close" onclick="closeRunDrawer()">&#x2715;</button>
+    </div>
+    <div class="drawer-log" id="drawer-log"></div>
+    <div class="drawer-results" id="drawer-results" style="display:none">
+      <div class="drawer-results-header" id="drawer-results-header"></div>
+      <div class="rec-list" id="rec-list"></div>
+      <div class="drawer-footer">
+        <button class="btn-submit-decisions" id="btn-submit" onclick="submitAndClose()">
+          Submit Decisions
+        </button>
+        <span class="decisions-summary" id="decisions-summary"></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  const API = 'http://localhost:8500';
+
+  // ── HTML escape ─────────────────────────────────────────────────────────
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Toast notification ───────────────────────────────────────────────────
+  function showToast(msg, isError) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    const bg = isError ? '#f85149' : '#10b981';
+    t.style.cssText = `position:fixed;top:20px;right:20px;background:${bg};color:white;padding:12px 20px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);`;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2500);
+  }
+
+  // ── Per-agent execution step definitions ─────────────────────────────────
+  const AGENT_STEPS = {
+    'ap-invoice-processing': [
+      { icon: '\uD83D\uDD0C', label: 'Connecting to AP system', ms: 500 },
+      { icon: '\uD83D\uDCE5', label: 'Loading invoice queue', ms: 800 },
+      { icon: '\u2696\uFE0F', label: 'Applying 3-way match rules', ms: 700 },
+      { icon: '\uD83D\uDEA8', label: 'Flagging exceptions', ms: 500 },
+    ],
+    'sales-forecast-accuracy': [
+      { icon: '\uD83D\uDCCA', label: 'Loading sales history', ms: 600 },
+      { icon: '\uD83E\uDDEE', label: 'Running forecast models', ms: 900 },
+      { icon: '\uD83D\uDCC8', label: 'Comparing actuals vs. forecast', ms: 700 },
+      { icon: '\uD83D\uDCDD', label: 'Generating variance report', ms: 500 },
+    ],
+  };
+
+  // ── Drawer state ─────────────────────────────────────────────────────────
+  let _drawerSlug = null;
+  let _drawerRunResult = null;
+  let _drawerDecisions = {};
+
+  window.openRunDrawer = function (slug) {
+    _drawerSlug = slug;
+    _drawerRunResult = null;
+    _drawerDecisions = {};
+
+    const tile = document.querySelector(`[data-slug="${slug}"]`);
+    const agentName = tile ? (tile.querySelector('.tile-name')?.textContent || slug) : slug;
+
+    document.getElementById('drawer-agent-name').textContent = agentName;
+    document.getElementById('drawer-subtitle').textContent = 'Initializing...';
+    document.getElementById('drawer-log').innerHTML = '';
+    document.getElementById('drawer-results').style.display = 'none';
+    document.getElementById('rec-list').innerHTML = '';
+    document.getElementById('btn-submit').disabled = true;
+    document.getElementById('decisions-summary').textContent = '';
+
+    document.getElementById('run-overlay').classList.add('active');
+    document.getElementById('run-drawer').classList.add('active');
+
+    const steps = AGENT_STEPS[slug] || [{ icon: '\u2699\uFE0F', label: 'Running agent', ms: 2000 }];
+
+    Promise.all([
+      runAgentAPI(slug),
+      animateSteps(steps),
+    ]).then(([runResult]) => {
+      _drawerRunResult = runResult;
+      showRecommendations(runResult);
+    }).catch(err => {
+      document.getElementById('drawer-subtitle').textContent = '\u26A0\uFE0F Error \u2014 ' + (err.message || 'Unknown error');
+    });
+  };
+
+  window.closeRunDrawer = function () {
+    document.getElementById('run-overlay').classList.remove('active');
+    document.getElementById('run-drawer').classList.remove('active');
+    _drawerSlug = null;
+  };
+
+  async function runAgentAPI(slug) {
+    const resp = await fetch(`${API}/api/run/${slug}`, { method: 'POST' });
+    if (!resp.ok) throw new Error('Run failed: HTTP ' + resp.status);
+    return await resp.json();
+  }
+
+  function animateSteps(steps) {
+    return new Promise(resolve => {
+      const logEl = document.getElementById('drawer-log');
+      const subtitle = document.getElementById('drawer-subtitle');
+      subtitle.textContent = 'Executing...';
+
+      let total = 0;
+      steps.forEach((s, i) => {
+        const el = document.createElement('div');
+        el.className = 'log-step';
+        el.innerHTML = `<span class="step-icon">${s.icon}</span><span>${s.label}</span>`;
+        logEl.appendChild(el);
+
+        setTimeout(() => {
+          el.classList.add('visible', 'running');
+          subtitle.textContent = s.label + '...';
+        }, total);
+
+        setTimeout(() => {
+          el.classList.remove('running');
+          el.classList.add('done');
+          if (i === steps.length - 1) {
+            subtitle.textContent = 'Complete \u2014 reviewing recommendations';
+            resolve();
+          }
+        }, total + s.ms);
+
+        total += s.ms;
+      });
+    });
+  }
+
+  function showRecommendations(result) {
+    const recs = result.recommendations || [];
+    const count = recs.length;
+    const resultsEl = document.getElementById('drawer-results');
+    const headerEl = document.getElementById('drawer-results-header');
+    const listEl = document.getElementById('rec-list');
+    const submitBtn = document.getElementById('btn-submit');
+
+    headerEl.textContent = count > 0
+      ? `${count} recommendation${count !== 1 ? 's' : ''} \u2014 review and decide`
+      : 'Run complete \u2014 no action items generated';
+
+    listEl.innerHTML = '';
+    recs.forEach(rec => {
+      const row = document.createElement('div');
+      row.className = 'rec-row';
+      row.dataset.recId = rec.id || '';
+      row.innerHTML = `
+        <span class="urgency-badge urgency-${escHtml(rec.urgency || 'medium')}">${escHtml(rec.urgency || 'med')}</span>
+        <div class="rec-body">
+          <div class="rec-item-id">${escHtml(rec.item_id || '')}</div>
+          <div class="rec-label">${escHtml(rec.item_label || rec.item_id || '')}</div>
+          <div class="rec-action">${escHtml(rec.recommended_action || '')}</div>
+        </div>
+        <div class="rec-buttons">
+          <button class="btn-accept" onclick="decideRec(${JSON.stringify(rec.id)}, 'approved', this)">Accept</button>
+          <button class="btn-reject" onclick="decideRec(${JSON.stringify(rec.id)}, 'rejected', this)">Reject</button>
+        </div>
+      `;
+      listEl.appendChild(row);
+    });
+
+    resultsEl.style.display = 'flex';
+    submitBtn.disabled = count === 0;
+    updateDecisionSummary();
+  }
+
+  window.decideRec = async function (recId, decision, btn) {
+    if (!recId) {
+      const row = btn.closest('.rec-row');
+      row.classList.add('decided');
+      btn.classList.add('active');
+      const other = btn.classList.contains('btn-accept')
+        ? row.querySelector('.btn-reject')
+        : row.querySelector('.btn-accept');
+      other.disabled = true;
+      _drawerDecisions[row.dataset.recId || Math.random()] = decision;
+      updateDecisionSummary();
+      return;
+    }
+
+    btn.disabled = true;
+    try {
+      await fetch(`${API}/api/recommendations/${recId}/decide`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ decision, decided_by: 'finance' })
+      });
+      const row = btn.closest('.rec-row');
+      row.classList.add('decided');
+      btn.classList.add('active');
+      const other = btn.classList.contains('btn-accept')
+        ? row.querySelector('.btn-reject')
+        : row.querySelector('.btn-accept');
+      other.disabled = true;
+      _drawerDecisions[recId] = decision;
+      updateDecisionSummary();
+    } catch (e) {
+      btn.disabled = false;
+    }
+  };
+
+  function updateDecisionSummary() {
+    const decisions = Object.values(_drawerDecisions);
+    const approved = decisions.filter(d => d === 'approved').length;
+    const rejected = decisions.filter(d => d === 'rejected').length;
+    const total = document.querySelectorAll('#rec-list .rec-row').length;
+    const pending = total - decisions.length;
+    const parts = [];
+    if (approved) parts.push(`${approved} approved`);
+    if (rejected) parts.push(`${rejected} rejected`);
+    if (pending) parts.push(`${pending} pending`);
+    document.getElementById('decisions-summary').textContent = parts.join(' \u00B7 ');
+  }
+
+  function submitAndClose() {
+    const decisions = Object.values(_drawerDecisions);
+    const approved = decisions.filter(d => d === 'approved').length;
+    const rejected = decisions.filter(d => d === 'rejected').length;
+    closeRunDrawer();
+    const msg = approved || rejected
+      ? `${approved} approved \u00B7 ${rejected} rejected`
+      : 'Run complete';
+    showToast('\u2705 ' + msg);
+  }
+
+  // ── Render pending approvals ──────────────────────────────────────────────
+  function renderApprovals(items) {
+    const container = document.getElementById('finance-approvals-list');
+    if (!container) return;
+
+    if (!items || items.length === 0) {
+      container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted);padding:12px 0;">No pending items — all caught up.</p>';
+      return;
+    }
+
+    container.innerHTML = items.map(item => {
+      const details = (typeof item.item_details === 'string')
+        ? (() => { try { return JSON.parse(item.item_details); } catch(e) { return {}; } })()
+        : (item.item_details || {});
+      const title = details.title || item.item_id || 'Pending Approval';
+      const meta  = [details.description, 'AP Invoice Processing Agent', 'Awaiting Finance Controller approval']
+                      .filter(Boolean).join(' &middot; ');
+      return `<div class="approval-item" id="fin-approval-${item.id}">
+        <div class="approval-title">${escHtml(title)}</div>
+        <div class="approval-meta">${escHtml(meta)}</div>
+        <div class="approval-buttons">
+          <button class="btn-approve" onclick="handleApproval(${item.id}, 'approved', this)">Approve</button>
+          <button class="btn-review"  onclick="handleApproval(${item.id}, 'info_requested', this)">Review</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Finance approval handler ──────────────────────────────────────────────
+  window.handleApproval = async function (itemId, decision, btn) {
+    const item = document.getElementById('fin-approval-' + itemId);
+    const btns = item?.querySelectorAll('button');
+    if (btns) btns.forEach(b => b.disabled = true);
+
+    try {
+      const resp = await fetch(`${API}/api/approvals/${itemId}/decide`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ decision, decided_by: 'finance', notes: '' })
+      });
+      const result = await resp.json();
+      if (result.success) {
+        showToast(decision === 'approved' ? 'Approved' : 'Marked for Review');
+        if (item) {
+          if (decision === 'approved') {
+            item.style.transition = 'opacity 0.4s';
+            item.style.opacity = '0';
+            setTimeout(() => item.remove(), 400);
+          } else {
+            item.style.opacity = '0.55';
+          }
+        }
+      } else {
+        showToast('Error recording decision', true);
+        if (btns) btns.forEach(b => b.disabled = false);
+      }
+    } catch (err) {
+      console.warn('[finance] Decision POST failed:', err.message);
+      showToast(decision === 'approved' ? 'Approved' : 'Marked for Review');
+      if (item) {
+        if (decision === 'approved') {
+          item.style.transition = 'opacity 0.4s';
+          item.style.opacity = '0';
+          setTimeout(() => item.remove(), 400);
+        } else {
+          item.style.opacity = '0.55';
+          if (btns) btns.forEach(b => b.disabled = true);
+        }
+      }
+    }
+  };
+
+  // ── Fetch approvals from API ──────────────────────────────────────────────
+  async function loadApprovals() {
+    try {
+      const resp = await fetch(API + '/api/approvals?status=pending', { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const items = await resp.json();
+      renderApprovals(items);
+      // S41-2E: Also render exception strip from pending approvals
+      if (typeof renderExceptionStrip === 'function') renderExceptionStrip(items);
+    } catch (err) {
+      console.warn('[finance] Approvals fetch failed:', err.message);
+      const container = document.getElementById('finance-approvals-list');
+      if (container) {
+        container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted);padding:12px 0;">No pending approvals &mdash; agents are not yet deployed.</p>';
+      }
+    }
+  }
+
+  // ── Fetch agents & update header status ──────────────────────────────────
+  async function loadAgentStatus() {
+    try {
+      const resp = await fetch(API + '/api/agents', { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const agents = await resp.json();
+
+      const financeAgents = agents.filter(a => a.persona === 'finance');
+      const deployedCount = financeAgents.filter(a =>
+        ['sandbox','validated','pilot_ready','production'].includes(a.lifecycle_stage)
+      ).length;
+
+      const statusEl = document.getElementById('header-agent-status');
+      if (statusEl) {
+        statusEl.textContent = `${deployedCount} agent${deployedCount !== 1 ? 's' : ''} deployed \u00b7 3 blueprints ready`;
+      }
+    } catch (err) {
+      console.warn('[finance] Agent status fetch failed:', err.message);
+      const banner = document.getElementById('offline-banner');
+      if (banner) banner.classList.add('visible');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    loadAgentStatus();
+    loadApprovals();
+    buildCommitCalendar();
+    buildROIChart();
+  });
+})();
+
+// S41-2B: Commitment Calendar
+function buildCommitCalendar() {
+  const weeks = ['Week 1 (Mar 13)', 'Week 2 (Mar 20)', 'Week 3 (Mar 27)', 'Week 4 (Apr 3)'];
+  const agents = ['Replenishment', 'Forecast', 'Quality', 'Invoice'];
+
+  // Spend data [agent][week] = {amount, items}
+  const spendData = [
+    [{a:18500,n:3},{a:0,n:0},{a:12200,n:2},{a:8900,n:1}],   // Replenishment
+    [{a:0,n:0},{a:0,n:0},{a:0,n:0},{a:0,n:0}],               // Forecast (read-only)
+    [{a:2400,n:1},{a:0,n:0},{a:1800,n:1},{a:0,n:0}],         // Quality
+    [{a:68500,n:1},{a:24800,n:1},{a:18500,n:1},{a:0,n:0}],   // Invoice (AP)
+  ];
+
+  const grid = document.getElementById('commitCalGrid');
+  if (!grid) return;
+
+  // Header row
+  grid.innerHTML = '<div class="cal-row-label"></div>' +
+    weeks.map(w => `<div class="cal-header-cell">${w}</div>`).join('');
+
+  // Data rows
+  agents.forEach((agent, ai) => {
+    grid.innerHTML += `<div class="cal-row-label">${agent}</div>`;
+    weeks.forEach((_, wi) => {
+      const d = spendData[ai][wi];
+      let cls = 'cal-empty';
+      let txt = '&mdash;';
+      if (d.a > 0) {
+        cls = d.a >= 25000 ? 'cal-high' : d.a >= 5000 ? 'cal-medium' : 'cal-low';
+        txt = `\u00a3${(d.a/1000).toFixed(0)}K<br><small>${d.n} item${d.n!==1?'s':''}</small>`;
+      }
+      grid.innerHTML += `<div class="cal-cell ${cls}" title="${agent} \u00b7 ${weeks[wi]}: \u00a3${d.a.toLocaleString()}">${txt}</div>`;
+    });
+  });
+}
+
+// S41-2C: Budget Gate
+let _gateCallback = null;
+function openBudgetGate(amount, rationale, onConfirm) {
+  document.getElementById('gateAmount').textContent = '\u00a3' + amount.toLocaleString();
+  document.getElementById('gateRationale').textContent = rationale;
+  document.getElementById('gateJustification').value = '';
+  _gateCallback = onConfirm;
+  document.getElementById('budgetGateOverlay').classList.add('show');
+}
+function closeBudgetGate() {
+  document.getElementById('budgetGateOverlay').classList.remove('show');
+  _gateCallback = null;
+}
+function confirmBudgetGate() {
+  const just = document.getElementById('gateJustification').value.trim();
+  if (!just) { alert('Please provide an approval justification.'); return; }
+  closeBudgetGate();
+  if (_gateCallback) _gateCallback(just);
+}
+
+// Wrap existing approve logic: if amount > 50000, open gate first
+function approveWithGateCheck(recId, amount, rationale) {
+  if (amount > 50000) {
+    openBudgetGate(amount, rationale, (justification) => {
+      // Proceed with approval
+      if (typeof window.decideRec === 'function') {
+        window.decideRec(recId, 'approved', justification);
+      }
+    });
+  } else {
+    if (typeof window.decideRec === 'function') {
+      window.decideRec(recId, 'approved', '');
+    }
+  }
+}
+
+// S41-2D: ROI Chart
+function buildROIChart() {
+  const months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+  const actual    = [0,  1200, 2800, 4200, 5600, 7100];  // cumulative £
+  const projected = [1500, 3000, 4500, 6000, 7500, 9000];
+  const svg = document.getElementById('roiChart');
+  if (!svg) return;
+
+  const W = 600, H = 160, PAD = 40, BAR_W = 30;
+  const maxVal = Math.max(...projected);
+  const cols = months.length;
+  const colW = (W - PAD * 2) / cols;
+
+  let html = '';
+  months.forEach((m, i) => {
+    const x = PAD + i * colW;
+    const ah = (actual[i] / maxVal) * (H - 30);
+    const ph = (projected[i] / maxVal) * (H - 30);
+    // Projected bar (behind)
+    html += `<rect x="${x+4}" y="${H - 20 - ph}" width="${BAR_W}" height="${ph}" fill="#6366f120" stroke="#6366f1" stroke-width="1" rx="3"/>`;
+    // Actual bar (front)
+    html += `<rect x="${x+4+BAR_W+4}" y="${H - 20 - ah}" width="${BAR_W}" height="${ah}" fill="#22c55e" rx="3"/>`;
+    // Month label
+    html += `<text x="${x + colW/2}" y="${H - 4}" text-anchor="middle" fill="#64748b" font-size="11">${m}</text>`;
+    // Value label
+    if (actual[i] > 0) html += `<text x="${x+4+BAR_W+4+BAR_W/2}" y="${H - 24 - ah}" text-anchor="middle" fill="#22c55e" font-size="10">\u00a3${(actual[i]/1000).toFixed(1)}K</text>`;
+  });
+  svg.innerHTML = html;
+}
+
+// S41-2E: Exception Flag Strip
+function renderExceptionStrip(recs) {
+  const strip = document.getElementById('exceptionStrip');
+  const pills = document.getElementById('exceptionPills');
+  if (!strip || !pills) return;
+
+  const exceptions = recs.filter(r => r.urgency === 'critical' || r.urgency === 'high');
+  if (exceptions.length === 0) { strip.style.display = 'none'; return; }
+
+  strip.style.display = 'flex';
+  pills.innerHTML = exceptions.slice(0, 5).map(r =>
+    `<span class="exc-pill ${r.urgency}" title="${r.recommended_action || ''}">${r.urgency.toUpperCase()}: ${r.item_label || r.item_id}</span>`
+  ).join('');
+
+  if (exceptions.length > 5) {
+    pills.innerHTML += `<span class="exc-pill medium">+${exceptions.length - 5} more</span>`;
+  }
+}
+</script>
+
+</body>
+</html>

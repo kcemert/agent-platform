@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opportunity Prioritization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #22263a;
+    --border: #2e3347;
+    --text: #f1f5f9;
+    --muted: #8892a4;
+    --green: #10b981;
+    --green-bg: rgba(16,185,129,0.10);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245,158,11,0.10);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.10);
+    --gray: #6b7280;
+    --gray-bg: rgba(107,114,128,0.10);
+    --radius: 8px;
+    --radius-sm: 5px;
+  }
+
+  html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── Banner ── */
+  #internal-banner {
+    display: none;
+    background: linear-gradient(90deg, #7c3aed, #4f46e5);
+    color: #fff;
+    text-align: center;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  header p.subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    max-width: 600px;
+  }
+  .legend-strip {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .legend-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .legend-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .badge-qw  { background: var(--green-bg);  color: var(--green);  border: 1px solid rgba(16,185,129,0.25); }
+  .badge-sb  { background: var(--amber-bg);  color: var(--amber);  border: 1px solid rgba(245,158,11,0.25); }
+  .badge-ef  { background: var(--blue-bg);   color: var(--blue);   border: 1px solid rgba(59,130,246,0.25); }
+  .badge-df  { background: var(--gray-bg);   color: var(--gray);   border: 1px solid rgba(107,114,128,0.25); }
+
+  /* ── Action bar ── */
+  .action-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 12px 40px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .action-bar .spacer { flex: 1; }
+  button {
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 7px 14px;
+    transition: all 0.15s;
+  }
+  .btn-primary   { background: var(--green);    color: #fff; }
+  .btn-primary:hover { background: #0ea472; }
+  .btn-secondary { background: var(--bg3);      color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: #2a2f46; border-color: #3e4560; }
+  .btn-danger    { background: transparent;     color: #ef4444; border: 1px solid #ef444440; }
+  .btn-danger:hover { background: #ef444415; }
+
+  /* ── Main layout ── */
+  .main {
+    display: flex;
+    gap: 0;
+    height: calc(100vh - 152px);
+    overflow: hidden;
+  }
+
+  /* ── Left column ── */
+  .left-col {
+    width: 40%;
+    min-width: 360px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Opportunity manager */
+  .opp-manager {
+    padding: 18px 20px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .opp-manager-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .opp-manager-header h3 { font-size: 13px; font-weight: 600; color: var(--text); }
+  .opp-manager-header span { font-size: 11px; color: var(--muted); }
+
+  /* Add form */
+  .add-form {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .add-form.visible { display: block; }
+  .add-form label { display: block; font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .add-form input, .add-form textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    outline: none;
+    transition: border-color 0.15s;
+    resize: vertical;
+  }
+  .add-form input:focus, .add-form textarea:focus { border-color: var(--green); }
+  .add-form textarea { min-height: 50px; }
+  .add-form-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* Opp list */
+  .opp-list { list-style: none; }
+  .opp-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.12s;
+    border: 1px solid transparent;
+  }
+  .opp-item:hover { background: var(--bg3); }
+  .opp-item.selected { background: var(--bg3); border-color: var(--border); }
+  .opp-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .opp-name { flex: 1; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .opp-score-pill { font-size: 10px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .opp-delete {
+    background: transparent;
+    border: none;
+    padding: 2px 6px;
+    color: var(--muted);
+    font-size: 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.12s;
+  }
+  .opp-item:hover .opp-delete { opacity: 1; }
+  .opp-delete:hover { color: #ef4444; }
+
+  /* Scoring panel */
+  .scoring-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+  .scoring-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--muted);
+    text-align: center;
+    padding: 40px;
+    gap: 8px;
+  }
+  .scoring-empty .icon { font-size: 32px; opacity: 0.4; }
+  .scoring-empty p { font-size: 13px; }
+
+  .scoring-content { padding: 20px; }
+  .scoring-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .scoring-desc { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+
+  .score-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .score-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .score-section-title.value-title { color: var(--green); }
+  .score-section-title.effort-title { color: var(--amber); }
+  .score-result {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 6px;
+  }
+  .score-result.value-score { color: var(--green); background: var(--green-bg); }
+  .score-result.effort-score { color: var(--amber); background: var(--amber-bg); }
+
+  .slider-row {
+    margin-bottom: 14px;
+  }
+  .slider-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .slider-label-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .slider-label-weight {
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .slider-desc { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .slider-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slider-control input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+  .slider-control input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--text);
+    cursor: pointer;
+    box-shadow: 0 0 0 2px var(--bg2);
+    transition: transform 0.1s;
+  }
+  .slider-control input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  .slider-val {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 18px;
+    text-align: right;
+  }
+
+  /* ── Right column ── */
+  .right-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .plot-area {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    padding: 20px 24px 10px;
+  }
+
+  #matrix-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 1000;
+    min-width: 160px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  #tooltip.visible { opacity: 1; }
+  #tooltip .tt-name { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+  #tooltip .tt-row { display: flex; justify-content: space-between; gap: 20px; color: var(--muted); }
+  #tooltip .tt-val { color: var(--text); font-weight: 500; }
+
+  /* Table */
+  .table-area {
+    border-top: 1px solid var(--border);
+    padding: 14px 24px 16px;
+    max-height: 260px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  .table-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .table-header-row h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  thead th {
+    text-align: left;
+    padding: 6px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:hover { background: var(--bg2); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td {
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--text);
+  }
+  tbody td.rank { color: var(--muted); font-weight: 600; font-size: 11px; }
+  tbody td.opp-name-cell { font-weight: 500; max-width: 160px; }
+  tbody td.opp-name-cell span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .quadrant-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .qb-qw { background: var(--green-bg); color: var(--green); }
+  .qb-sb { background: var(--amber-bg); color: var(--amber); }
+  .qb-ef { background: var(--blue-bg);  color: var(--blue); }
+  .qb-df { background: var(--gray-bg);  color: var(--gray); }
+
+  tbody tr.row-qw { background: rgba(16,185,129,0.04); }
+  tbody tr.row-sb { background: rgba(245,158,11,0.04); }
+  tbody tr.row-qw:hover { background: rgba(16,185,129,0.08); }
+  tbody tr.row-sb:hover { background: rgba(245,158,11,0.08); }
+
+  .net-positive { color: var(--green); font-weight: 600; }
+  .net-negative { color: #ef4444; font-weight: 600; }
+
+  /* ── Empty state for table ── */
+  .table-empty { color: var(--muted); text-align: center; padding: 20px; font-size: 12px; }
+
+  /* ── Print ── */
+  @media print {
+    #internal-banner { display: none !important; }
+    .action-bar { display: none !important; }
+    .left-col { display: none !important; }
+    #tooltip { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .main { height: auto !important; overflow: visible !important; }
+    .right-col { overflow: visible !important; }
+    .plot-area { overflow: visible !important; height: 480px !important; }
+    .table-area { max-height: none !important; overflow: visible !important; }
+    header { border-bottom: 1px solid #ccc !important; }
+    .legend-strip { margin-top: 10px; }
+    table { font-size: 11px; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .main { flex-direction: column; height: auto; overflow: auto; }
+    .left-col { width: 100%; min-width: unset; border-right: none; border-bottom: 1px solid var(--border); }
+    .scoring-panel { max-height: 480px; }
+    header { padding: 20px; }
+    .action-bar { padding: 10px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="internal-banner">Internal Mode — Epic prioritization view</div>
+
+<header>
+  <h1>Opportunity Prioritization</h1>
+  <p class="subtitle">Score each opportunity across Value Potential and Execution Effort to find your Quick Wins</p>
+  <div class="legend-strip">
+    <span class="legend-badge badge-qw"><span class="dot" style="background:var(--green)"></span>Quick Wins</span>
+    <span class="legend-badge badge-sb"><span class="dot" style="background:var(--amber)"></span>Strategic Bets</span>
+    <span class="legend-badge badge-ef"><span class="dot" style="background:var(--blue)"></span>Easy Fills</span>
+    <span class="legend-badge badge-df"><span class="dot" style="background:var(--gray)"></span>Defer</span>
+  </div>
+</header>
+
+<div class="action-bar">
+  <button class="btn-secondary" onclick="loadExamples()">Load Example</button>
+  <button class="btn-secondary" onclick="exportJSON()">Export JSON</button>
+  <button class="btn-secondary" onclick="window.print()">Print / PDF</button>
+  <div class="spacer"></div>
+  <button class="btn-danger" onclick="clearAll()">Clear All</button>
+</div>
+
+<div class="main">
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+    <div class="opp-manager">
+      <div class="opp-manager-header">
+        <h3>Opportunities</h3>
+        <span id="opp-count-label">0 / 10</span>
+      </div>
+
+      <!-- Add form -->
+      <div class="add-form" id="add-form">
+        <label for="new-name">Opportunity Name *</label>
+        <input type="text" id="new-name" placeholder="e.g. AP Invoice Processing" maxlength="60" autocomplete="off">
+        <label for="new-desc">Description (optional)</label>
+        <textarea id="new-desc" placeholder="Brief description of the opportunity" maxlength="200"></textarea>
+        <div class="add-form-actions">
+          <button class="btn-secondary" style="font-size:12px; padding:6px 12px;" onclick="cancelAdd()">Cancel</button>
+          <button class="btn-primary" style="font-size:12px; padding:6px 12px;" onclick="confirmAdd()">Add</button>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="add-btn" onclick="toggleAddForm()" style="width:100%; margin-bottom:12px;">+ Add Opportunity</button>
+      <ul class="opp-list" id="opp-list"></ul>
+    </div>
+
+    <!-- Scoring panel -->
+    <div class="scoring-panel" id="scoring-panel">
+      <div class="scoring-empty" id="scoring-empty">
+        <div class="icon">&#9654;</div>
+        <p>Select an opportunity<br>to score it</p>
+      </div>
+      <div class="scoring-content" id="scoring-content" style="display:none;">
+        <div class="scoring-title" id="scoring-opp-name"></div>
+        <div class="scoring-desc" id="scoring-opp-desc"></div>
+
+        <!-- Value Potential -->
+        <div class="score-section">
+          <div class="score-section-title value-title">
+            <span>Value Potential &nbsp;&#8593; Y-axis</span>
+            <span class="score-result value-score" id="val-score-display">3.0</span>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span class="slider-label-text" id="lbl-impact">Business Impact</span>
+              <span class="slider-label-weight">40%</span>
+            </div>
+            <div class="slider-desc" id="desc-impact">Volume, cost, and P&amp;L significance of the process</div>
+            <div class="slider-control">
+              <input type="range" min="1" max="5" step="1" id="sl-impact" value="3" oninput="onSlider()">
+              <span class="slider-val" id="sv-impact">3</span>
+            </div>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span class="slider-label-text" id="lbl-alignment">Stakeholder Alignment</span>
+              <span class="slider-label-weight">25%</span>
+            </div>
+            <div class="slider-desc" id="desc-alignment">Executive sponsorship and team readiness</div>
+            <div class="slider-control">
+              <input type="range" min="1" max="5" step="1" id="sl-alignment" value="3" oninput="onSlider()">
+              <span class="slider-val" id="sv-alignment">3</span>
+            </div>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span class="slider-label-text">Regulatory / Risk Impact</span>
+              <span class="slider-label-weight">20%</span>
+            </div>
+            <div class="slider-desc">Compliance value or risk exposure reduced</div>
+            <div class="slider-control">
+              <input type="range" min="1" max="5" step="1" id="sl-regulatory" value="3" oninput="onSlider()">
+              <span class="slider-val" id="sv-regulatory">3</span>
+            </div>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span class="slider-label-text" id="lbl-scalability">Scalability</span>
+              <span class="slider-label-weight">15%</span>
+            </div>
+            <div class="slider-desc" id="desc-scalability">Replicable across sites, teams, or business units</div>
+            <div class="slider-control">
+              <input type="range" min="1" max="5" step="1" id="sl-scalability" value="3" oninput="onSlider()">
+              <span class="slider-val" id="sv-scalability">3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Execution Effort -->
+        <div class="score-section">
+          <div class="score-section-title effort-title">
+            <span>Execution Effort &nbsp;&#8594; X-axis</span>
+            <span class="score-result effort-score" id="eff-score-display">3.0</span>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span class="slider-label-text">Implementation Complexity</span>
+              <span class="slider-label-weight">35%</span>
+            </div>
+            <div class="slider-desc">System integration tier: REST API &#8594; SAP BAPI &#8594; mainframe</div>
+            <div class="slider-control">
+              <input type="range" min="1" max="5" step="1" id="sl-complexity" value="3" oninput="onSlider()">
+              <span class="slider-val" id="sv-complexity">3</span>
+            </div>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span class="slider-label-text">Data Complexity</span>
+              <span class="slider-label-weight">30%</span>
+            </div>
+            <div class="slider-desc">Data availability, quality, and readiness to power the agent</div>
+            <div class="slider-control">
+              <input type="range" min="1" max="5" step="1" id="sl-data" value="3" oninput="onSlider()">
+              <span class="slider-val" id="sv-data">3</span>
+            </div>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span class="slider-label-text">Change Management</span>
+              <span class="slider-label-weight">25%</span>
+            </div>
+            <div class="slider-desc">Behaviour change and adoption required from users</div>
+            <div class="slider-control">
+              <input type="range" min="1" max="5" step="1" id="sl-change" value="3" oninput="onSlider()">
+              <span class="slider-val" id="sv-change">3</span>
+            </div>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <span class="slider-label-text">Time to Value</span>
+              <span class="slider-label-weight">10%</span>
+            </div>
+            <div class="slider-desc">How quickly benefits are realized after go-live</div>
+            <div class="slider-control">
+              <input type="range" min="1" max="5" step="1" id="sl-time" value="3" oninput="onSlider()">
+              <span class="slider-val" id="sv-time">3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+    <div class="plot-area" id="plot-area">
+      <svg id="matrix-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div class="table-area">
+      <div class="table-header-row">
+        <h3>Ranked Opportunities</h3>
+        <span style="font-size:11px;color:var(--muted);">Sorted by Net Score (Value − Effort)</span>
+      </div>
+      <div id="rank-table-wrap">
+        <div class="table-empty">No opportunities yet. Add one to get started.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-name" id="tt-name"></div>
+  <div class="tt-row"><span>Value</span><span class="tt-val" id="tt-value"></span></div>
+  <div class="tt-row"><span>Effort</span><span class="tt-val" id="tt-effort"></span></div>
+  <div class="tt-row"><span>Quadrant</span><span class="tt-val" id="tt-quad"></span></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let opportunities = [];
+let selectedId = null;
+let addFormVisible = false;
+
+const MAX_OPPS = 10;
+const MIDPOINT = 3.0;
+
+// Internal mode detection
+const isInternal = new URLSearchParams(window.location.search).get('mode') === 'internal';
+
+// ═══════════════════════════════════════════
+// INTERNAL MODE
+// ═══════════════════════════════════════════
+function applyInternalMode() {
+  if (!isInternal) return;
+  document.getElementById('internal-banner').style.display = 'block';
+  document.getElementById('lbl-alignment').textContent = 'Client Demand';
+  document.getElementById('desc-alignment').textContent = 'Active requests from pipeline prospects';
+  document.getElementById('lbl-scalability').textContent = 'Differentiation';
+  document.getElementById('desc-scalability').textContent = 'Unique IP — not available from competitors';
+}
+
+// ═══════════════════════════════════════════
+// SCORE CALCULATIONS
+// ═══════════════════════════════════════════
+function calcValue(o) {
+  return (o.impact * 0.40) + (o.alignment * 0.25) + (o.regulatory * 0.20) + (o.scalability * 0.15);
+}
+
+function calcEffort(o) {
+  return (o.complexity * 0.35) + (o.data * 0.30) + (o.change * 0.25) + (o.time * 0.10);
+}
+
+function getQuadrant(v, e) {
+  if (v >= MIDPOINT && e <= MIDPOINT) return { key: 'qw', label: 'Quick Win',      color: '#10b981', cls: 'qb-qw', rowCls: 'row-qw' };
+  if (v >= MIDPOINT && e >  MIDPOINT) return { key: 'sb', label: 'Strategic Bet',  color: '#f59e0b', cls: 'qb-sb', rowCls: 'row-sb' };
+  if (v <  MIDPOINT && e <= MIDPOINT) return { key: 'ef', label: 'Easy Fill',       color: '#3b82f6', cls: 'qb-ef', rowCls: ''       };
+  return                                       { key: 'df', label: 'Defer',          color: '#6b7280', cls: 'qb-df', rowCls: ''       };
+}
+
+function newOpportunity(name, desc) {
+  return {
+    id: Date.now() + Math.random(),
+    name, desc: desc || '',
+    impact: 3, alignment: 3, regulatory: 3, scalability: 3,
+    complexity: 3, data: 3, change: 3, time: 3
+  };
+}
+
+// ═══════════════════════════════════════════
+// UI — ADD FORM
+// ═══════════════════════════════════════════
+function toggleAddForm() {
+  if (opportunities.length >= MAX_OPPS) {
+    alert('Maximum of 10 opportunities reached. Delete one to add another.');
+    return;
+  }
+  addFormVisible = !addFormVisible;
+  document.getElementById('add-form').classList.toggle('visible', addFormVisible);
+  if (addFormVisible) {
+    document.getElementById('new-name').focus();
+    document.getElementById('add-btn').textContent = '— Cancel';
+  } else {
+    document.getElementById('add-btn').textContent = '+ Add Opportunity';
+    document.getElementById('new-name').value = '';
+    document.getElementById('new-desc').value = '';
+  }
+}
+
+function cancelAdd() {
+  addFormVisible = true;
+  toggleAddForm();
+}
+
+function confirmAdd() {
+  const name = document.getElementById('new-name').value.trim();
+  if (!name) { document.getElementById('new-name').focus(); return; }
+  const desc = document.getElementById('new-desc').value.trim();
+  const opp = newOpportunity(name, desc);
+  opportunities.push(opp);
+  addFormVisible = true;
+  toggleAddForm();
+  selectOpportunity(opp.id);
+  renderAll();
+}
+
+// ═══════════════════════════════════════════
+// UI — OPPORTUNITY LIST
+// ═══════════════════════════════════════════
+function selectOpportunity(id) {
+  selectedId = id;
+  renderOppList();
+  renderScoringPanel();
+}
+
+function deleteOpportunity(id, e) {
+  e.stopPropagation();
+  opportunities = opportunities.filter(o => o.id !== id);
+  if (selectedId === id) {
+    selectedId = opportunities.length ? opportunities[0].id : null;
+  }
+  renderAll();
+}
+
+function renderOppList() {
+  const list = document.getElementById('opp-list');
+  const label = document.getElementById('opp-count-label');
+  label.textContent = `${opportunities.length} / ${MAX_OPPS}`;
+
+  if (opportunities.length === 0) {
+    list.innerHTML = '';
+    return;
+  }
+
+  list.innerHTML = opportunities.map(o => {
+    const v = calcValue(o);
+    const e = calcEffort(o);
+    const q = getQuadrant(v, e);
+    const sel = o.id === selectedId ? 'selected' : '';
+    return `<li class="opp-item ${sel}" onclick="selectOpportunity(${o.id})">
+      <span class="opp-dot" style="background:${q.color}"></span>
+      <span class="opp-name">${escHtml(o.name)}</span>
+      <span class="opp-score-pill">${v.toFixed(1)} / ${e.toFixed(1)}</span>
+      <button class="opp-delete" onclick="deleteOpportunity(${o.id}, event)" title="Remove">&times;</button>
+    </li>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// UI — SCORING PANEL
+// ═══════════════════════════════════════════
+function renderScoringPanel() {
+  const empty = document.getElementById('scoring-empty');
+  const content = document.getElementById('scoring-content');
+
+  if (!selectedId) {
+    empty.style.display = 'flex';
+    content.style.display = 'none';
+    return;
+  }
+
+  const o = opportunities.find(x => x.id === selectedId);
+  if (!o) {
+    empty.style.display = 'flex';
+    content.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  content.style.display = 'block';
+
+  document.getElementById('scoring-opp-name').textContent = o.name;
+  document.getElementById('scoring-opp-desc').textContent = o.desc || '';
+
+  // Set sliders
+  const fields = ['impact','alignment','regulatory','scalability','complexity','data','change','time'];
+  fields.forEach(f => {
+    const sl = document.getElementById('sl-' + f);
+    const sv = document.getElementById('sv-' + f);
+    if (sl) { sl.value = o[f]; sv.textContent = o[f]; }
+  });
+
+  updateScoreDisplays(o);
+}
+
+function updateScoreDisplays(o) {
+  const v = calcValue(o);
+  const e = calcEffort(o);
+  document.getElementById('val-score-display').textContent = v.toFixed(1);
+  document.getElementById('eff-score-display').textContent = e.toFixed(1);
+}
+
+function onSlider() {
+  if (!selectedId) return;
+  const o = opportunities.find(x => x.id === selectedId);
+  if (!o) return;
+
+  const fields = ['impact','alignment','regulatory','scalability','complexity','data','change','time'];
+  fields.forEach(f => {
+    const sl = document.getElementById('sl-' + f);
+    if (sl) {
+      o[f] = parseInt(sl.value);
+      document.getElementById('sv-' + f).textContent = o[f];
+    }
+  });
+
+  updateScoreDisplays(o);
+  renderAll();
+}
+
+// ═══════════════════════════════════════════
+// SVG PLOT
+// ═══════════════════════════════════════════
+function renderPlot() {
+  const svg = document.getElementById('matrix-svg');
+  const area = document.getElementById('plot-area');
+  const W = area.clientWidth - 48;
+  const H = area.clientHeight - 16;
+  if (W <= 0 || H <= 0) return;
+
+  const PAD = { top: 20, right: 20, bottom: 48, left: 52 };
+  const PW = W - PAD.left - PAD.right;
+  const PH = H - PAD.top - PAD.bottom;
+
+  // Scale helpers (data range 1-5)
+  const xScale = (val) => PAD.left + ((val - 1) / 4) * PW;
+  const yScale = (val) => PAD.top  + ((5 - val) / 4) * PH;
+  const midX = xScale(MIDPOINT);
+  const midY = yScale(MIDPOINT);
+
+  let markup = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">`;
+
+  // Quadrant fills
+  const fills = [
+    { x: PAD.left, y: PAD.top, w: midX - PAD.left, h: midY - PAD.top,        fill: 'rgba(16,185,129,0.06)',  label: 'QUICK WINS',      lx: PAD.left + 8,      ly: PAD.top + 18,         lc: '#10b981' },
+    { x: midX,    y: PAD.top, w: W - PAD.right - midX, h: midY - PAD.top,     fill: 'rgba(245,158,11,0.06)', label: 'STRATEGIC BETS',  lx: W - PAD.right - 8, ly: PAD.top + 18,         lc: '#f59e0b', anchor: 'end' },
+    { x: PAD.left, y: midY,   w: midX - PAD.left, h: H - PAD.bottom - midY,   fill: 'rgba(59,130,246,0.06)',  label: 'EASY FILLS',      lx: PAD.left + 8,      ly: H - PAD.bottom - 8,   lc: '#3b82f6' },
+    { x: midX,    y: midY,   w: W - PAD.right - midX, h: H - PAD.bottom - midY, fill: 'rgba(107,114,128,0.06)', label: 'DEFER',          lx: W - PAD.right - 8, ly: H - PAD.bottom - 8,   lc: '#6b7280', anchor: 'end' },
+  ];
+
+  fills.forEach(f => {
+    markup += `<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="${f.fill}" />`;
+    markup += `<text x="${f.lx}" y="${f.ly}" fill="${f.lc}" font-size="9" font-family="Inter,sans-serif" font-weight="700" letter-spacing="1.5" text-anchor="${f.anchor || 'start'}" opacity="0.8">${f.label}</text>`;
+  });
+
+  // Axes background line
+  markup += `<rect x="${PAD.left}" y="${PAD.top}" width="${PW}" height="${PH}" fill="none" stroke="#2e3347" stroke-width="1" rx="2" />`;
+
+  // Midpoint dashed lines
+  markup += `<line x1="${midX}" y1="${PAD.top}" x2="${midX}" y2="${PAD.top + PH}" stroke="#ffffff" stroke-width="1" stroke-dasharray="4 4" opacity="0.2" />`;
+  markup += `<line x1="${PAD.left}" y1="${midY}" x2="${PAD.left + PW}" y2="${midY}" stroke="#ffffff" stroke-width="1" stroke-dasharray="4 4" opacity="0.2" />`;
+
+  // Axis tick marks and labels
+  for (let v = 1; v <= 5; v++) {
+    const x = xScale(v);
+    const y = yScale(v);
+    // X axis ticks
+    markup += `<line x1="${x}" y1="${PAD.top + PH}" x2="${x}" y2="${PAD.top + PH + 5}" stroke="#4b5563" stroke-width="1" />`;
+    markup += `<text x="${x}" y="${PAD.top + PH + 18}" fill="#6b7280" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">${v}</text>`;
+    // Y axis ticks
+    markup += `<line x1="${PAD.left - 5}" y1="${y}" x2="${PAD.left}" y2="${y}" stroke="#4b5563" stroke-width="1" />`;
+    markup += `<text x="${PAD.left - 10}" y="${y + 4}" fill="#6b7280" font-size="10" font-family="Inter,sans-serif" text-anchor="end">${v}</text>`;
+  }
+
+  // Axis labels
+  const axX = PAD.left + PW / 2;
+  const axY = H - 6;
+  markup += `<text x="${axX}" y="${axY}" fill="#8892a4" font-size="11" font-family="Inter,sans-serif" text-anchor="middle" font-weight="500">Execution Effort →</text>`;
+  markup += `<text transform="rotate(-90,${16},${PAD.top + PH / 2})" x="${16}" y="${PAD.top + PH / 2}" fill="#8892a4" font-size="11" font-family="Inter,sans-serif" text-anchor="middle" font-weight="500">Value Potential ↑</text>`;
+
+  // "Low" / "High" corner labels
+  markup += `<text x="${PAD.left + 6}" y="${PAD.top + PH - 6}" fill="#4b5563" font-size="9" font-family="Inter,sans-serif">Low</text>`;
+  markup += `<text x="${PAD.left + PW - 6}" y="${PAD.top + PH - 6}" fill="#4b5563" font-size="9" font-family="Inter,sans-serif" text-anchor="end">High</text>`;
+
+  // Plot bubbles — with jitter for overlapping
+  if (opportunities.length > 0) {
+    const plotted = [];
+    const R = 18;
+    const LABEL_MAXLEN = 12;
+
+    opportunities.forEach((o, idx) => {
+      const v = calcValue(o);
+      const e = calcEffort(o);
+      const q = getQuadrant(v, e);
+
+      let cx = xScale(e);
+      let cy = yScale(v);
+
+      // Jitter to avoid overlap
+      let attempts = 0;
+      while (attempts < 30) {
+        let overlap = false;
+        for (const p of plotted) {
+          const dx = cx - p.cx;
+          const dy = cy - p.cy;
+          if (Math.sqrt(dx*dx + dy*dy) < R * 2.2) { overlap = true; break; }
+        }
+        if (!overlap) break;
+        const angle = (attempts * 137.5) * (Math.PI / 180);
+        const dist = Math.ceil(attempts / 6) * R * 0.7;
+        cx = xScale(e) + Math.cos(angle) * dist;
+        cy = yScale(v) + Math.sin(angle) * dist;
+        attempts++;
+      }
+
+      // Clamp to plot area
+      cx = Math.max(PAD.left + R, Math.min(PAD.left + PW - R, cx));
+      cy = Math.max(PAD.top  + R, Math.min(PAD.top  + PH - R, cy));
+      plotted.push({ cx, cy, id: o.id });
+
+      const isSel = o.id === selectedId;
+      const strokeW = isSel ? 2.5 : 1.5;
+      const alpha = isSel ? '1' : '0.85';
+      const label = o.name.length > LABEL_MAXLEN ? o.name.slice(0, LABEL_MAXLEN) + '…' : o.name;
+
+      // Group with data attributes for tooltip
+      markup += `<g class="bubble" data-id="${o.id}" style="cursor:pointer;" opacity="${alpha}"
+        onmouseenter="showTooltip(event, ${o.id})"
+        onmouseleave="hideTooltip()"
+        onclick="selectOpportunity(${o.id})">`;
+      markup += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${q.color}" fill-opacity="0.2" stroke="${q.color}" stroke-width="${strokeW}" />`;
+      if (isSel) {
+        markup += `<circle cx="${cx}" cy="${cy}" r="${R + 4}" fill="none" stroke="${q.color}" stroke-width="1" stroke-dasharray="3 3" opacity="0.5" />`;
+      }
+      markup += `<text x="${cx}" y="${cy + 4}" fill="${q.color}" font-size="9" font-family="Inter,sans-serif" text-anchor="middle" font-weight="600">${escHtml(label)}</text>`;
+      markup += `</g>`;
+    });
+  } else {
+    // Empty state
+    markup += `<text x="${PAD.left + PW / 2}" y="${PAD.top + PH / 2 - 10}" fill="#4b5563" font-size="13" font-family="Inter,sans-serif" text-anchor="middle">Add opportunities to plot them</text>`;
+    markup += `<text x="${PAD.left + PW / 2}" y="${PAD.top + PH / 2 + 10}" fill="#374151" font-size="11" font-family="Inter,sans-serif" text-anchor="middle">Use the panel on the left</text>`;
+  }
+
+  markup += '</svg>';
+  svg.innerHTML = markup;
+}
+
+// ═══════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════
+function showTooltip(event, id) {
+  const o = opportunities.find(x => x.id === id);
+  if (!o) return;
+  const v = calcValue(o);
+  const e = calcEffort(o);
+  const q = getQuadrant(v, e);
+  const tt = document.getElementById('tooltip');
+  document.getElementById('tt-name').textContent = o.name;
+  document.getElementById('tt-value').textContent = v.toFixed(1);
+  document.getElementById('tt-effort').textContent = e.toFixed(1);
+  document.getElementById('tt-quad').textContent = q.label;
+  tt.classList.add('visible');
+  positionTooltip(event);
+}
+
+function hideTooltip() {
+  document.getElementById('tooltip').classList.remove('visible');
+}
+
+document.addEventListener('mousemove', e => {
+  const tt = document.getElementById('tooltip');
+  if (tt.classList.contains('visible')) positionTooltip(e);
+});
+
+function positionTooltip(e) {
+  const tt = document.getElementById('tooltip');
+  const margin = 14;
+  let x = e.clientX + margin;
+  let y = e.clientY + margin;
+  const r = tt.getBoundingClientRect();
+  if (x + r.width > window.innerWidth - 8) x = e.clientX - r.width - margin;
+  if (y + r.height > window.innerHeight - 8) y = e.clientY - r.height - margin;
+  tt.style.left = x + 'px';
+  tt.style.top  = y + 'px';
+}
+
+// ═══════════════════════════════════════════
+// RANKED TABLE
+// ═══════════════════════════════════════════
+function renderTable() {
+  const wrap = document.getElementById('rank-table-wrap');
+  if (opportunities.length === 0) {
+    wrap.innerHTML = '<div class="table-empty">No opportunities yet. Add one to get started.</div>';
+    return;
+  }
+
+  const sorted = [...opportunities]
+    .map(o => {
+      const v = calcValue(o);
+      const e = calcEffort(o);
+      return { o, v, e, net: v - e, q: getQuadrant(v, e) };
+    })
+    .sort((a, b) => b.net - a.net);
+
+  let html = `<table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Opportunity</th>
+        <th>Quadrant</th>
+        <th>Value</th>
+        <th>Effort</th>
+        <th>Net Score</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  sorted.forEach(({ o, v, e, net, q }, i) => {
+    const netStr = (net >= 0 ? '+' : '') + net.toFixed(1);
+    const netCls = net >= 0 ? 'net-positive' : 'net-negative';
+    html += `<tr class="${q.rowCls}" onclick="selectOpportunity(${o.id})" style="cursor:pointer;">
+      <td class="rank">#${i + 1}</td>
+      <td class="opp-name-cell"><span title="${escHtml(o.name)}">${escHtml(o.name)}</span></td>
+      <td><span class="quadrant-badge ${q.cls}">${q.label}</span></td>
+      <td>${v.toFixed(1)}</td>
+      <td>${e.toFixed(1)}</td>
+      <td class="${netCls}">${netStr}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════
+function renderAll() {
+  renderOppList();
+  renderPlot();
+  renderTable();
+}
+
+// ═══════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════
+function clearAll() {
+  if (opportunities.length === 0) return;
+  if (!confirm('Clear all opportunities? This cannot be undone.')) return;
+  opportunities = [];
+  selectedId = null;
+  renderAll();
+  renderScoringPanel();
+}
+
+function exportJSON() {
+  const data = opportunities.map(o => {
+    const v = calcValue(o);
+    const e = calcEffort(o);
+    const q = getQuadrant(v, e);
+    return {
+      name: o.name,
+      description: o.desc,
+      scores: {
+        value: {
+          businessImpact: o.impact,
+          stakeholderAlignment: o.alignment,
+          regulatoryImpact: o.regulatory,
+          scalability: o.scalability,
+          total: parseFloat(v.toFixed(2))
+        },
+        effort: {
+          implementationComplexity: o.complexity,
+          dataComplexity: o.data,
+          changeManagement: o.change,
+          timeToValue: o.time,
+          total: parseFloat(e.toFixed(2))
+        }
+      },
+      quadrant: q.label,
+      netScore: parseFloat((v - e).toFixed(2))
+    };
+  });
+
+  const json = JSON.stringify({ exportedAt: new Date().toISOString(), opportunities: data }, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'prioritization-export.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════
+// LOAD EXAMPLES
+// ═══════════════════════════════════════════
+function loadExamples() {
+  if (opportunities.length > 0) {
+    if (!confirm('This will replace all current opportunities with examples. Continue?')) return;
+  }
+
+  // Helper to reverse-engineer slider values for target scores
+  // We set sliders to approximate the target values
+  // AP Invoice: Value 4.2, Effort 2.1
+  const examples = [
+    {
+      name: 'AP Invoice Processing',
+      desc: 'Automate accounts payable invoice matching and approval routing',
+      // Value 4.2: impact=5,align=4,reg=4,scale=3 → 5*.4+4*.25+4*.2+3*.15 = 2+1+0.8+0.45 = 4.25 ≈ 4.2
+      impact: 5, alignment: 4, regulatory: 4, scalability: 3,
+      // Effort 2.1: complex=2,data=2,change=2,time=3 → 2*.35+2*.30+2*.25+3*.10 = 0.7+0.6+0.5+0.3 = 2.1
+      complexity: 2, data: 2, change: 2, time: 3
+    },
+    {
+      name: 'AML Alert Triage',
+      desc: 'Intelligent triage and disposition of Anti-Money Laundering alerts',
+      // Value 4.5: impact=5,align=5,reg=5,scale=3 → 2+1.25+1+0.45 = 4.7... let's tune
+      // impact=5,align=4,reg=5,scale=4 → 2+1+1+0.6 = 4.6; close enough
+      impact: 5, alignment: 4, regulatory: 5, scalability: 4,
+      // Effort 4.2: complex=5,data=4,change=4,time=4 → 1.75+1.2+1+0.4 = 4.35
+      complexity: 5, data: 4, change: 4, time: 4
+    },
+    {
+      name: 'Sales Forecast Agent',
+      desc: 'Agent that synthesises CRM signals and market data to generate sales forecasts',
+      // Value 3.8: impact=4,align=4,reg=3,scale=4 → 1.6+1+0.6+0.6 = 3.8
+      impact: 4, alignment: 4, regulatory: 3, scalability: 4,
+      // Effort 2.8: complex=3,data=3,change=3,time=2 → 1.05+0.9+0.75+0.2 = 2.9
+      complexity: 3, data: 3, change: 3, time: 2
+    },
+    {
+      name: 'Employee Onboarding',
+      desc: 'Guided onboarding workflow with automated provisioning and task checklists',
+      // Value 2.6: impact=2,align=3,reg=3,scale=3 → 0.8+0.75+0.6+0.45 = 2.6
+      impact: 2, alignment: 3, regulatory: 3, scalability: 3,
+      // Effort 2.4: complex=2,data=3,change=2,time=3 → 0.7+0.9+0.5+0.3 = 2.4
+      complexity: 2, data: 3, change: 2, time: 3
+    },
+    {
+      name: 'Legacy Mainframe Integration',
+      desc: 'Deep integration with 1970s COBOL mainframe for batch processing modernisation',
+      // Value 2.2: impact=2,align=2,reg=3,scale=2 → 0.8+0.5+0.6+0.3 = 2.2
+      impact: 2, alignment: 2, regulatory: 3, scalability: 2,
+      // Effort 4.8: complex=5,data=5,change=5,time=4 → 1.75+1.5+1.25+0.4 = 4.9
+      complexity: 5, data: 5, change: 5, time: 4
+    }
+  ];
+
+  opportunities = examples.map((ex, i) => ({
+    id: Date.now() + i,
+    name: ex.name,
+    desc: ex.desc,
+    impact: ex.impact, alignment: ex.alignment, regulatory: ex.regulatory, scalability: ex.scalability,
+    complexity: ex.complexity, data: ex.data, change: ex.change, time: ex.time
+  }));
+
+  selectedId = opportunities[0].id;
+  renderAll();
+  renderScoringPanel();
+}
+
+// ═══════════════════════════════════════════
+// UTILITY
+// ═══════════════════════════════════════════
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════
+// RESIZE OBSERVER
+// ═══════════════════════════════════════════
+const ro = new ResizeObserver(() => renderPlot());
+ro.observe(document.getElementById('plot-area'));
+
+// ═══════════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (addFormVisible) cancelAdd();
+  }
+  if ((e.key === 'Enter') && document.activeElement === document.getElementById('new-name')) {
+    confirmAdd();
+  }
+});
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+applyInternalMode();
+renderAll();
+renderScoringPanel();
+</script>
+</body>
+</html>

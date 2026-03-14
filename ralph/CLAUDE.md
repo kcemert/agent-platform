@@ -122,3 +122,17 @@ If stories remain with `passes: false`, end your response normally — another i
 - The ralph/ directory is at `/Users/keith_ai/Documents/Agentic Projects/ralph/`
 - When creating a new project, create it under `/Users/keith_ai/Documents/Agentic Projects/`
 - Read progress.txt Codebase Patterns section before starting — it has critical context
+
+## Session Wrap-Up Protocol — MANDATORY
+
+**Do NOT end any session where work was done without completing all four steps.**
+The Stop hook runs `audit_platform.py` on exit and will exit code 1 (visible error) if MEMORY.md is stale.
+
+1. **Update MEMORY.md** — reflect any new industries, blueprints, epics, tools, or patterns
+2. **Sync registry.json + index.html** — if a new HTML tool was created, add entry and bump badge
+3. **Update ralph/roadmap.md** — mark completed epics ✅, add any new queued epics
+4. **Run audit and verify clean** — `python3 '/Users/keith_ai/Documents/Agentic Projects/audit_platform.py'`
+   - Must exit 0 before ending the session
+   - If it exits 1, fix the issues it reports, then re-run
+
+MEMORY.md: `/Users/keith_ai/.claude/projects/-Users-keith-ai-Documents-Agentic-Projects/memory/MEMORY.md`

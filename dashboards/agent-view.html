@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent View — Business Agents Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #1c2128;
+      --card-hover: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+
+      --low: #3fb950;
+      --low-dim: #3fb95020;
+      --medium: #d29922;
+      --medium-dim: #d2992220;
+      --high: #f85149;
+      --high-dim: #f8514920;
+
+      --success: #3fb950;
+      --partial: #d29922;
+      --failed: #f85149;
+
+      /* lifecycle badge colors */
+      --lc-blueprint: #6e7681;
+      --lc-scaffolded: #388bfd;
+      --lc-sandbox: #56d364;
+      --lc-validated: #d29922;
+      --lc-pilot-ready: #3fb950;
+      --lc-production: #26a641;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Offline Banner ── */
+    #offline-banner {
+      display: none;
+      background: #d2992220;
+      border-bottom: 1px solid #d2992240;
+      padding: 10px 32px;
+      font-size: 0.82rem;
+      color: var(--medium);
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+    }
+
+    .nav-tab:hover {
+      background: rgba(88, 166, 255, 0.08);
+      color: var(--accent);
+    }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+      width: 100%;
+    }
+
+    /* ── Back button ── */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-bottom: 24px;
+      padding: 5px 0;
+      transition: color 120ms;
+    }
+
+    .back-btn:hover { color: var(--accent); }
+
+    /* ── Agent Header ── */
+    .agent-header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+
+    .agent-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+
+    .agent-badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    /* lifecycle badge */
+    .badge-lifecycle {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 11px;
+    }
+
+    .badge-lifecycle.blueprint  { background: #6e768120; color: #6e7681; border: 1px solid #6e768140; }
+    .badge-lifecycle.scaffolded { background: #388bfd20; color: #388bfd; border: 1px solid #388bfd40; }
+    .badge-lifecycle.sandbox    { background: #56d36420; color: #56d364; border: 1px solid #56d36440; }
+    .badge-lifecycle.validated  { background: #d2992220; color: #d29922; border: 1px solid #d2992240; }
+    .badge-lifecycle.pilot_ready { background: #3fb95020; color: #3fb950; border: 1px solid #3fb95040; }
+    .badge-lifecycle.production { background: #26a64120; color: #26a641; border: 1px solid #26a64140; }
+
+    /* authority pill */
+    .pill-authority {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 11px;
+    }
+
+    .pill-authority.low    { background: var(--low-dim);    color: var(--low);    border: 1px solid #3fb95040; }
+    .pill-authority.medium { background: var(--medium-dim); color: var(--medium); border: 1px solid #d2992240; }
+    .pill-authority.high   { background: var(--high-dim);   color: var(--high);   border: 1px solid #f8514940; }
+
+    /* chip */
+    .chip {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: #30363d40;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+
+    .agent-description {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .meta-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .meta-value {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* ── Section common ── */
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── KPI Trend Cards ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .kpi-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .kpi-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .kpi-numbers {
+      text-align: right;
+    }
+
+    .kpi-total {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .kpi-avg {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .kpi-sparkline {
+      width: 100%;
+      height: 50px;
+      display: block;
+    }
+
+    /* ── Run History table ── */
+    .run-table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+    }
+
+    thead tr {
+      background: #21262d;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 100ms;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--card-hover); }
+
+    td {
+      padding: 10px 16px;
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+
+    td.ts {
+      font-family: 'SF Mono', 'Fira Mono', monospace;
+      font-size: 0.78rem;
+      white-space: nowrap;
+      color: var(--text-muted);
+    }
+
+    td.summary { line-height: 1.45; }
+
+    .outcome-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 2px 9px;
+    }
+
+    .outcome-badge.success { background: #3fb95020; color: #3fb950; border: 1px solid #3fb95040; }
+    .outcome-badge.partial { background: #d2992220; color: #d29922; border: 1px solid #d2992240; }
+    .outcome-badge.failed  { background: #f8514920; color: #f85149; border: 1px solid #f8514940; }
+
+    td.duration {
+      font-family: 'SF Mono', 'Fira Mono', monospace;
+      font-size: 0.78rem;
+      white-space: nowrap;
+      color: var(--text-muted);
+    }
+
+    /* ── Last Output (details/summary) ── */
+    .output-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .output-panel summary {
+      padding: 14px 20px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 120ms;
+      user-select: none;
+    }
+
+    .output-panel summary::-webkit-details-marker { display: none; }
+
+    .output-panel summary::before {
+      content: '▶';
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      transition: transform 150ms;
+      display: inline-block;
+    }
+
+    .output-panel[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .output-panel summary:hover { background: var(--card-hover); }
+
+    .output-panel summary .run-at {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-left: auto;
+      font-family: 'SF Mono', 'Fira Mono', monospace;
+    }
+
+    .output-pre {
+      background: #161b22;
+      border-top: 1px solid var(--border);
+      padding: 18px 20px;
+      font-family: 'SF Mono', 'Fira Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: #a5d6ff;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* ── Approval Queue ── */
+    .approval-header {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--medium);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .approval-empty {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+
+    .capa-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .capa-card:last-child { margin-bottom: 0; }
+
+    .capa-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .capa-id {
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Fira Mono', monospace;
+      color: var(--accent);
+      background: #58a6ff15;
+      border: 1px solid #58a6ff30;
+      border-radius: 6px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
+    .capa-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .capa-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .capa-age {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+    }
+
+    .severity-pill {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 2px 9px;
+    }
+
+    .severity-pill.low    { background: #3fb95015; color: #3fb950; border: 1px solid #3fb95030; }
+    .severity-pill.medium { background: #d2992215; color: #d29922; border: 1px solid #d2992230; }
+    .severity-pill.high   { background: #f8514915; color: #f85149; border: 1px solid #f8514930; }
+
+    .capa-details {
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .capa-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 6px 14px;
+      border: 1px solid;
+      cursor: pointer;
+      transition: opacity 120ms, background 120ms;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn:hover { opacity: 0.8; }
+
+    .btn-approve {
+      background: #3fb95015;
+      color: #3fb950;
+      border-color: #3fb95040;
+    }
+
+    .btn-info {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: var(--border);
+    }
+
+    .btn-info:hover { background: var(--card-hover); color: var(--text); }
+
+    /* ── Run Agent button ── */
+    .btn-run-agent {
+      background: #58a6ff15;
+      color: var(--accent);
+      border: 1px solid #58a6ff40;
+      font-size: 0.83rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 8px 18px;
+      cursor: pointer;
+      transition: background 120ms, opacity 120ms;
+      margin-right: 10px;
+    }
+
+    .btn-run-agent:hover:not(:disabled) { background: #58a6ff25; }
+    .btn-run-agent:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Next Gate panel ── */
+    .gate-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 24px;
+    }
+
+    .gate-flow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .gate-stage {
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    .gate-stage.current {
+      background: #56d36420;
+      color: #56d364;
+      border: 1px solid #56d36440;
+    }
+
+    .gate-stage.next {
+      background: #d2992220;
+      color: #d29922;
+      border: 1px solid #d2992240;
+    }
+
+    .gate-arrow {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    .gate-checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .gate-checklist li {
+      font-size: 0.85rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.45;
+    }
+
+    .gate-checklist li.done {
+      color: var(--low);
+    }
+
+    .gate-checklist li.pending {
+      color: var(--text-secondary);
+    }
+
+    .gate-checklist li.pending::before {
+      content: '○';
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .gate-checklist li.done::before {
+      content: '';
+      flex-shrink: 0;
+    }
+
+    .btn-advance {
+      background: #58a6ff15;
+      color: var(--accent);
+      border: 1px solid #58a6ff40;
+      font-size: 0.83rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 8px 18px;
+      cursor: pointer;
+      transition: background 120ms, opacity 120ms;
+    }
+
+    .btn-advance:hover:not(:disabled) { background: #58a6ff25; }
+    .btn-advance:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Lifecycle notes ── */
+    .lifecycle-notes {
+      background: #58a6ff0a;
+      border: 1px solid #58a6ff20;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-top: 16px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 20px 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 120ms;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    /* ── Not-found fallback ── */
+    .not-found {
+      text-align: center;
+      padding: 80px 32px;
+      color: var(--text-muted);
+    }
+
+    .not-found h2 {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .not-found p {
+      font-size: 0.85rem;
+    }
+
+    /* ── Utilities ── */
+    .hidden { display: none; }
+
+    /* ── Run Theater Drawer ──────────────────────────────────────────────────── */
+    .run-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      backdrop-filter: blur(2px);
+    }
+    .run-overlay.active { display: block; }
+
+    .run-drawer {
+      position: fixed;
+      top: 0; right: -500px;
+      width: 480px; height: 100vh;
+      background: #1a1f2e;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      z-index: 201;
+      display: flex; flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -8px 0 32px rgba(0,0,0,0.4);
+    }
+    .run-drawer.active { right: 0; }
+
+    .drawer-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+    }
+    .drawer-agent-name { font-size: 1rem; font-weight: 700; color: #e2e8f0; }
+    .drawer-subtitle { font-size: 0.75rem; color: #64748b; margin-top: 3px; }
+    .drawer-close {
+      background: none; border: none; color: #64748b; font-size: 1.1rem;
+      cursor: pointer; padding: 2px 6px; border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .drawer-close:hover { color: #e2e8f0; background: rgba(255,255,255,0.06); }
+
+    .drawer-log {
+      flex: 0 0 auto;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      min-height: 140px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .log-step {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 0;
+      font-size: 0.82rem; color: #94a3b8;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .log-step.visible { opacity: 1; transform: translateY(0); }
+    .log-step .step-icon { font-size: 0.9rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .log-step.done { color: #94a3b8; }
+    .log-step.done .step-icon::after { content: ' \2705'; }
+    .log-step.running { color: #e2e8f0; }
+    .log-step.running .step-icon { animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+    .drawer-results { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .drawer-results-header {
+      padding: 12px 20px 8px;
+      font-size: 0.8rem; font-weight: 600; color: #64748b;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .rec-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+    .rec-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s, opacity 0.3s;
+    }
+    .rec-row:hover { background: rgba(255,255,255,0.02); }
+    .rec-row.decided { opacity: 0.45; }
+
+    .urgency-badge {
+      flex-shrink: 0;
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      padding: 2px 6px; border-radius: 3px; margin-top: 2px;
+      letter-spacing: 0.05em;
+    }
+    .urgency-critical { background: rgba(239,68,68,0.2); color: #f87171; }
+    .urgency-high     { background: rgba(251,146,60,0.2); color: #fb923c; }
+    .urgency-medium   { background: rgba(234,179,8,0.2);  color: #facc15; }
+    .urgency-low      { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+    .rec-body { flex: 1; min-width: 0; }
+    .rec-item-id { font-size: 0.72rem; color: #64748b; font-family: monospace; }
+    .rec-label { font-size: 0.82rem; color: #cbd5e1; margin: 2px 0; font-weight: 500; }
+    .rec-action { font-size: 0.75rem; color: #94a3b8; line-height: 1.4; }
+
+    .rec-buttons { display: flex; gap: 6px; flex-shrink: 0; margin-top: 2px; }
+    .btn-accept, .btn-reject {
+      font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 4px;
+      border: none; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-accept { background: rgba(16,185,129,0.15); color: #10b981; }
+    .btn-accept:hover { background: rgba(16,185,129,0.3); }
+    .btn-accept.active { background: #10b981; color: #fff; }
+    .btn-reject { background: rgba(239,68,68,0.12); color: #f87171; }
+    .btn-reject:hover { background: rgba(239,68,68,0.25); }
+    .btn-reject.active { background: #ef4444; color: #fff; }
+
+    .drawer-footer {
+      padding: 14px 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(0,0,0,0.2);
+    }
+    .btn-submit-decisions {
+      background: #3b82f6; color: #fff; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-submit-decisions:hover { background: #2563eb; }
+    .btn-submit-decisions:disabled { background: #334155; color: #64748b; cursor: default; }
+    .decisions-summary { font-size: 0.75rem; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Offline Banner ── -->
+  <div id="offline-banner">
+    &#9888; Server offline &mdash; start with: <code style="font-family:monospace;background:#d2992215;padding:1px 6px;border-radius:3px;">cd dashboards &amp;&amp; python3 server.py</code>
+  </div>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="nav-brand">&#9889; Business Agents Platform</div>
+    <div class="nav-personas">
+      <a href="operations.html" class="nav-tab">Operations</a>
+      <a href="finance.html" class="nav-tab">Finance</a>
+      <a href="compliance.html" class="nav-tab">Compliance</a>
+      <a href="../business-agents/dashboard/index.html" class="nav-tab">Enterprise &#8599;</a>
+    </div>
+  </nav>
+
+  <!-- Main content — rendered by JS -->
+  <main id="main-content">
+    <div class="not-found">
+      <h2>Loading agent data...</h2>
+      <p>If this persists, check the ?agent= URL parameter.</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <a id="footer-back" href="operations.html">&#8592; Back</a>
+    <a href="../business-agents/dashboard/index.html">Enterprise Dashboard &#8599;</a>
+  </footer>
+
+  <!-- Run Theater Drawer -->
+  <div class="run-overlay" id="run-overlay" onclick="closeRunDrawer()"></div>
+  <div class="run-drawer" id="run-drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-agent-name" id="drawer-agent-name">Running Agent</div>
+        <div class="drawer-subtitle" id="drawer-subtitle">Initializing...</div>
+      </div>
+      <button class="drawer-close" onclick="closeRunDrawer()">&#x2715;</button>
+    </div>
+    <div class="drawer-log" id="drawer-log"></div>
+    <div class="drawer-results" id="drawer-results" style="display:none">
+      <div class="drawer-results-header" id="drawer-results-header"></div>
+      <div class="rec-list" id="rec-list"></div>
+      <div class="drawer-footer">
+        <button class="btn-submit-decisions" id="btn-submit" onclick="submitAndClose()">
+          Submit Decisions
+        </button>
+        <span class="decisions-summary" id="decisions-summary"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:8500';
+
+    // ── Lifecycle stage ordering for next-gate logic ───────────────────────
+    const LIFECYCLE_STAGES = ['blueprint','scaffolded','sandbox','validated','pilot_ready','production'];
+
+    // ── Persona → dashboard URL map ───────────────────────────────────────
+    const PERSONA_DASHBOARD = {
+      'operations': 'operations.html',
+      'compliance': 'compliance.html',
+      'finance':    'finance.html',
+    };
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+    function getParam(name) {
+      const u = new URLSearchParams(window.location.search);
+      return u.get(name) || '';
+    }
+
+    function escHtml(str) {
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    function capitalize(s) {
+      return String(s || '').replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function buildSparkline(trend, id) {
+      if (!trend || trend.length === 0) return '';
+      const W = 200, H = 50, pad = 4;
+      const min = Math.min(...trend);
+      const max = Math.max(...trend);
+      const range = (max - min) || 1;
+      const pts = trend.map((v, i) => {
+        const x = pad + (i / Math.max(trend.length - 1, 1)) * (W - pad * 2);
+        const y = H - pad - ((v - min) / range) * (H - pad * 2);
+        return x.toFixed(1) + ',' + y.toFixed(1);
+      });
+      const lastPt = pts[pts.length - 1].split(',');
+      return `<svg class="kpi-sparkline" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="sg-${id}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#58a6ff" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#58a6ff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polyline points="${pts.join(' ')}" fill="none" stroke="#58a6ff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="3" fill="#58a6ff"/>
+      </svg>`;
+    }
+
+    function fmtUnit(value, unit) {
+      if (!value && value !== 0) return '—';
+      const n = parseFloat(value);
+      if (unit === 'percent' || unit === '%') return n.toFixed(1) + '%';
+      if (unit === 'hours' || unit === 'hrs') return n.toFixed(1) + ' hrs';
+      return String(value);
+    }
+
+    function lifecycleBadge(stage) {
+      return `<span class="badge-lifecycle ${escHtml(stage)}">${escHtml(capitalize(stage))}</span>`;
+    }
+
+    function authorityPill(level) {
+      return `<span class="pill-authority ${escHtml(level || 'low')}">${escHtml((level || 'low').toUpperCase())} Authority</span>`;
+    }
+
+    function outcomeBadge(outcome) {
+      return `<span class="outcome-badge ${escHtml(outcome || '')}">${escHtml(outcome || '')}</span>`;
+    }
+
+    function isCompleted(req) {
+      return String(req).includes('\u2705');
+    }
+
+    // ── Render run history table rows ─────────────────────────────────────
+    function renderRunRows(runs) {
+      if (!runs || runs.length === 0) {
+        return '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">No runs recorded yet.</td></tr>';
+      }
+      return runs.map(r => `<tr>
+        <td class="ts">${escHtml(r.run_at || '')}</td>
+        <td>${outcomeBadge(r.outcome)}</td>
+        <td class="summary">${escHtml(r.summary || '')}</td>
+        <td class="duration">${r.duration_secs != null ? escHtml(String(Math.round(r.duration_secs * 10) / 10)) + 's' : '—'}</td>
+      </tr>`).join('');
+    }
+
+    // ── Render KPI cards from value_tracking trends ────────────────────────
+    function renderKpiCards(bp, value, trends, runs) {
+      // Build KPI cards from value_tracking data if available, else use run metrics
+      const cards = [];
+
+      if (value && value.length > 0) {
+        value.forEach((v, i) => {
+          const trendData = (trends && trends[v.metric_type]) || [];
+          const last10 = trendData.slice(-10);
+          const totalFmt = fmtUnit(v.total_delta, v.unit);
+          const avgFmt = fmtUnit(v.avg_delta, v.unit);
+          cards.push(`<div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-label">${escHtml(capitalize(v.metric_type.replace(/_/g,' ')))}</div>
+              <div class="kpi-numbers">
+                <div class="kpi-total">${escHtml(totalFmt)}</div>
+                <div class="kpi-avg">Avg ${escHtml(avgFmt)} / run</div>
+              </div>
+            </div>
+            ${buildSparkline(last10, bp.slug + '-' + i)}
+          </div>`);
+        });
+      } else {
+        // Fallback: show run count card if no value_tracking data
+        const successCount = (runs || []).filter(r => r.outcome === 'success').length;
+        const totalRuns = (runs || []).length;
+        cards.push(`<div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-label">Total Runs</div>
+            <div class="kpi-numbers">
+              <div class="kpi-total">${totalRuns}</div>
+              <div class="kpi-avg">${successCount} successful</div>
+            </div>
+          </div>
+        </div>`);
+        if (bp.estimated_time_saved_hrs_week) {
+          cards.push(`<div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-label">Est. Hours Saved / Week</div>
+              <div class="kpi-numbers">
+                <div class="kpi-total">${escHtml(String(bp.estimated_time_saved_hrs_week))}</div>
+                <div class="kpi-avg">hrs</div>
+              </div>
+            </div>
+          </div>`);
+        }
+      }
+
+      return cards.join('');
+    }
+
+    // ── Render approval queue ─────────────────────────────────────────────
+    function renderApprovalSection(approvals) {
+      if (!approvals || approvals.length === 0) {
+        return `<section class="section">
+          <div class="section-title">Approval Queue</div>
+          <div class="approval-empty">No items pending approval &mdash; all LOW authority actions are auto-approved.</div>
+        </section>`;
+      }
+      const cards = approvals.map(item => {
+        const details = item.item_details || {};
+        const title = details.title || item.item_id || '';
+        const severity = details.severity || 'low';
+        const age = details.age_days != null ? details.age_days : '?';
+        const detailText = details.details || '';
+        return `<div class="capa-card">
+          <div class="capa-top">
+            <span class="capa-id">${escHtml(item.item_id || '')}</span>
+            <span class="capa-title">${escHtml(title)}</span>
+          </div>
+          <div class="capa-meta">
+            <span class="capa-age">Age: ${escHtml(String(age))} day${age !== 1 ? 's' : ''}</span>
+            <span class="severity-pill ${escHtml(severity)}">${escHtml(severity.toUpperCase())} Severity</span>
+          </div>
+          <div class="capa-details">${escHtml(detailText)}</div>
+          <div class="capa-actions">
+            <button class="btn btn-approve">&#10003; Review &amp; Approve</button>
+            <button class="btn btn-info">Request More Info</button>
+          </div>
+        </div>`;
+      }).join('');
+      return `<section class="section">
+        <div class="approval-header">&#9888;&#65039; Pending Approvals (${approvals.length} item${approvals.length !== 1 ? 's' : ''})</div>
+        ${cards}
+      </section>`;
+    }
+
+    // ── Render next lifecycle gate ─────────────────────────────────────────
+    function renderGateSection(bp, slug) {
+      const currentStage = bp.lifecycle_stage || 'sandbox';
+      const currentIdx = LIFECYCLE_STAGES.indexOf(currentStage);
+      const nextStage = currentIdx >= 0 && currentIdx < LIFECYCLE_STAGES.length - 1
+        ? LIFECYCLE_STAGES[currentIdx + 1]
+        : null;
+
+      // Parse requirements from lifecycle_notes or use generic ones
+      const notes = bp.lifecycle_notes || '';
+      const requirements = [
+        'Complete SOP documentation',
+        'Achieve required run success rate',
+        'Stakeholder sign-off',
+      ];
+
+      const checkItems = requirements.map(req => {
+        const done = isCompleted(req);
+        return `<li class="${done ? 'done' : 'pending'}">${escHtml(req)}</li>`;
+      }).join('');
+
+      if (!nextStage) {
+        return `<section class="section">
+          <div class="section-title">Lifecycle Stage</div>
+          <div class="gate-panel">
+            <div class="gate-flow">
+              <span class="gate-stage current">${escHtml(capitalize(currentStage))}</span>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-muted);">Agent is at the final lifecycle stage (Production).</p>
+          </div>
+        </section>`;
+      }
+
+      return `<section class="section">
+        <div class="section-title">Next Lifecycle Gate</div>
+        <div class="gate-panel">
+          <div class="gate-flow">
+            <span class="gate-stage current">${escHtml(capitalize(currentStage))}</span>
+            <span class="gate-arrow">&#8594;</span>
+            <span class="gate-stage next">${escHtml(capitalize(nextStage))}</span>
+          </div>
+          <ul class="gate-checklist">
+            ${checkItems}
+          </ul>
+          <button class="btn-advance" id="btn-advance" onclick="advanceAgent('${escHtml(slug)}', '${escHtml(nextStage)}', this)">
+            Advance to ${escHtml(capitalize(nextStage))} &rarr;
+          </button>
+        </div>
+      </section>`;
+    }
+
+    // ── Per-agent execution step definitions ──────────────────────────────
+    const AGENT_STEPS = {
+      'cg-replenishment-pr-agent': [
+        { icon: '\uD83D\uDD0C', label: 'Connecting to SAP ERP', ms: 500 },
+        { icon: '\uD83D\uDCE6', label: 'Loading SKU inventory records', ms: 800 },
+        { icon: '\u2696\uFE0F', label: 'Applying reorder logic to each SKU', ms: 600 },
+        { icon: '\uD83D\uDCCB', label: 'Generating purchase requisitions', ms: 700 },
+        { icon: '\u2709\uFE0F', label: 'Queuing for approval workflow', ms: 400 },
+      ],
+      'cg-demand-forecast-agent': [
+        { icon: '\uD83D\uDCCA', label: 'Loading 12-week demand history', ms: 600 },
+        { icon: '\uD83E\uDDEE', label: 'Running SMA + trend regression models', ms: 900 },
+        { icon: '\uD83D\uDCC8', label: 'Identifying demand signals and anomalies', ms: 700 },
+        { icon: '\uD83D\uDD2E', label: 'Computing 4-week forward projections', ms: 500 },
+        { icon: '\uD83C\uDFAF', label: 'Scoring confidence intervals', ms: 400 },
+      ],
+      'cg-quality-capa-agent': [
+        { icon: '\uD83D\uDD0D', label: 'Scanning quality event log', ms: 500 },
+        { icon: '\u2699\uFE0F', label: 'Checking OEE across 5 production lines', ms: 800 },
+        { icon: '\uD83D\uDEA8', label: 'Applying CAPA rule engine', ms: 600 },
+        { icon: '\uD83D\uDCDD', label: 'Submitting maintenance requests to MES', ms: 700 },
+        { icon: '\uD83D\uDCE3', label: 'Dispatching quality alerts', ms: 400 },
+      ],
+    };
+
+    // ── Drawer state ──────────────────────────────────────────────────────
+    let _drawerSlug = null;
+    let _drawerRunResult = null;
+    let _drawerDecisions = {};  // rec_id -> decision
+
+    function openRunDrawer(slug) {
+      _drawerSlug = slug;
+      _drawerRunResult = null;
+      _drawerDecisions = {};
+
+      // Use the agent name from the rendered page title if available
+      const agentName = document.title.replace(' \u2014 Business Agents Platform', '') || slug;
+
+      document.getElementById('drawer-agent-name').textContent = agentName;
+      document.getElementById('drawer-subtitle').textContent = 'Initializing...';
+      document.getElementById('drawer-log').innerHTML = '';
+      document.getElementById('drawer-results').style.display = 'none';
+      document.getElementById('rec-list').innerHTML = '';
+      document.getElementById('btn-submit').disabled = true;
+      document.getElementById('decisions-summary').textContent = '';
+
+      document.getElementById('run-overlay').classList.add('active');
+      document.getElementById('run-drawer').classList.add('active');
+
+      // Fire real run + animate steps simultaneously
+      const steps = AGENT_STEPS[slug] || [{ icon: '\u2699\uFE0F', label: 'Running agent', ms: 2000 }];
+
+      Promise.all([
+        runAgentAPI(slug),
+        animateSteps(steps),
+      ]).then(([runResult]) => {
+        _drawerRunResult = runResult;
+        showRecommendations(runResult);
+        loadAgentData(slug);
+      }).catch(err => {
+        document.getElementById('drawer-subtitle').textContent = '\u26A0\uFE0F Error \u2014 ' + (err.message || 'Unknown error');
+      });
+    }
+
+    function closeRunDrawer() {
+      document.getElementById('run-overlay').classList.remove('active');
+      document.getElementById('run-drawer').classList.remove('active');
+      _drawerSlug = null;
+    }
+
+    async function runAgentAPI(slug) {
+      const resp = await fetch(`${API}/api/run/${slug}`, { method: 'POST' });
+      if (!resp.ok) throw new Error('Run failed: HTTP ' + resp.status);
+      return await resp.json();
+    }
+
+    function animateSteps(steps) {
+      return new Promise(resolve => {
+        const logEl = document.getElementById('drawer-log');
+        const subtitle = document.getElementById('drawer-subtitle');
+        subtitle.textContent = 'Executing...';
+
+        let total = 0;
+        steps.forEach((s, i) => {
+          // Create step element (hidden)
+          const el = document.createElement('div');
+          el.className = 'log-step';
+          el.innerHTML = `<span class="step-icon">${s.icon}</span><span>${s.label}</span>`;
+          logEl.appendChild(el);
+
+          // Show step after cumulative delay
+          setTimeout(() => {
+            el.classList.add('visible', 'running');
+            subtitle.textContent = s.label + '...';
+          }, total);
+
+          // Mark done after step duration
+          setTimeout(() => {
+            el.classList.remove('running');
+            el.classList.add('done');
+            if (i === steps.length - 1) {
+              subtitle.textContent = 'Complete \u2014 reviewing recommendations';
+              resolve();
+            }
+          }, total + s.ms);
+
+          total += s.ms;
+        });
+      });
+    }
+
+    function showRecommendations(result) {
+      const recs = result.recommendations || [];
+      const count = recs.length;
+      const resultsEl = document.getElementById('drawer-results');
+      const headerEl = document.getElementById('drawer-results-header');
+      const listEl = document.getElementById('rec-list');
+      const submitBtn = document.getElementById('btn-submit');
+
+      headerEl.textContent = count > 0
+        ? `${count} recommendation${count !== 1 ? 's' : ''} \u2014 review and decide`
+        : 'Run complete \u2014 no action items generated';
+
+      listEl.innerHTML = '';
+      recs.forEach(rec => {
+        const row = document.createElement('div');
+        row.className = 'rec-row';
+        row.dataset.recId = rec.id || '';
+        row.innerHTML = `
+          <span class="urgency-badge urgency-${escHtml(rec.urgency || 'medium')}">${escHtml(rec.urgency || 'med')}</span>
+          <div class="rec-body">
+            <div class="rec-item-id">${escHtml(rec.item_id || '')}</div>
+            <div class="rec-label">${escHtml(rec.item_label || rec.item_id || '')}</div>
+            <div class="rec-action">${escHtml(rec.recommended_action || '')}</div>
+          </div>
+          <div class="rec-buttons">
+            <button class="btn-accept" onclick="decideRec(${JSON.stringify(rec.id)}, 'approved', this)">Accept</button>
+            <button class="btn-reject" onclick="decideRec(${JSON.stringify(rec.id)}, 'rejected', this)">Reject</button>
+          </div>
+        `;
+        listEl.appendChild(row);
+      });
+
+      resultsEl.style.display = 'flex';
+      submitBtn.disabled = count === 0;
+      updateDecisionSummary();
+    }
+
+    async function decideRec(recId, decision, btn) {
+      if (!recId) {
+        // No DB id yet (server didn't return ids) -- just update UI locally
+        const row = btn.closest('.rec-row');
+        row.classList.add('decided');
+        btn.classList.add('active');
+        const other = btn.classList.contains('btn-accept')
+          ? row.querySelector('.btn-reject')
+          : row.querySelector('.btn-accept');
+        other.disabled = true;
+        _drawerDecisions[row.dataset.recId || Math.random()] = decision;
+        updateDecisionSummary();
+        return;
+      }
+
+      btn.disabled = true;
+      try {
+        await fetch(`${API}/api/recommendations/${recId}/decide`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ decision, decided_by: 'agent-view' })
+        });
+        const row = btn.closest('.rec-row');
+        row.classList.add('decided');
+        btn.classList.add('active');
+        const other = btn.classList.contains('btn-accept')
+          ? row.querySelector('.btn-reject')
+          : row.querySelector('.btn-accept');
+        other.disabled = true;
+        _drawerDecisions[recId] = decision;
+        updateDecisionSummary();
+      } catch (e) {
+        btn.disabled = false;
+      }
+    }
+
+    function updateDecisionSummary() {
+      const decisions = Object.values(_drawerDecisions);
+      const approved = decisions.filter(d => d === 'approved').length;
+      const rejected = decisions.filter(d => d === 'rejected').length;
+      const total = document.querySelectorAll('#rec-list .rec-row').length;
+      const pending = total - decisions.length;
+      const parts = [];
+      if (approved) parts.push(`${approved} approved`);
+      if (rejected) parts.push(`${rejected} rejected`);
+      if (pending) parts.push(`${pending} pending`);
+      document.getElementById('decisions-summary').textContent = parts.join(' \u00B7 ');
+    }
+
+    function submitAndClose() {
+      const decisions = Object.values(_drawerDecisions);
+      const approved = decisions.filter(d => d === 'approved').length;
+      const rejected = decisions.filter(d => d === 'rejected').length;
+      const slug = _drawerSlug;
+      closeRunDrawer();
+      // Toast
+      const msg = approved || rejected
+        ? `${approved} approved \u00B7 ${rejected} rejected`
+        : 'Run complete';
+      showToast('\u2705 ' + msg);
+      if (slug) loadAgentData(slug);
+    }
+
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = 'position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:12px 20px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
+
+    // ── Advance lifecycle ──────────────────────────────────────────────────
+    async function advanceAgent(slug, nextStage, btn) {
+      if (!confirm(`Advance agent to "${capitalize(nextStage)}"? This will update the lifecycle stage in the database.`)) return;
+      btn.disabled = true;
+      btn.textContent = 'Advancing...';
+      try {
+        const result = await fetch(`${API}/api/agents/${slug}/advance`, { method: 'POST' }).then(r => r.json());
+        if (result.success) {
+          btn.textContent = '\u2705 Advanced!';
+          setTimeout(() => { window.location.reload(); }, 1200);
+        } else {
+          btn.textContent = '\u274C ' + (result.error || 'Failed');
+          setTimeout(() => { btn.disabled = false; btn.textContent = 'Advance \u2192'; }, 2500);
+        }
+      } catch (e) {
+        btn.textContent = '\u274C Error';
+        setTimeout(() => { btn.disabled = false; btn.textContent = 'Advance \u2192'; }, 2500);
+      }
+    }
+
+    // ── Render full agent page ─────────────────────────────────────────────
+    function renderAgent(bp, runs, value, trends, approvals, slug) {
+      const main = document.getElementById('main-content');
+
+      // Update page title
+      document.title = escHtml(bp.title || slug) + ' — Business Agents Platform';
+
+      // Update footer back link
+      const personaDashboard = PERSONA_DASHBOARD[bp.persona] || 'operations.html';
+      const footerBack = document.getElementById('footer-back');
+      if (footerBack) {
+        footerBack.href = personaDashboard;
+        footerBack.textContent = '\u2190 Back to ' + capitalize(bp.persona || 'Operations') + ' Dashboard';
+      }
+
+      const kpiCards = renderKpiCards(bp, value, trends, runs);
+      const runRows = renderRunRows(runs);
+      const approvalSection = renderApprovalSection(approvals);
+      const gateSection = renderGateSection(bp, slug);
+
+      // Last output: use most recent run's output_json if available
+      const lastRun = runs && runs.length > 0 ? runs[0] : null;
+      let lastOutputSection = '';
+      if (lastRun) {
+        let outputData = null;
+        try { outputData = lastRun.output_json ? JSON.parse(lastRun.output_json) : null; } catch(e) {}
+        const outputStr = outputData
+          ? JSON.stringify(outputData, null, 2)
+          : (lastRun.summary || 'No output data');
+        lastOutputSection = `<section class="section">
+          <div class="section-title">Last Output</div>
+          <details class="output-panel" open>
+            <summary>
+              Last Run Output
+              <span class="run-at">${escHtml(lastRun.run_at || '')}</span>
+            </summary>
+            <pre class="output-pre">${escHtml(outputStr)}</pre>
+          </details>
+        </section>`;
+      }
+
+      // Schedule / trigger display
+      const scheduleText = bp.trigger_schedule || bp.schedule || (bp.trigger_type === 'scheduled' ? 'Scheduled' : bp.trigger_type || 'On-demand');
+      const triggerType  = bp.trigger_type || 'scheduled';
+      const industry     = bp.industry || 'Consumer Goods';
+
+      main.innerHTML = `
+        <!-- Back button -->
+        <a class="back-btn" href="${escHtml(personaDashboard)}">&#8592; Back to ${escHtml(capitalize(bp.persona || 'Operations'))} Dashboard</a>
+
+        <!-- Agent Header -->
+        <div class="agent-header">
+          <h1 class="agent-title">${escHtml(bp.title || slug)}</h1>
+          <div class="agent-badges-row">
+            ${lifecycleBadge(bp.lifecycle_stage || 'sandbox')}
+            ${authorityPill(bp.authority_level)}
+            <span class="chip">&#128197; ${escHtml(triggerType)}</span>
+            <span class="chip">&#127970; ${escHtml(industry)}</span>
+          </div>
+          <p class="agent-description">${escHtml(bp.business_value || bp.description || '')}</p>
+          <div class="meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">Schedule</span>
+              <span class="meta-value">${escHtml(scheduleText)}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Est. Hours Saved / Week</span>
+              <span class="meta-value">${escHtml(String(bp.estimated_time_saved_hrs_week || bp.est_hours_per_week || '—'))} hrs</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Primary Persona</span>
+              <span class="meta-value">${escHtml(capitalize(bp.persona || 'Operations'))}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Blueprint Slug</span>
+              <span class="meta-value" style="font-family:'SF Mono','Fira Mono',monospace;font-size:0.78rem;color:var(--text-muted);">${escHtml(bp.slug || slug)}</span>
+            </div>
+          </div>
+          ${bp.lifecycle_notes ? `<div class="lifecycle-notes">${escHtml(bp.lifecycle_notes)}</div>` : ''}
+        </div>
+
+        <!-- Run Agent button -->
+        <section class="section" style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+          <button class="btn-run-agent" id="btn-run-agent" onclick="openRunDrawer('${escHtml(slug)}')">&#9654; Run Agent</button>
+          <span style="font-size:0.78rem;color:var(--text-muted);">Executes a dry-run and records results</span>
+        </section>
+
+        <!-- KPI Trends -->
+        <section class="section">
+          <div class="section-title">KPI Summary</div>
+          <div class="kpi-grid">${kpiCards}</div>
+        </section>
+
+        <!-- Run History -->
+        <section class="section">
+          <div class="section-title">Run History (last 10)</div>
+          <div class="run-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Outcome</th>
+                  <th>Summary</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody id="run-history-tbody">${runRows}</tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Last Output -->
+        ${lastOutputSection}
+
+        <!-- Approval Queue -->
+        ${approvalSection}
+
+        <!-- Next Lifecycle Gate -->
+        ${gateSection}
+      `;
+    }
+
+    // ── Load agent data from API ───────────────────────────────────────────
+    async function loadAgentData(slug) {
+      try {
+        const detail = await fetch(`${API}/api/agents/${slug}`).then(r => {
+          if (!r.ok) throw new Error('Not found');
+          return r.json();
+        });
+
+        const runs = await fetch(`${API}/api/runs/${slug}?limit=10`).then(r => r.json()).catch(() => []);
+
+        document.getElementById('offline-banner').style.display = 'none';
+        renderAgent(
+          detail.blueprint,
+          runs,
+          detail.value || [],
+          detail.trends || {},
+          detail.approvals || [],
+          slug
+        );
+      } catch (e) {
+        document.getElementById('offline-banner').style.display = 'block';
+        renderOfflineFallback(slug);
+      }
+    }
+
+    // ── Offline fallback ───────────────────────────────────────────────────
+    function renderOfflineFallback(slug) {
+      const main = document.getElementById('main-content');
+      main.innerHTML = `<div class="not-found">
+        <h2>Cannot load agent data</h2>
+        <p>The server is offline or agent <code>${escHtml(slug || '(none)')}</code> was not found.</p>
+        <p style="margin-top:16px;">Start the server: <code>cd dashboards &amp;&amp; python3 server.py</code></p>
+        <p style="margin-top:16px;"><a href="operations.html" style="color:var(--accent);">&#8592; Back to Operations Dashboard</a></p>
+      </div>`;
+    }
+
+    // ── Init ───────────────────────────────────────────────────────────────
+    (function init() {
+      const slug = getParam('agent');
+      if (!slug) {
+        document.getElementById('main-content').innerHTML = `<div class="not-found">
+          <h2>No agent specified</h2>
+          <p>Add <code>?agent=&lt;slug&gt;</code> to the URL.</p>
+          <p style="margin-top:16px;"><a href="operations.html" style="color:var(--accent);">&#8592; Back to Operations Dashboard</a></p>
+        </div>`;
+        return;
+      }
+      loadAgentData(slug);
+    })();
+  </script>
+</body>
+</html>

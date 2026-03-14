@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mary Gaston — Executive Dashboard | Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --kimre: #f97316;
+      --kimre-dim: rgba(249,115,22,0.15);
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --green-dim: rgba(34,197,94,0.1);
+      --amber-dim: rgba(245,158,11,0.1);
+      --red-dim: rgba(239,68,68,0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; }
+
+    /* NAV */
+    .kimre-nav { background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .kimre-nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .kimre-nav-brand { font-weight: 800; font-size: 18px; color: var(--kimre); letter-spacing: -0.5px; }
+    .kimre-nav-links { display: flex; gap: 4px; }
+    .kimre-nav-link { color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; transition: all 0.15s; }
+    .kimre-nav-link:hover { color: var(--text); background: var(--border); }
+    .kimre-nav-link.active { color: var(--kimre); background: var(--kimre-dim); }
+
+    /* LAYOUT */
+    .page { max-width: 1400px; margin: 0 auto; padding: 24px; }
+    .page-header { margin-bottom: 24px; }
+    .page-title { font-size: 24px; font-weight: 700; }
+    .page-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+    /* KPI STRIP */
+    .kpi-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .kpi-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .kpi-value { font-size: 28px; font-weight: 800; line-height: 1; }
+    .kpi-value.amber { color: var(--amber); }
+    .kpi-value.orange { color: var(--kimre); }
+    .kpi-badge { display: inline-block; background: var(--kimre); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; margin-left: 6px; vertical-align: middle; }
+
+    /* CARDS */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .card-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .card-title .badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+    .badge-pilot { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+    .badge-next { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-planned { background: rgba(59,130,246,0.1); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+
+    /* IMPACT NARRATIVE */
+    .narrative { background: var(--kimre-dim); border: 1px solid rgba(249,115,22,0.3); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .narrative p { color: var(--text); line-height: 1.6; margin-bottom: 12px; }
+    .narrative-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+
+    /* FUNNEL */
+    .funnel-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 8px; }
+    .funnel-stage { cursor: pointer; }
+    .funnel-label { font-size: 10px; color: var(--muted); text-align: center; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    .funnel-bar-wrap { height: 80px; display: flex; align-items: flex-end; }
+    .funnel-bar { width: 100%; border-radius: 6px 6px 0 0; background: var(--kimre); opacity: 0.7; transition: opacity 0.2s; position: relative; }
+    .funnel-stage:hover .funnel-bar { opacity: 1; }
+    .funnel-count { text-align: center; font-size: 18px; font-weight: 800; margin-top: 6px; }
+    .funnel-value { text-align: center; font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .funnel-tooltip { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: #0a0e1a; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; min-width: 200px; font-size: 12px; z-index: 50; display: none; white-space: nowrap; }
+    .funnel-stage:hover .funnel-tooltip { display: block; }
+    .funnel-tooltip-item { padding: 3px 0; border-bottom: 1px solid var(--border); }
+    .funnel-tooltip-item:last-child { border-bottom: none; }
+
+    /* TABLES */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; white-space: nowrap; }
+    th:hover { color: var(--text); }
+    th .sort-arrow { margin-left: 4px; opacity: 0.4; }
+    th.sorted .sort-arrow { opacity: 1; color: var(--kimre); }
+    td { padding: 10px 12px; border-bottom: 1px solid rgba(30,41,59,0.5); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    .dot-green { background: var(--green); }
+    .dot-amber { background: var(--amber); }
+    .dot-red { background: var(--red); }
+    .margin-cell { font-weight: 700; }
+    .margin-high { color: var(--green); }
+    .margin-mid { color: var(--amber); }
+
+    /* ACCOUNT HEAT MAP */
+    .accounts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .account-card { border-radius: 10px; padding: 14px; border: 1px solid; }
+    .account-card.health-green { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.05); }
+    .account-card.health-amber { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); }
+    .account-card.health-red { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+    .account-name { font-size: 12px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+    .account-ytd { font-size: 20px; font-weight: 800; }
+    .account-meta { font-size: 11px; color: var(--muted); margin-top: 4px; display: flex; gap: 8px; align-items: center; }
+    .account-trend { font-size: 14px; font-weight: 700; }
+    .trend-up { color: var(--green); }
+    .trend-stable { color: var(--muted); }
+    .trend-down { color: var(--red); }
+    .delayed-flag { background: var(--red-dim); color: var(--red); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+
+    /* AGENT SCORECARD */
+    .agent-scorecard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .agent-sc-card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .agent-sc-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .agent-sc-status { font-size: 11px; margin-bottom: 10px; }
+    .agent-sc-stat { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; color: var(--muted); }
+    .agent-sc-stat span { color: var(--text); font-weight: 600; }
+    .progress-bar-wrap { height: 6px; background: var(--border); border-radius: 99px; margin: 10px 0 4px; }
+    .progress-bar-fill { height: 100%; border-radius: 99px; background: var(--kimre); }
+    .progress-label { font-size: 10px; color: var(--muted); }
+    .annual-value { font-size: 11px; color: var(--green); margin-top: 8px; font-weight: 600; }
+
+    /* ESCALATION */
+    .escalation-item { border: 1px solid var(--kimre); border-radius: 10px; padding: 16px; margin-bottom: 12px; background: var(--kimre-dim); }
+    .escalation-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .escalation-title { font-weight: 700; font-size: 14px; }
+    .escalation-badge { background: var(--kimre); color: #fff; font-size: 10px; padding: 3px 8px; border-radius: 99px; font-weight: 700; white-space: nowrap; }
+    .escalation-meta { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .escalation-note { font-size: 13px; font-style: italic; color: var(--text); padding: 10px; background: rgba(0,0,0,0.2); border-radius: 6px; margin-bottom: 12px; }
+    .escalation-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+    .btn-approve { background: var(--green); color: #fff; }
+    .btn-approve:hover { filter: brightness(1.1); }
+    .btn-delegate { background: var(--border); color: var(--text); }
+    .btn-delegate:hover { background: #2d3748; }
+    .btn-hold { background: rgba(239,68,68,0.2); color: var(--red); }
+    .btn-hold:hover { background: rgba(239,68,68,0.3); }
+    .no-escalations { text-align: center; padding: 30px; color: var(--muted); font-size: 13px; }
+
+    /* AGENT ROADMAP */
+    .roadmap-scroll { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; }
+    .roadmap-scroll::-webkit-scrollbar { height: 4px; }
+    .roadmap-scroll::-webkit-scrollbar-track { background: var(--border); border-radius: 99px; }
+    .roadmap-scroll::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 99px; }
+    .roadmap-card { flex: 0 0 240px; border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .roadmap-card.live { border-color: rgba(34,197,94,0.4); }
+    .roadmap-agent-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .roadmap-phase { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .roadmap-value { font-size: 20px; font-weight: 800; color: var(--kimre); }
+    .roadmap-value-label { font-size: 10px; color: var(--muted); }
+    .roadmap-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+    .roadmap-advance-btn { margin-top: 10px; width: 100%; padding: 6px; border-radius: 6px; background: var(--kimre); color: #fff; border: none; cursor: pointer; font-size: 11px; font-weight: 600; }
+    .roadmap-advance-btn:hover { filter: brightness(1.1); }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; line-height: 1; }
+    .modal-close:hover { color: var(--text); }
+    .modal-section { margin-bottom: 16px; }
+    .modal-section h4 { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .modal-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(30,41,59,0.5); font-size: 13px; }
+    .modal-row:last-child { border-bottom: none; }
+    .modal-row span { color: var(--muted); }
+    .modal-row strong { color: var(--text); }
+    .print-only { display: none; }
+
+    /* BOARD SUMMARY BUTTON */
+    .export-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--kimre); color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; margin: 20px 0; }
+    .export-btn:hover { filter: brightness(1.1); }
+
+    @media print {
+      body * { display: none; }
+      .print-modal * { display: block !important; }
+      .modal-close { display: none !important; }
+    }
+
+    @media (max-width: 1100px) {
+      .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+      .funnel-grid { grid-template-columns: repeat(3, 1fr); }
+      .accounts-grid { grid-template-columns: repeat(2, 1fr); }
+      .agent-scorecard-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .kpi-strip { grid-template-columns: 1fr 1fr; }
+      .funnel-grid { grid-template-columns: 1fr; }
+      .accounts-grid { grid-template-columns: 1fr; }
+      .agent-scorecard-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="kimre-nav">
+  <div class="kimre-nav-inner">
+    <span class="kimre-nav-brand">Kimre Inc.</span>
+    <div class="kimre-nav-links">
+      <a href="./index.html" class="kimre-nav-link">Home</a>
+      <a href="./sales.html" class="kimre-nav-link">Sales</a>
+      <a href="./engineering.html" class="kimre-nav-link">Engineering</a>
+      <a href="./customer-service.html" class="kimre-nav-link">Customer Service</a>
+      <a href="./executive.html" class="kimre-nav-link active">Executive</a>
+      <a href="./quality.html" class="kimre-nav-link">Quality</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="page-title">Mary Gaston — Executive Dashboard</div>
+    <div class="page-sub">AI Agent Platform — Business Overview &nbsp;&bull;&nbsp; Kimre Inc. &nbsp;&bull;&nbsp; Week of March 13, 2026</div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-label">Quote Pipeline</div>
+      <div class="kpi-value">£340K</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Orders</div>
+      <div class="kpi-value">11</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">OTD Rate</div>
+      <div class="kpi-value amber">87%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Agent Hours Saved This Week</div>
+      <div class="kpi-value" style="color:var(--kimre)">6.2h</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Escalations Awaiting</div>
+      <div class="kpi-value">1<span class="kpi-badge">Action</span></div>
+    </div>
+  </div>
+
+  <!-- IMPACT NARRATIVE -->
+  <div class="narrative">
+    <p>This week: 5 new RFQs (£210K potential), 2 quotes sent, 1 order won (£85K). Material Requisition Agent saved 6.2h this week. 1 high-value decision awaiting your approval. OTD at 87% — 2 delayed orders need attention.</p>
+    <div class="narrative-pills">
+      <span class="pill">💰 £85K Won</span>
+      <span class="pill">⚠️ 1 Approval Required</span>
+      <span class="pill">🤖 6.2h Saved</span>
+    </div>
+  </div>
+
+  <!-- QUOTE-TO-CASH FUNNEL -->
+  <div class="card">
+    <div class="card-title">Quote-to-Cash Funnel — ETO Order Flow</div>
+    <div class="funnel-grid" id="funnelGrid"></div>
+    <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px;">Hover any stage to see detail</div>
+  </div>
+
+  <!-- PROJECT MARGIN TABLE -->
+  <div class="card">
+    <div class="card-title">Project Margin Overview — Active Production Orders</div>
+    <table id="marginTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable('order')" data-col="order">Order <span class="sort-arrow">↕</span></th>
+          <th onclick="sortTable('customer')" data-col="customer">Customer <span class="sort-arrow">↕</span></th>
+          <th onclick="sortTable('value')" data-col="value">Order Value <span class="sort-arrow">↕</span></th>
+          <th onclick="sortTable('cost')" data-col="cost">Est. Cost <span class="sort-arrow">↕</span></th>
+          <th onclick="sortTable('margin')" data-col="margin" class="sorted">Margin % <span class="sort-arrow">↓</span></th>
+          <th onclick="sortTable('days')" data-col="days">Days to Ship <span class="sort-arrow">↕</span></th>
+          <th onclick="sortTable('status')" data-col="status">Status <span class="sort-arrow">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="marginBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ACCOUNT HEAT MAP -->
+  <div class="card">
+    <div class="card-title">Key Account Health Map</div>
+    <div class="accounts-grid" id="accountsGrid"></div>
+  </div>
+
+  <!-- AGENT SCORECARD -->
+  <div class="card">
+    <div class="card-title">Agent Program Scorecard — ROI Tracking</div>
+    <div class="agent-scorecard-grid" id="agentScorecard"></div>
+  </div>
+
+  <!-- ESCALATION QUEUE -->
+  <div class="card">
+    <div class="card-title">Escalation Approval Queue <span class="badge badge-pilot" style="font-size:11px;">1 Awaiting</span></div>
+    <div id="escalationQueue"></div>
+  </div>
+
+  <!-- AGENT ROADMAP -->
+  <div class="card">
+    <div class="card-title">Agent Roadmap — 5 Agents, £190K Annual Value</div>
+    <div class="roadmap-scroll" id="roadmapCards"></div>
+  </div>
+
+  <!-- EXPORT BUTTON -->
+  <button class="export-btn" onclick="openBoardSummary()">📋 Export Board Summary</button>
+</div>
+
+<!-- BOARD SUMMARY MODAL -->
+<div class="modal-overlay" id="boardModal">
+  <div class="modal print-modal">
+    <div class="modal-title">
+      Board Summary — Kimre Inc. AI Agent Platform
+      <button class="modal-close" onclick="document.getElementById('boardModal').classList.remove('open')">✕</button>
+    </div>
+    <div id="boardSummaryContent"></div>
+    <div style="margin-top:20px;display:flex;gap:10px;">
+      <button class="btn btn-approve" onclick="window.print()">🖨 Print / Save PDF</button>
+      <button class="btn btn-delegate" onclick="document.getElementById('boardModal').classList.remove('open')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8500';
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const FUNNEL_STAGES = [
+  { stage: 'RFQ', count: 8, value: '£470K', items: ['RFQ-2026-020 — Gulf Fertilizers — £65K', 'RFQ-2026-019 — Petrochem Solutions — £42K', 'RFQ-2026-018 — Southern Power Gen — £125K', 'RFQ-2026-017 — Mosaic Steel — £28K', 'RFQ-2026-016 — Horizon Petro — £67K', 'RFQ-2026-015 — Atlas Fertilizer — £195K', 'RFQ-2026-014 — Sulfur Processing — £38K', 'RFQ-2026-013 — Coastal Refineries — £88K'], pct: 100 },
+  { stage: 'Scoping', count: 3, value: '£215K', items: ['QT-2024-017 — Rhine Energy — £52K', 'QT-2024-016 — Pacific Chemicals — £31K', 'QT-2024-015 — Gulf Chemicals — £34K'], pct: 75 },
+  { stage: 'Quoted', count: 5, value: '£340K', items: ['QT-2024-018 — Southern Power Gen — £125K', 'QT-2024-014 — Atlas Fertilizer — £195K (partial)', 'QT-2024-013 — Coastal Refineries — £88K', 'QT-2024-012 — Gulf Fertilizers — £85K', 'QT-2024-011 — Mosaic Steel — £28K'], pct: 60 },
+  { stage: 'Approved', count: 2, value: '£112K', items: ['KIM-048 — Southern Power Gen — £125K', 'KIM-046 — Rhine Energy — £52K'], pct: 45 },
+  { stage: 'Fabricating', count: 6, value: '£287K', items: ['KIM-052 — Gulf Fertilizers — £85K', 'KIM-051 — Pacific Chemicals — £31K', 'KIM-050 — Petrochem Solutions — £42K', 'KIM-049 — Atlas Fertilizer — £195K', 'KIM-047 — Mosaic Steel — £28K', 'KIM-045 — Gulf Chemicals — £34K'], pct: 30 },
+  { stage: 'Shipped', count: 2, value: '£89K', items: ['KIM-044 — Horizon Petro — £67K', 'KIM-043 — Coastal Refineries — £88K'], pct: 18 },
+];
+
+const ORDERS = [
+  { order: 'KIM-052', customer: 'Gulf Fertilizers', value: 85, cost: 48, margin: 43, days: 5, status: 'Delayed' },
+  { order: 'KIM-051', customer: 'Pacific Chemicals', value: 31, cost: 18, margin: 42, days: 7, status: 'On Track' },
+  { order: 'KIM-050', customer: 'Petrochem Solutions', value: 42, cost: 25, margin: 40, days: 9, status: 'Delayed' },
+  { order: 'KIM-049', customer: 'Atlas Fertilizer', value: 195, cost: 112, margin: 43, days: 12, status: 'Watch' },
+  { order: 'KIM-048', customer: 'Southern Power Gen', value: 125, cost: 71, margin: 43, days: 15, status: 'On Track' },
+  { order: 'KIM-047', customer: 'Mosaic Steel Works', value: 28, cost: 17, margin: 39, days: 20, status: 'On Track' },
+  { order: 'KIM-046', customer: 'Rhine Energy GmbH', value: 52, cost: 30, margin: 42, days: 23, status: 'Packed' },
+  { order: 'KIM-045', customer: 'Gulf Chemicals', value: 34, cost: 20, margin: 41, days: 26, status: 'On Track' },
+  { order: 'KIM-044', customer: 'Horizon Petrochem', value: 67, cost: 40, margin: 40, days: 30, status: 'On Track' },
+  { order: 'KIM-043', customer: 'Coastal Refineries', value: 88, cost: 50, margin: 43, days: 33, status: 'On Track' },
+];
+
+const ACCOUNTS = [
+  { name: 'Gulf Fertilizers Co.', ytd: 285, open: 2, delayed: 1, trend: '▲', health: 'amber' },
+  { name: 'Atlas Fertilizer Corp', ytd: 412, open: 1, delayed: 1, trend: '▲', health: 'amber' },
+  { name: 'Rhine Energy GmbH', ytd: 198, open: 2, delayed: 0, trend: '▲', health: 'green' },
+  { name: 'Southern Power Gen', ytd: 340, open: 1, delayed: 0, trend: '→', health: 'green' },
+  { name: 'Petrochem Solutions Ltd', ytd: 155, open: 1, delayed: 1, trend: '▼', health: 'red' },
+  { name: 'Pacific Chemicals Inc', ytd: 124, open: 1, delayed: 0, trend: '→', health: 'green' },
+  { name: 'Coastal Refineries Ltd', ytd: 210, open: 1, delayed: 0, trend: '▲', health: 'green' },
+  { name: 'Mosaic Steel Works', ytd: 88, open: 1, delayed: 0, trend: '▼', health: 'green' },
+  { name: 'Horizon Petrochemicals', ytd: 145, open: 1, delayed: 0, trend: '→', health: 'green' },
+  { name: 'Gulf Chemicals Trading', ytd: 76, open: 1, delayed: 0, trend: '▲', health: 'green' },
+];
+
+const AGENTS = [
+  { name: 'Material Requisition Agent', status: '🟢 PILOT', hours: '6.2h', recovered: '£4,200', payback: 52, paybackTarget: 8000, paybackCurrent: 4200, annualValue: '£24,000', breakeven: 'Week 8', phase: 'pilot' },
+  { name: 'RFQ-to-Quote Agent', status: '🟡 NEXT', hours: '—', recovered: '—', payback: null, annualValue: '£38,000', breakeven: '—', phase: 'next' },
+  { name: 'Quality Compliance Checker', status: '🟡 NEXT', hours: '—', recovered: '—', payback: null, annualValue: '£18,000', breakeven: '—', phase: 'next' },
+  { name: 'Order Milestone Notifier', status: '🔵 PLANNED', hours: '—', recovered: '—', payback: null, annualValue: '£22,000', breakeven: '—', phase: 'planned' },
+  { name: 'Retrofit Reorder Agent', status: '🔵 PLANNED', hours: '—', recovered: '—', payback: null, annualValue: '£88,000', breakeven: '—', phase: 'planned' },
+];
+
+const ESCALATIONS = [
+  {
+    id: 'QT-2024-018',
+    title: 'Quote QT-2024-018 — Southern Power Generation',
+    value: '£125,000',
+    badge: '🔒 Manager Review Required',
+    meta: 'Submitted by Alex Torres • Fiber Bed Filter — 60" Stack Application • Margin: 43%',
+    note: '"Alex: Fiber Bed Filter for 60" stack application. Customer requesting 99.9% efficiency. Recommend approval — standard spec, good margin (43%)."',
+    approved: false,
+  }
+];
+
+const ROADMAP = [
+  { name: 'Material Requisition', phase: 'Pilot (Live)', value: '£24K/year', note: 'Advanced to pilot stage — Sam saving 6.2h/week', live: true, btn: false },
+  { name: 'RFQ-to-Quote', phase: 'Next Wave', value: '£38K/year', note: 'Schedule in Q2 2026', live: false, btn: true },
+  { name: 'Quality Compliance', phase: 'Next Wave', value: '£18K/year', note: 'Schedule alongside RFQ agent', live: false, btn: false },
+  { name: 'Order Milestone Notifier', phase: 'Planned', value: '£22K/year', note: 'Q2 2026', live: false, btn: false },
+  { name: 'Retrofit Reorder', phase: 'Planned', value: '£88K/year', note: 'Q3 2026 — highest long-term value', live: false, btn: false },
+];
+
+// ── RENDER FUNNEL ─────────────────────────────────────────────────────────────
+function renderFunnel() {
+  const grid = document.getElementById('funnelGrid');
+  grid.innerHTML = FUNNEL_STAGES.map(s => `
+    <div class="funnel-stage">
+      <div class="funnel-label">${s.stage}</div>
+      <div class="funnel-bar-wrap">
+        <div class="funnel-bar" style="height:${s.pct}%">
+          <div class="funnel-tooltip">
+            <div style="font-weight:700;margin-bottom:6px;color:var(--kimre)">${s.stage} — ${s.value}</div>
+            ${s.items.map(i => `<div class="funnel-tooltip-item">${i}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="funnel-count">${s.count}</div>
+      <div class="funnel-value">${s.value}</div>
+    </div>
+  `).join('');
+}
+
+// ── RENDER MARGIN TABLE ───────────────────────────────────────────────────────
+let sortCol = 'margin';
+let sortDir = -1;
+
+function statusIcon(s) {
+  if (s === 'Delayed') return '<span class="status-dot dot-red"></span>';
+  if (s === 'Watch') return '<span class="status-dot dot-amber"></span>';
+  if (s === 'Packed') return '<span class="status-dot" style="background:var(--blue)"></span>';
+  return '<span class="status-dot dot-green"></span>';
+}
+
+function renderMarginTable() {
+  const data = [...ORDERS].sort((a, b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (typeof av === 'string') return sortDir * av.localeCompare(bv);
+    return sortDir * (av - bv);
+  });
+  const tbody = document.getElementById('marginBody');
+  tbody.innerHTML = data.map(o => `
+    <tr>
+      <td style="font-weight:700;color:var(--kimre)">${o.order}</td>
+      <td>${o.customer}</td>
+      <td>£${o.value}K</td>
+      <td>£${o.cost}K</td>
+      <td class="margin-cell ${o.margin >= 42 ? 'margin-high' : 'margin-mid'}">${o.margin}%</td>
+      <td>${o.days}</td>
+      <td>${statusIcon(o.status)}${o.status}</td>
+    </tr>
+  `).join('');
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = -1; }
+  document.querySelectorAll('th').forEach(th => {
+    th.classList.remove('sorted');
+    th.querySelector('.sort-arrow').textContent = '↕';
+  });
+  const activeTh = document.querySelector(`th[data-col="${col}"]`);
+  if (activeTh) {
+    activeTh.classList.add('sorted');
+    activeTh.querySelector('.sort-arrow').textContent = sortDir === -1 ? '↓' : '↑';
+  }
+  renderMarginTable();
+}
+
+// ── RENDER ACCOUNTS ───────────────────────────────────────────────────────────
+function renderAccounts() {
+  const grid = document.getElementById('accountsGrid');
+  const trendClass = t => t === '▲' ? 'trend-up' : t === '▼' ? 'trend-down' : 'trend-stable';
+  grid.innerHTML = ACCOUNTS.map(a => `
+    <div class="account-card health-${a.health}">
+      <div class="account-name">${a.name}</div>
+      <div class="account-ytd">£${a.ytd}K</div>
+      <div class="account-meta">
+        <span>YTD Revenue</span>
+        <span class="account-trend ${trendClass(a.trend)}">${a.trend}</span>
+      </div>
+      <div class="account-meta" style="margin-top:6px">
+        <span>${a.open} open order${a.open !== 1 ? 's' : ''}</span>
+        ${a.delayed > 0 ? `<span class="delayed-flag">⚠ ${a.delayed} delayed</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── RENDER AGENT SCORECARD ───────────────────────────────────────────────────
+function renderAgentScorecard() {
+  const grid = document.getElementById('agentScorecard');
+  grid.innerHTML = AGENTS.map(a => {
+    const phaseBadge = a.phase === 'pilot' ? 'badge-pilot' : a.phase === 'next' ? 'badge-next' : 'badge-planned';
+    let extras = '';
+    if (a.payback !== null) {
+      const pct = a.payback;
+      extras = `
+        <div style="margin-top:12px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Payback Progress: £${(a.paybackCurrent/1000).toFixed(1)}K / £${(a.paybackTarget/1000).toFixed(0)}K (${pct}%)</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+          <div class="annual-value">Estimated annual value: £24,000 &nbsp;|&nbsp; Break-even: Week 8</div>
+        </div>`;
+    }
+    return `
+      <div class="agent-sc-card">
+        <div class="agent-sc-name">${a.name}</div>
+        <div class="agent-sc-status"><span class="badge ${phaseBadge}">${a.status}</span></div>
+        <div class="agent-sc-stat">Hours Saved/wk <span>${a.hours}</span></div>
+        <div class="agent-sc-stat">£ Recovered <span>${a.recovered}</span></div>
+        <div class="agent-sc-stat">Annual Value <span style="color:var(--kimre)">${a.annualValue}</span></div>
+        ${extras}
+      </div>`;
+  }).join('');
+}
+
+// ── RENDER ESCALATIONS ───────────────────────────────────────────────────────
+let escalationState = [...ESCALATIONS];
+function renderEscalations() {
+  const queue = document.getElementById('escalationQueue');
+  const pending = escalationState.filter(e => !e.approved);
+  if (pending.length === 0) {
+    queue.innerHTML = '<div class="no-escalations">✓ No pending escalations — all items reviewed</div>';
+    return;
+  }
+  queue.innerHTML = pending.map((e, i) => `
+    <div class="escalation-item" id="esc-${i}">
+      <div class="escalation-header">
+        <div class="escalation-title">${e.title}</div>
+        <span class="escalation-badge">${e.badge}</span>
+      </div>
+      <div class="escalation-meta">${e.meta} &nbsp;|&nbsp; Value: ${e.value}</div>
+      <div class="escalation-note">${e.note}</div>
+      <div class="escalation-actions">
+        <button class="btn btn-approve" onclick="approveEsc(${i})">✓ Approve to Quote</button>
+        <button class="btn btn-delegate" onclick="delegateEsc(${i})">↩ Delegate to Alex</button>
+        <button class="btn btn-hold" onclick="holdEsc(${i})">⏸ Hold</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function approveEsc(i) {
+  escalationState[i].approved = true;
+  renderEscalations();
+}
+function delegateEsc(i) {
+  alert(`Delegated back to Alex Torres. They will be notified.`);
+  escalationState[i].approved = true;
+  renderEscalations();
+}
+function holdEsc(i) {
+  escalationState[i].approved = true;
+  renderEscalations();
+}
+
+// ── RENDER ROADMAP ────────────────────────────────────────────────────────────
+function renderRoadmap() {
+  const scroll = document.getElementById('roadmapCards');
+  scroll.innerHTML = ROADMAP.map(r => `
+    <div class="roadmap-card ${r.live ? 'live' : ''}">
+      <div class="roadmap-agent-name">${r.name}</div>
+      <div class="roadmap-phase">${r.phase}</div>
+      <div class="roadmap-value">${r.value}</div>
+      <div class="roadmap-value-label">Estimated Annual Value</div>
+      <div class="roadmap-note">${r.note}</div>
+      ${r.btn ? `<button class="roadmap-advance-btn" onclick="alert('Advancing RFQ-to-Quote Agent to next phase. Scheduling Q2 2026.')">▶ Advance to Next Phase</button>` : ''}
+    </div>
+  `).join('');
+}
+
+// ── BOARD SUMMARY MODAL ───────────────────────────────────────────────────────
+function openBoardSummary() {
+  const content = document.getElementById('boardSummaryContent');
+  const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  content.innerHTML = `
+    <div class="modal-section">
+      <h4>Business Metrics — Week of March 13, 2026</h4>
+      <div class="modal-row"><span>Quote Pipeline</span><strong>£340K (5 active quotes)</strong></div>
+      <div class="modal-row"><span>Active Production Orders</span><strong>11 orders</strong></div>
+      <div class="modal-row"><span>OTD Rate</span><strong style="color:var(--amber)">87% — 2 delayed orders</strong></div>
+      <div class="modal-row"><span>Orders Won This Week</span><strong>1 (£85K — Gulf Fertilizers)</strong></div>
+      <div class="modal-row"><span>New RFQs This Week</span><strong>5 (£210K potential)</strong></div>
+    </div>
+    <div class="modal-section">
+      <h4>Agent Program Status</h4>
+      <div class="modal-row"><span>Material Requisition Agent</span><strong>🟢 PILOT — 6.2h/wk saved — £4,200 recovered</strong></div>
+      <div class="modal-row"><span>Payback Progress</span><strong>52% of £8K investment</strong></div>
+      <div class="modal-row"><span>Break-even</span><strong>Week 8</strong></div>
+      <div class="modal-row"><span>Year 1 Projected Value</span><strong>£24,000</strong></div>
+      <div class="modal-row"><span>RFQ-to-Quote Agent</span><strong>🟡 NEXT — Q2 2026</strong></div>
+      <div class="modal-row"><span>5-Agent Total Annual Value</span><strong style="color:var(--kimre)">£190,000</strong></div>
+    </div>
+    <div class="modal-section">
+      <h4>Key Account Health</h4>
+      <div class="modal-row"><span>Accounts — All On Track</span><strong>7 accounts</strong></div>
+      <div class="modal-row"><span>Accounts — Delayed (Notified)</span><strong style="color:var(--amber)">2 (Gulf Fertilizers, Atlas Fertilizer)</strong></div>
+      <div class="modal-row"><span>Accounts — At Risk</span><strong style="color:var(--red)">1 (Petrochem Solutions — not notified)</strong></div>
+      <div class="modal-row"><span>Highest YTD Account</span><strong>Atlas Fertilizer Corp — £412K</strong></div>
+    </div>
+    <div class="modal-section">
+      <h4>Next 30 Days Outlook</h4>
+      <div class="modal-row"><span>Orders Shipping</span><strong>4 orders (Rhine Energy, Pacific Chemicals + 2)</strong></div>
+      <div class="modal-row"><span>Quotes Pending Decision</span><strong>2 (QT-2024-018, QT-2024-014)</strong></div>
+      <div class="modal-row"><span>Escalations</span><strong>1 pending — QT-2024-018 £125K approval</strong></div>
+      <div class="modal-row"><span>Next Agent Milestone</span><strong>RFQ-to-Quote scoping session — Q2 2026</strong></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:16px;">Generated ${today} — Kimre Inc. AI Agent Platform</div>
+  `;
+  document.getElementById('boardModal').classList.add('open');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderFunnel();
+renderMarginTable();
+renderAccounts();
+renderAgentScorecard();
+renderEscalations();
+renderRoadmap();
+</script>
+</body>
+</html>

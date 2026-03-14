@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Action Queue — Business Agents Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #1c2128;
+      --card-hover: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+
+      --low: #3fb950;
+      --low-dim: #3fb95020;
+      --medium: #d29922;
+      --medium-dim: #d2992220;
+      --high: #f85149;
+      --high-dim: #f8514920;
+
+      --queue: #f59e0b;
+      --queue-dim: #f59e0b18;
+
+      /* Urgency colors per spec */
+      --urgency-critical: #f87171;
+      --urgency-high: #fb923c;
+      --urgency-medium: #facc15;
+      --urgency-low: #94a3b8;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Offline Banner ── */
+    .offline-banner {
+      display: none;
+      background: rgba(248, 81, 73, 0.1);
+      border-bottom: 1px solid rgba(248, 81, 73, 0.25);
+      padding: 9px 40px;
+      font-size: 0.82rem;
+      color: #f85149;
+      text-align: center;
+    }
+    .offline-banner.visible { display: block; }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+    }
+
+    .nav-tab:hover {
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: rgba(245, 158, 11, 0.14);
+      color: var(--queue);
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .persona-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--queue);
+      margin-bottom: 6px;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .refresh-info {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .refresh-btn {
+      font-size: 0.75rem;
+      color: var(--queue);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      margin-left: 8px;
+      background: transparent;
+      cursor: pointer;
+      transition: background 120ms;
+    }
+
+    .refresh-btn:hover { background: var(--queue-dim); }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      padding: 32px 40px;
+    }
+
+    .main-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── KPI Bar ── */
+    .kpi-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 28px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .kpi-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kpi-value {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .kpi-value.amber { color: var(--queue); }
+    .kpi-value.blue  { color: var(--accent); }
+    .kpi-value.green { color: var(--low); }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* ── Filter Bar ── */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    .filter-btn {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: background 120ms, color 120ms, border-color 120ms;
+    }
+
+    .filter-btn:hover {
+      background: var(--card-hover);
+      color: var(--text);
+    }
+
+    .filter-btn.active {
+      background: rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: var(--queue);
+    }
+
+    .filter-btn.active-critical {
+      background: rgba(248, 113, 113, 0.14);
+      border-color: rgba(248, 113, 113, 0.4);
+      color: var(--urgency-critical);
+    }
+
+    .filter-btn.active-high {
+      background: rgba(251, 146, 60, 0.14);
+      border-color: rgba(251, 146, 60, 0.4);
+      color: var(--urgency-high);
+    }
+
+    /* ── Action Item Cards ── */
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .action-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      border-left: 4px solid var(--border);
+      transition: border-color 150ms, box-shadow 150ms;
+      animation: slideIn 200ms ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .action-card:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-card.urgency-critical { border-left-color: var(--urgency-critical); }
+    .action-card.urgency-high     { border-left-color: var(--urgency-high); }
+    .action-card.urgency-medium   { border-left-color: var(--urgency-medium); }
+    .action-card.urgency-low      { border-left-color: var(--urgency-low); }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .urgency-pill {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      padding: 2px 8px;
+      flex-shrink: 0;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .urgency-pill.critical {
+      background: rgba(248, 113, 113, 0.15);
+      color: var(--urgency-critical);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+    }
+
+    .urgency-pill.high {
+      background: rgba(251, 146, 60, 0.15);
+      color: var(--urgency-high);
+      border: 1px solid rgba(251, 146, 60, 0.3);
+    }
+
+    .urgency-pill.medium {
+      background: rgba(250, 204, 21, 0.12);
+      color: var(--urgency-medium);
+      border: 1px solid rgba(250, 204, 21, 0.25);
+    }
+
+    .urgency-pill.low {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--urgency-low);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .card-item-id {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    .card-type-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      padding: 2px 7px;
+      background: rgba(88, 166, 255, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+    }
+
+    .card-type-badge.approval {
+      background: rgba(163, 113, 247, 0.1);
+      color: #a371f7;
+      border-color: rgba(163, 113, 247, 0.25);
+    }
+
+    .card-type-badge.recommendation {
+      background: rgba(61, 207, 207, 0.1);
+      color: #3dcfcf;
+      border-color: rgba(61, 207, 207, 0.25);
+    }
+
+    .card-persona-tag {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-left: auto;
+    }
+
+    .card-description {
+      font-size: 0.88rem;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .card-meta {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .card-meta .meta-sep {
+      color: var(--border);
+      margin: 0 5px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 6px 14px;
+      cursor: pointer;
+      border: none;
+      transition: opacity 120ms, background 120ms;
+      white-space: nowrap;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-accept {
+      background: rgba(63, 185, 80, 0.15);
+      color: #3fb950;
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .btn-accept:hover:not(:disabled) {
+      background: rgba(63, 185, 80, 0.25);
+    }
+
+    .btn-reject {
+      background: rgba(248, 81, 73, 0.1);
+      color: #f85149;
+      border: 1px solid rgba(248, 81, 73, 0.25);
+    }
+
+    .btn-reject:hover:not(:disabled) {
+      background: rgba(248, 81, 73, 0.2);
+    }
+
+    .btn-info {
+      background: rgba(88, 166, 255, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+    }
+
+    .btn-info:hover:not(:disabled) {
+      background: rgba(88, 166, 255, 0.18);
+    }
+
+    /* ── Empty State ── */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 24px;
+      text-align: center;
+      gap: 16px;
+    }
+
+    .empty-state.visible { display: flex; }
+
+    .empty-icon {
+      font-size: 4rem;
+      line-height: 1;
+    }
+
+    .empty-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--low);
+    }
+
+    .empty-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Recently Decided (collapsed) ── */
+    .decided-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .decided-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: background 120ms;
+    }
+
+    .decided-toggle:hover { background: var(--card-hover); }
+
+    .decided-toggle-arrow {
+      font-size: 0.72rem;
+      transition: transform 200ms;
+    }
+
+    .decided-toggle-arrow.open { transform: rotate(180deg); }
+
+    .decided-body {
+      display: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .decided-body.open { display: block; }
+
+    .decided-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+
+    .decided-item:last-child { border-bottom: none; }
+
+    .decided-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .decided-dot.approved { background: var(--low); }
+    .decided-dot.rejected { background: var(--high); }
+    .decided-dot.info     { background: var(--accent); }
+    .decided-dot.other    { background: var(--text-muted); }
+
+    .decided-info {
+      flex: 1;
+      color: var(--text-secondary);
+    }
+
+    .decided-id {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .decided-when {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .decided-badge {
+      font-size: 0.63rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 20px;
+    }
+
+    .decided-badge.approved {
+      background: var(--low-dim);
+      color: var(--low);
+      border: 1px solid rgba(63, 185, 80, 0.25);
+    }
+
+    .decided-badge.rejected {
+      background: var(--high-dim);
+      color: var(--high);
+      border: 1px solid rgba(248, 81, 73, 0.25);
+    }
+
+    .decided-badge.info_requested {
+      background: rgba(88, 166, 255, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 16px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--queue);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Role Filter Buttons ── */
+    .role-btn {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid #1e293b;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .role-btn:hover { color: #94a3b8; border-color: #334155; }
+    .role-btn.active { background: #f59e0b20; color: #f59e0b; border-color: #f59e0b40; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .page-header, main { padding-left: 20px; padding-right: 20px; }
+      .top-nav { padding: 0 16px; }
+      .kpi-bar { grid-template-columns: 1fr 1fr; }
+      .card-top { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Offline Banner ── -->
+  <div class="offline-banner" id="offline-banner">
+    Server offline &mdash; showing static fallback data. Start with: <code style="font-family:monospace;background:rgba(248,81,73,0.1);padding:1px 6px;border-radius:3px;">cd dashboards &amp;&amp; python3 server.py</code>
+  </div>
+
+  <!-- ── Top Nav ── -->
+  <nav class="top-nav">
+    <span class="nav-brand">&#9889; Business Agents Platform</span>
+    <div class="nav-personas">
+      <a href="operations.html" class="nav-tab">Operations</a>
+      <a href="finance.html" class="nav-tab">Finance</a>
+      <a href="compliance.html" class="nav-tab">Compliance</a>
+      <a href="it-health.html" class="nav-tab">IT</a>
+      <a href="action-queue.html" class="nav-tab active">Action Queue</a>
+      <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>
+      <a href="eval.html" class="nav-tab">Eval <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>#9650;</a>
+    </div>
+  </nav>
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <div class="persona-label">Unified Inbox</div>
+        <h1>Action Queue</h1>
+        <div class="page-subtitle">All pending decisions across agents and approvals</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="refresh-info">
+          Last refreshed: <span id="last-refreshed">&#8212;</span>
+          <button class="refresh-btn" onclick="loadQueue()">&#8635; Refresh</button>
+        </div>
+        <div id="header-status" style="margin-top:8px; font-size:0.75rem; color:var(--text-muted);">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <main>
+    <div class="main-inner">
+
+      <!-- KPI Bar -->
+      <div>
+        <div class="section-title">Overview</div>
+        <div class="kpi-bar">
+          <div class="kpi-item">
+            <div class="kpi-value amber" id="kpi-total">&#8212;</div>
+            <div class="kpi-label">Total Pending</div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-value" style="color:#a371f7;" id="kpi-approvals">&#8212;</div>
+            <div class="kpi-label">Approvals</div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-value" style="color:#3dcfcf;" id="kpi-recs">&#8212;</div>
+            <div class="kpi-label">Recommendations</div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-value blue" id="kpi-avg-age">&#8212;</div>
+            <div class="kpi-label">Avg Age</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role Selector -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:0.72rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.06em">Viewing as:</span>
+        <div style="display:flex;gap:6px">
+          <button class="role-btn active" data-role="all" onclick="setRole('all')">All Roles</button>
+          <button class="role-btn" data-role="operations" onclick="setRole('operations')">Operations</button>
+          <button class="role-btn" data-role="compliance" onclick="setRole('compliance')">Compliance</button>
+          <button class="role-btn" data-role="finance" onclick="setRole('finance')">Finance</button>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" data-filter="approvals" onclick="setFilter('approvals', this)">Approvals</button>
+        <button class="filter-btn" data-filter="recommendations" onclick="setFilter('recommendations', this)">Recommendations</button>
+        <button class="filter-btn" data-filter="critical" onclick="setFilter('critical', this)">Critical</button>
+        <button class="filter-btn" data-filter="high" onclick="setFilter('high', this)">High Priority</button>
+      </div>
+
+      <!-- Items List -->
+      <div>
+        <div class="section-title">Pending Actions <span id="items-count" style="font-size:0.65rem;color:var(--text-muted);margin-left:4px;"></span></div>
+        <div class="items-list" id="items-list">
+          <div style="color:var(--text-muted);font-size:0.85rem;padding:24px 0;text-align:center;">Loading queue...</div>
+        </div>
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">&#10003;</div>
+          <div class="empty-title">All caught up</div>
+          <div class="empty-sub">No pending actions &mdash; everything has been decided.</div>
+        </div>
+      </div>
+
+      <!-- Recently Decided -->
+      <div class="decided-section">
+        <div class="decided-toggle" onclick="toggleDecided()">
+          <span>Recently Decided</span>
+          <span class="decided-toggle-arrow" id="decided-arrow">&#9660;</span>
+        </div>
+        <div class="decided-body" id="decided-body">
+          <div id="decided-list" style="color:var(--text-muted);font-size:0.82rem;padding:16px 20px;">Loading history...</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span>Action Queue &mdash; Unified Decision Inbox</span>
+    <span>
+      <a href="enterprise.html">Enterprise Dashboard &#8599;</a>
+      &nbsp;&middot;&nbsp;
+      <a href="#" onclick="loadQueue(); return false;">&#8635; Refresh Data</a>
+    </span>
+  </footer>
+
+<script>
+(function () {
+  'use strict';
+
+  const API = 'http://localhost:8500';
+  let allItems = [];
+  let activeFilter = 'all';
+  let activeRole = 'all';
+  // Track decided recs in-session (server may not persist them immediately)
+  let sessionDecided = [];
+
+  // ── HTML escape ─────────────────────────────────────────────────────────
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ── Toast notification ──────────────────────────────────────────────────
+  function showToast(msg, isError) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    const bg = isError ? '#f85149' : '#10b981';
+    t.style.cssText = 'position:fixed;top:20px;right:20px;background:' + bg + ';color:white;padding:12px 20px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);font-size:0.88rem;';
+    document.body.appendChild(t);
+    setTimeout(function () { t.remove(); }, 2800);
+  }
+
+  // ── Relative time ───────────────────────────────────────────────────────
+  function timeAgo(isoStr) {
+    if (!isoStr) return '&#8212;';
+    var raw = String(isoStr);
+    var d = new Date(raw.replace(' ', 'T') + (raw.includes('T') ? '' : 'Z'));
+    if (isNaN(d.getTime())) return esc(isoStr);
+    var diff = Math.floor((Date.now() - d.getTime()) / 1000);
+    if (diff < 0) diff = 0;
+    if (diff < 60)    return diff + 's ago';
+    if (diff < 3600)  return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    return Math.floor(diff / 86400) + 'd ago';
+  }
+
+  // ── Average age in hours ────────────────────────────────────────────────
+  function computeAvgAge(items) {
+    if (!items || items.length === 0) return null;
+    var now = Date.now();
+    var totalMs = 0;
+    var count = 0;
+    items.forEach(function (item) {
+      var raw = String(item.created_at || '');
+      var d = new Date(raw.replace(' ', 'T') + (raw.includes('T') ? '' : 'Z'));
+      if (!isNaN(d.getTime())) {
+        totalMs += (now - d.getTime());
+        count++;
+      }
+    });
+    if (count === 0) return null;
+    var avgHours = (totalMs / count) / 3600000;
+    if (avgHours < 1)   return Math.round(avgHours * 60) + 'm';
+    if (avgHours < 24)  return avgHours.toFixed(1) + 'h';
+    return (avgHours / 24).toFixed(1) + 'd';
+  }
+
+  // ── Infer urgency from approval item_details ────────────────────────────
+  function inferUrgency(approval) {
+    try {
+      var d = JSON.parse(approval.item_details || '{}');
+      return d.urgency || d.priority || 'high';
+    } catch (e) { return 'high'; }
+  }
+
+  // ── Parse item description from item_details JSON ───────────────────────
+  function parseItemDetails(rawDetails) {
+    try {
+      var d = JSON.parse(rawDetails || '{}');
+      return d.description || d.title || d.action || '';
+    } catch (e) { return ''; }
+  }
+
+  // ── Normalize API data into unified items ───────────────────────────────
+  function normalizeApproval(a) {
+    var details = parseItemDetails(a.item_details);
+    return {
+      id:          a.id,
+      type:        'approval',
+      urgency:     inferUrgency(a),
+      title:       esc(a.item_id || 'Unknown'),
+      subtitle:    esc(a.item_type || 'CAPA'),
+      description: esc(details || a.item_id || 'Approval required'),
+      persona:     'compliance',
+      created_at:  a.created_at,
+      raw:         a
+    };
+  }
+
+  function normalizeRec(r) {
+    return {
+      id:          r.id,
+      type:        'recommendation',
+      urgency:     (r.urgency || 'medium').toLowerCase(),
+      title:       esc(r.item_id || r.item_label || r.id || 'Unknown'),
+      subtitle:    esc(r.rec_type || 'recommendation'),
+      description: esc(r.recommended_action || ''),
+      persona:     'operations',
+      created_at:  r.run_at,
+      agent_slug:  r.slug || '',
+      run_id:      r.run_id || '',
+      raw:         r
+    };
+  }
+
+  // ── Sort: critical first, then high, then by age (oldest first) ─────────
+  var urgencyOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+
+  function sortItems(items) {
+    return items.slice().sort(function (a, b) {
+      var ua = urgencyOrder[a.urgency] !== undefined ? urgencyOrder[a.urgency] : 2;
+      var ub = urgencyOrder[b.urgency] !== undefined ? urgencyOrder[b.urgency] : 2;
+      if (ua !== ub) return ua - ub;
+      // Oldest first within same urgency
+      var da = new Date(String(a.created_at || '').replace(' ', 'T'));
+      var db = new Date(String(b.created_at || '').replace(' ', 'T'));
+      return da - db;
+    });
+  }
+
+  // ── Apply filter ─────────────────────────────────────────────────────────
+  function applyFilter(items, filter) {
+    if (filter === 'all') return items;
+    if (filter === 'approvals') return items.filter(function (i) { return i.type === 'approval'; });
+    if (filter === 'recommendations') return items.filter(function (i) { return i.type === 'recommendation'; });
+    if (filter === 'critical') return items.filter(function (i) { return i.urgency === 'critical'; });
+    if (filter === 'high') return items.filter(function (i) { return i.urgency === 'critical' || i.urgency === 'high'; });
+    return items;
+  }
+
+  // ── Render KPI bar ───────────────────────────────────────────────────────
+  function renderKPIs(approvalCount, recCount) {
+    var total = approvalCount + recCount;
+    var kpiTotal = document.getElementById('kpi-total');
+    var kpiApprovals = document.getElementById('kpi-approvals');
+    var kpiRecs = document.getElementById('kpi-recs');
+    var kpiAge = document.getElementById('kpi-avg-age');
+    if (kpiTotal) kpiTotal.textContent = total;
+    if (kpiApprovals) kpiApprovals.textContent = approvalCount;
+    if (kpiRecs) kpiRecs.textContent = recCount;
+    var avg = computeAvgAge(allItems);
+    if (kpiAge) kpiAge.textContent = avg || '&#8212;';
+  }
+
+  function updateKPIs() {
+    var approvals = allItems.filter(function (i) { return i.type === 'approval'; }).length;
+    var recs = allItems.filter(function (i) { return i.type === 'recommendation'; }).length;
+    renderKPIs(approvals, recs);
+  }
+
+  // ── Render item card ─────────────────────────────────────────────────────
+  function renderCard(item) {
+    var urgencyLabel = item.urgency.charAt(0).toUpperCase() + item.urgency.slice(1);
+    var typeLabel = item.type === 'approval' ? 'Approval' : 'Recommendation';
+
+    var metaLine = '';
+    if (item.type === 'approval') {
+      metaLine = 'Created: ' + timeAgo(item.created_at);
+    } else {
+      var parts = [];
+      if (item.agent_slug) parts.push('Source: ' + esc(item.agent_slug));
+      if (item.run_id) parts.push('Run #' + esc(String(item.run_id)));
+      parts.push('Created: ' + timeAgo(item.created_at));
+      metaLine = parts.join('<span class="meta-sep">&middot;</span>');
+    }
+
+    var descLine = item.description
+      ? '<div class="card-description">' + item.description + '</div>'
+      : '';
+
+    var actions = '';
+    if (item.type === 'approval') {
+      actions = '<button class="btn btn-accept" onclick="handleApproval(' + item.id + ', \'approved\', this)">&#10003; Approve</button>' +
+                '<button class="btn btn-info" onclick="handleApproval(' + item.id + ', \'info_requested\', this)">&#9432; Request Info</button>' +
+                '<button class="btn btn-reject" onclick="handleApproval(' + item.id + ', \'rejected\', this)">&#10007; Reject</button>';
+    } else {
+      actions = '<button class="btn btn-accept" onclick="handleRecommendation(' + item.id + ', \'approved\', this)">&#10003; Accept</button>' +
+                '<button class="btn btn-reject" onclick="handleRecommendation(' + item.id + ', \'rejected\', this)">&#10007; Reject</button>';
+    }
+
+    return '<div class="action-card urgency-' + esc(item.urgency) + '" id="action-card-' + esc(item.type) + '-' + esc(String(item.id)) + '">' +
+      '<div class="card-top">' +
+        '<span class="urgency-pill ' + esc(item.urgency) + '">' + esc(urgencyLabel) + '</span>' +
+        '<span class="card-item-id">' + item.title + '</span>' +
+        '<span class="card-type-badge ' + esc(item.type) + '">' + esc(typeLabel) + '</span>' +
+        '<span class="card-persona-tag">' + esc(item.subtitle) + '</span>' +
+      '</div>' +
+      descLine +
+      '<div class="card-meta">' + metaLine + '</div>' +
+      '<div class="card-actions">' + actions + '</div>' +
+    '</div>';
+  }
+
+  // ── Render items list ────────────────────────────────────────────────────
+  function renderList(items) {
+    var list = document.getElementById('items-list');
+    var emptyState = document.getElementById('empty-state');
+    var countEl = document.getElementById('items-count');
+
+    if (!list) return;
+
+    if (!items || items.length === 0) {
+      list.innerHTML = '';
+      list.style.display = 'none';
+      if (emptyState) emptyState.classList.add('visible');
+      if (countEl) countEl.textContent = '(0)';
+    } else {
+      list.style.display = 'flex';
+      if (emptyState) emptyState.classList.remove('visible');
+      if (countEl) countEl.textContent = '(' + items.length + ')';
+      list.innerHTML = items.map(renderCard).join('');
+    }
+  }
+
+  // ── Role filter definitions ───────────────────────────────────────────────
+  var ROLE_FILTERS = {
+    all: function () { return true; },
+    operations: function (item) {
+      var slug = (item.agent_slug || (item.raw && item.raw.slug) || '').toLowerCase();
+      var type = (item.subtitle || '').toLowerCase();
+      return slug.includes('replenishment') || slug.includes('demand') ||
+             type === 'pr_order' || type === 'forecast_signal';
+    },
+    compliance: function (item) {
+      var slug = (item.agent_slug || (item.raw && item.raw.slug) || '').toLowerCase();
+      var type = (item.subtitle || '').toLowerCase();
+      return slug.includes('capa') || type === 'capa_action' || type === 'oee_alert' ||
+             item.type === 'approval';
+    },
+    finance: function (item) {
+      var slug = (item.agent_slug || (item.raw && item.raw.slug) || '').toLowerCase();
+      return slug.includes('invoice') || slug.includes('forecast-accuracy');
+    }
+  };
+
+  // ── Set active role ───────────────────────────────────────────────────────
+  window.setRole = function (role) {
+    activeRole = role;
+    document.querySelectorAll('.role-btn').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.role === role);
+    });
+    renderQueue();
+  };
+
+  // ── Apply both filter and role filter ────────────────────────────────────
+  function applyFilters(items) {
+    var filtered = applyFilter(items, activeFilter);
+    var roleFn = ROLE_FILTERS[activeRole] || ROLE_FILTERS.all;
+    return filtered.filter(roleFn);
+  }
+
+  // ── renderQueue: alias that applies both filters ──────────────────────────
+  function renderQueue() {
+    renderList(applyFilters(allItems));
+  }
+
+  // ── Set active filter ────────────────────────────────────────────────────
+  window.setFilter = function (filter, btn) {
+    activeFilter = filter;
+    // Update button states
+    var btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(function (b) {
+      b.classList.remove('active', 'active-critical', 'active-high');
+    });
+    if (filter === 'critical') {
+      btn.classList.add('active-critical');
+    } else if (filter === 'high') {
+      btn.classList.add('active-high');
+    } else {
+      btn.classList.add('active');
+    }
+    renderQueue();
+  };
+
+  // ── Remove item from allItems and re-render ──────────────────────────────
+  function removeItem(type, id) {
+    allItems = allItems.filter(function (i) {
+      return !(i.type === type && String(i.id) === String(id));
+    });
+    renderQueue();
+    updateKPIs();
+  }
+
+  // ── Animate card out then remove ─────────────────────────────────────────
+  function animateOut(cardEl, callback) {
+    cardEl.style.transition = 'opacity 300ms, transform 300ms';
+    cardEl.style.opacity = '0';
+    cardEl.style.transform = 'translateX(20px)';
+    setTimeout(callback, 320);
+  }
+
+  // ── Approval decision handler ────────────────────────────────────────────
+  window.handleApproval = async function (id, decision, btn) {
+    var card = document.getElementById('action-card-approval-' + id);
+    var allBtns = card ? card.querySelectorAll('.btn') : [];
+    allBtns.forEach(function (b) { b.disabled = true; });
+
+    try {
+      var resp = await fetch(API + '/api/approvals/' + id + '/decide', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ decision: decision, decided_by: 'compliance', notes: '' })
+      });
+
+      if (resp.ok) {
+        var label = decision === 'approved' ? 'Approved'
+                  : decision === 'rejected' ? 'Rejected'
+                  : 'Info Requested';
+        showToast(label);
+
+        // Track for decided section
+        var item = allItems.find(function (i) { return i.type === 'approval' && String(i.id) === String(id); });
+        if (item) {
+          sessionDecided.unshift({ type: 'approval', id: id, decision: decision, title: item.title, when: new Date().toISOString() });
+        }
+
+        if (card) {
+          animateOut(card, function () {
+            removeItem('approval', id);
+            renderDecided();
+          });
+        } else {
+          removeItem('approval', id);
+          renderDecided();
+        }
+      } else {
+        showToast('Error recording decision', true);
+        allBtns.forEach(function (b) { b.disabled = false; });
+      }
+    } catch (err) {
+      showToast('Offline \u2014 decision not recorded', true);
+      allBtns.forEach(function (b) { b.disabled = false; });
+    }
+  };
+
+  // ── Recommendation decision handler ─────────────────────────────────────
+  window.handleRecommendation = async function (id, decision, btn) {
+    var card = document.getElementById('action-card-recommendation-' + id);
+    var allBtns = card ? card.querySelectorAll('.btn') : [];
+    allBtns.forEach(function (b) { b.disabled = true; });
+
+    try {
+      var resp = await fetch(API + '/api/recommendations/' + id + '/decide', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ decision: decision, decided_by: 'operations' })
+      });
+
+      if (resp.ok) {
+        showToast(decision === 'approved' ? 'Accepted' : 'Rejected');
+
+        var item = allItems.find(function (i) { return i.type === 'recommendation' && String(i.id) === String(id); });
+        if (item) {
+          sessionDecided.unshift({ type: 'recommendation', id: id, decision: decision, title: item.title, when: new Date().toISOString() });
+        }
+
+        if (card) {
+          animateOut(card, function () {
+            removeItem('recommendation', id);
+            renderDecided();
+          });
+        } else {
+          removeItem('recommendation', id);
+          renderDecided();
+        }
+      } else {
+        showToast('Error recording decision', true);
+        allBtns.forEach(function (b) { b.disabled = false; });
+      }
+    } catch (err) {
+      showToast('Offline \u2014 decision not recorded', true);
+      allBtns.forEach(function (b) { b.disabled = false; });
+    }
+  };
+
+  // ── Toggle decided panel ─────────────────────────────────────────────────
+  window.toggleDecided = function () {
+    var body = document.getElementById('decided-body');
+    var arrow = document.getElementById('decided-arrow');
+    if (!body) return;
+    var isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    if (arrow) arrow.classList.toggle('open', !isOpen);
+    if (!isOpen) loadDecided();
+  };
+
+  // ── Render decided section ───────────────────────────────────────────────
+  function renderDecided() {
+    var body = document.getElementById('decided-body');
+    if (!body || !body.classList.contains('open')) return;
+    loadDecided();
+  }
+
+  async function loadDecided() {
+    var listEl = document.getElementById('decided-list');
+    if (!listEl) return;
+
+    var decidedItems = [];
+
+    // Try to fetch approval history from server
+    try {
+      var resp = await fetch(API + '/api/approvals/history', { signal: AbortSignal.timeout(4000) });
+      if (resp.ok) {
+        var history = await resp.json();
+        if (Array.isArray(history)) {
+          history.slice(0, 5).forEach(function (h) {
+            decidedItems.push({
+              type: 'approval',
+              id: h.id,
+              decision: h.decision || 'decided',
+              title: esc(h.item_id || 'Unknown'),
+              when: h.decided_at || h.created_at
+            });
+          });
+        }
+      }
+    } catch (e) {
+      // Merge in session-decided items if server unreachable
+    }
+
+    // Merge session-decided recs (not persisted to history endpoint)
+    sessionDecided.forEach(function (sd) {
+      var already = decidedItems.find(function (d) { return d.type === sd.type && String(d.id) === String(sd.id); });
+      if (!already) decidedItems.unshift(sd);
+    });
+
+    decidedItems = decidedItems.slice(0, 5);
+
+    if (decidedItems.length === 0) {
+      listEl.innerHTML = '<div style="padding:16px 0;color:var(--text-muted);font-size:0.82rem;">No decisions recorded yet.</div>';
+      return;
+    }
+
+    listEl.innerHTML = decidedItems.map(function (d) {
+      var dotCls = d.decision === 'approved' ? 'approved'
+                 : d.decision === 'rejected' ? 'rejected'
+                 : d.decision === 'info_requested' ? 'info'
+                 : 'other';
+      var badgeCls = d.decision === 'approved' ? 'approved'
+                   : d.decision === 'rejected' ? 'rejected'
+                   : 'info_requested';
+      var decLabel = d.decision === 'approved' ? 'Approved'
+                   : d.decision === 'rejected' ? 'Rejected'
+                   : d.decision === 'info_requested' ? 'Info Req.'
+                   : esc(d.decision);
+      return '<div class="decided-item">' +
+        '<div class="decided-dot ' + dotCls + '"></div>' +
+        '<div class="decided-info">' +
+          '<span class="decided-id">' + d.title + '</span>' +
+          '<span style="color:var(--text-muted);margin-left:6px;font-size:0.75rem;">' + esc(d.type) + '</span>' +
+        '</div>' +
+        '<span class="decided-badge ' + badgeCls + '">' + decLabel + '</span>' +
+        '<span class="decided-when">' + timeAgo(d.when) + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ── Static fallback items ────────────────────────────────────────────────
+  var FALLBACK_ITEMS = [
+    {
+      id: 'fallback-1',
+      type: 'approval',
+      urgency: 'high',
+      title: 'CAPA-2024-089',
+      subtitle: 'CAPA',
+      description: 'Line 3 pH deviation (4.8, limit 5.0). Awaiting Compliance Officer sign-off.',
+      persona: 'compliance',
+      created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+      raw: {}
+    },
+    {
+      id: 'fallback-2',
+      type: 'approval',
+      urgency: 'high',
+      title: 'CAPA-2024-091',
+      subtitle: 'CAPA',
+      description: 'Viscosity out of spec on Line 2, Batch #B-4491. Root cause: temperature drift.',
+      persona: 'compliance',
+      created_at: new Date(Date.now() - 1 * 86400000).toISOString(),
+      raw: {}
+    }
+  ];
+
+  // ── Main load ─────────────────────────────────────────────────────────────
+  window.loadQueue = async function () {
+    var statusEl = document.getElementById('header-status');
+    var refreshedEl = document.getElementById('last-refreshed');
+    if (statusEl) statusEl.textContent = 'Fetching...';
+
+    try {
+      var results = await Promise.all([
+        fetch(API + '/api/approvals?status=pending', { signal: AbortSignal.timeout(5000) }).then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        }),
+        fetch(API + '/api/recommendations/pending', { signal: AbortSignal.timeout(5000) }).then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+      ]);
+
+      var approvals = Array.isArray(results[0]) ? results[0] : [];
+      var recs = Array.isArray(results[1]) ? results[1] : [];
+
+      // Hide offline banner if previously shown
+      var banner = document.getElementById('offline-banner');
+      if (banner) banner.classList.remove('visible');
+
+      var approvalItems = approvals.map(normalizeApproval);
+      var recItems = recs.map(normalizeRec);
+
+      allItems = sortItems(approvalItems.concat(recItems));
+
+      renderKPIs(approvalItems.length, recItems.length);
+      renderQueue();
+
+      if (statusEl) {
+        statusEl.textContent = approvalItems.length + ' approval' + (approvalItems.length !== 1 ? 's' : '') +
+          ' \u00b7 ' + recItems.length + ' recommendation' + (recItems.length !== 1 ? 's' : '') + ' pending';
+      }
+      if (refreshedEl) refreshedEl.textContent = new Date().toLocaleTimeString();
+
+    } catch (err) {
+      // Show offline banner and use fallback
+      var banner = document.getElementById('offline-banner');
+      if (banner) banner.classList.add('visible');
+
+      allItems = sortItems(FALLBACK_ITEMS.slice());
+
+      renderKPIs(
+        allItems.filter(function (i) { return i.type === 'approval'; }).length,
+        allItems.filter(function (i) { return i.type === 'recommendation'; }).length
+      );
+      renderQueue();
+
+      if (statusEl) statusEl.textContent = 'Server offline \u2014 showing static fallback data';
+      if (refreshedEl) refreshedEl.textContent = 'Offline';
+    }
+  };
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    loadQueue();
+  });
+
+})();
+</script>
+
+</body>
+</html>

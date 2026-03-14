@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Tools — Kimre Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #161b2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --kimre: #f97316;
+      --kimre-hover: #ea6c0a;
+      --kimre-dim: rgba(249,115,22,0.1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Nav */
+    .kimre-nav {
+      background: #161b2e;
+      border-bottom: 1px solid #1e293b;
+      padding: 12px 24px;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .kimre-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .kimre-nav a:hover, .kimre-nav a.active {
+      color: #f97316;
+      background: rgba(249,115,22,0.1);
+    }
+    .kimre-nav a:first-child {
+      color: #f1f5f9;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* Page header */
+    .page-header {
+      padding: 56px 24px 40px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .page-header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .page-header p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 600px;
+      font-weight: 400;
+      line-height: 1.7;
+    }
+    .header-accent {
+      width: 48px;
+      height: 4px;
+      background: var(--kimre);
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    /* Tools grid */
+    .tools-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: 24px;
+    }
+
+    /* Tool card */
+    .tool-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .tool-card:hover {
+      border-color: var(--kimre);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(249,115,22,0.12);
+    }
+
+    .tool-icon {
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .tool-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .tool-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.75;
+      flex: 1;
+    }
+
+    .tool-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .tool-cta {
+      display: inline-flex;
+      align-items: center;
+      background: var(--kimre);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+    .tool-card:hover .tool-cta {
+      background: var(--kimre-hover);
+    }
+
+    /* Footer note */
+    .footer-note {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+    }
+    .footer-note p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .footer-note a {
+      color: var(--kimre);
+      text-decoration: none;
+    }
+    .footer-note a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+      .page-header h1 {
+        font-size: 24px;
+      }
+      .kimre-nav {
+        gap: 8px;
+        padding: 10px 16px;
+      }
+      .kimre-nav a {
+        font-size: 12px;
+        padding: 5px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="kimre-nav">
+    <a href="../index.html">Kimre</a>
+    <a href="../sales.html">Sales</a>
+    <a href="../engineering.html">Engineering</a>
+    <a href="../customer-service.html">Customer Service</a>
+    <a href="../executive.html">Executive</a>
+    <a href="../quality.html">Quality</a>
+    <a href="./index.html" class="active">Tools</a>
+  </nav>
+
+  <div class="page-header">
+    <div class="header-accent"></div>
+    <h1>Client Tools</h1>
+    <p>Engineering resources and interactive calculators to support your evaluation and specification process.</p>
+  </div>
+
+  <div class="tools-grid">
+
+    <a class="tool-card" href="./business-case.html">
+      <div class="tool-icon">&#x1F4B0;</div>
+      <div class="tool-title">Business Case Calculator</div>
+      <div class="tool-desc">Quantify the cost of mist carryover in your process. Input your operating conditions and get an estimated annual savings value and payback period for a Kimre mist eliminator.</div>
+      <div class="tool-tags">
+        <span class="tag">Sizing</span>
+        <span class="tag">ROI</span>
+        <span class="tag">Pre-Sales</span>
+      </div>
+      <span class="tool-cta">Open Calculator &#x2192;</span>
+    </a>
+
+    <a class="tool-card" href="./rfq-intake.html">
+      <div class="tool-icon">&#x1F4CB;</div>
+      <div class="tool-title">RFQ Application Intake</div>
+      <div class="tool-desc">Complete a structured technical intake form to submit an accurate Request for Quotation. Captures your process chemistry, operating conditions, vessel specs, and efficiency requirements — generating a formatted RFQ for submission to our engineering team.</div>
+      <div class="tool-tags">
+        <span class="tag">Engineering</span>
+        <span class="tag">Specification</span>
+        <span class="tag">Quotation</span>
+      </div>
+      <span class="tool-cta">Start Intake &#x2192;</span>
+    </a>
+
+    <a class="tool-card" href="./spec-gen.html">
+      <div class="tool-icon">&#x2699;&#xFE0F;</div>
+      <div class="tool-title">Engineering Spec Generator</div>
+      <div class="tool-desc">Internal tool for applications engineers. Input operating conditions and generate a formal Equipment Specification Sheet — ready to review, issue with a quote, and hand off to fabrication. Includes product selection, material compatibility, sizing, and performance guarantee.</div>
+      <div class="tool-tags">
+        <span class="tag">Internal</span>
+        <span class="tag">Engineering</span>
+        <span class="tag">Spec Sheet</span>
+      </div>
+      <span class="tool-cta">Open Spec Gen &#x2192;</span>
+    </a>
+
+    <a class="tool-card" href="../intro-deck.html">
+      <div class="tool-icon">&#x1F4CA;</div>
+      <div class="tool-title">Introduction Deck</div>
+      <div class="tool-desc">10-slide introduction deck for executive and stakeholder presentations. Covers market position, business model, agent value chain, persona mapping, platform architecture, and next steps — built for Kimre.</div>
+      <div class="tool-tags">
+        <span class="tag">Presentation</span>
+        <span class="tag">Strategy</span>
+        <span class="tag">External</span>
+      </div>
+      <span class="tool-cta">Open Deck &#x2192;</span>
+    </a>
+
+  </div>
+
+  <div class="footer-note">
+    <p>Questions? Contact our Applications Engineering team: <a href="mailto:applications@kimre.com">applications@kimre.com</a> | +1 (713) 467-0900</p>
+  </div>
+
+</body>
+</html>

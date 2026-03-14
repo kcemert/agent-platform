@@ -1,22 +1,37 @@
 {
   "branchName": "ralph/epic-2-partner-pitch",
   "projectName": "Business Agents — Partner Pitch Deck",
-  "description": "Epic 2: Build a concise partner pitch deck using office-skills PPTX generation",
+  "description": "Epic 2: Build a concise partner pitch deck as a reveal.js HTML presentation",
   "githubRepo": "kcemert/business-agents",
   "userStories": [
+    {
+      "id": "E2-S0",
+      "githubIssue": null,
+      "title": "Expand agentic capability matrix with Finance and Sales functions",
+      "project": "business-agents",
+      "priority": 0,
+      "description": "The capability_types and agent_capabilities tables are seeded with CI and Supply Chain data. Expand coverage to 2 more functions: (1) Manage Financial Resources (9.0) — add capabilities for: AP/AR monitoring, spend anomaly detection, budget variance analysis, journal entry generation, vendor payment execution (low/medium authority). (2) Market and Sell Products and Services (3.0) — add capabilities for: pricing anomaly monitoring, promotion performance analysis, order anomaly alerts, price adjustment execution (medium authority). Run `python3 business-agents/query.py capabilities` to verify output. No HTML or PPTX work in this story — DB only.",
+      "acceptanceCriteria": [
+        "At least 6 new capabilities added for Finance (9.0) covering all 6 capability types",
+        "At least 6 new capabilities added for Sales/Marketing (3.0) covering all 6 capability types",
+        "Each capability has authority_level, data_inputs, data_outputs, authority_notes populated",
+        "`python3 business-agents/query.py capabilities` shows 28+ total capabilities across 4 functions"
+      ],
+      "passes": true
+    },
     {
       "id": "E2-S1",
       "githubIssue": 7,
       "title": "Define deck outline and narrative arc",
       "project": "office-skills",
       "priority": 1,
-      "description": "Create a structured outline for the partner pitch deck. Save as business-agents/deck/outline.md. Define 8-12 slides with title, key message, and supporting points. Narrative: Problem → Vision → How It Works → First Pilot → Business Model → Why Us → Next Steps.",
+      "description": "Create a structured outline for the partner pitch deck. Save as office-skills/outputs/partner-pitch/outline.md. Define 11 slides with title, key message, and supporting points. Narrative: Title → Problem (Scale) → Problem (Why Automation Fails) → Vision → How It Works → What an Agent Is → Systems We Connect → First Pilot → Business Model → Why Us → Next Steps.",
       "acceptanceCriteria": [
-        "business-agents/deck/outline.md exists with full slide structure",
+        "office-skills/outputs/partner-pitch/outline.md exists with full slide structure",
         "Each slide has: title, 1-sentence key message, 3-5 bullet supporting points",
         "Narrative arc flows logically from problem to call to action"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "E2-S2",
@@ -24,27 +39,30 @@
       "title": "Build Problem slides — the enterprise automation gap",
       "project": "office-skills",
       "priority": 2,
-      "description": "Create 2 HTML slides for the problem section. Slide 1: scale of manual work in enterprise (cost, errors, speed). Slide 2: why existing automation (RPA) fails — brittleness, no reasoning, exception handling gaps. Convert to PPTX via html2pptx.",
+      "description": "Create the Problem section as 2 reveal.js slides inside office-skills/outputs/partner-pitch/index.html. Slide 1: Scale of manual work in enterprise (cost, errors, speed). Slide 2: Why existing automation fails — RPA brittleness, no reasoning, exception handling gaps vs. generic AI with no grounding. Use reveal.js via CDN. Strong visual headline per slide, minimal text, dark professional theme.",
       "acceptanceCriteria": [
-        "2 HTML slide files in office-skills/outputs/partner-pitch/slides/",
-        "Strong visual headline per slide, minimal text",
-        "PPTX slides generated and readable"
+        "office-skills/outputs/partner-pitch/index.html exists with reveal.js loaded via CDN",
+        "2 problem slides with strong visual headlines and minimal bullet text",
+        "Consistent dark professional theme established"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "E2-S3",
       "githubIssue": 9,
-      "title": "Build Solution slides — agentic pilots hooked to real systems",
+      "title": "Build Solution slides — vision, approach, capability matrix, and agent explanation",
       "project": "office-skills",
       "priority": 3,
-      "description": "Create 3 HTML slides: (1) Our approach diagram: Process Map → Opportunity Matrix → Agent Pilot → Scale. (2) What an agent is vs RPA. (3) Systems we connect to (SAP, Salesforce, MES, CRM). Use data from business-agents DB where relevant.",
+      "description": "Add 5 slides to index.html: (1) Vision: 'Agentic pilots built on your actual processes' — 4-step arc (Map → Score → Pilot → Scale). (2) How It Works: Process Map → Opportunity Matrix → Agent Pilot → Scale with brief description of each step. (3) Agentic Capability Matrix (Option B): a visual grid showing Business Functions as rows and the 6 Capability Types as columns (Monitor & Detect, Root Cause Analysis, Idea & Option Generation, Evaluate & Score, Execute & Act, Manage & Track). Each cell is color-coded by authority level: LOW=green (fully auto, reversible), MEDIUM=yellow (auto + notification), HIGH=orange (draft + human approves), EMPTY=grey. Pull data from `python3 business-agents/query.py capabilities` to populate real cells. (4) What an Agent Is: agent loop diagram (Monitor → Reason → Act → Report → Escalate), comparison to RPA and chatbots. (5) Systems We Connect: show SAP, Salesforce, MES, CRM, S&OP, POS — pull names from business-agents DB using python3 business-agents/query.py systems.",
       "acceptanceCriteria": [
-        "3 HTML slides in office-skills/outputs/partner-pitch/slides/",
-        "Opportunity matrix concept visually clear",
-        "Systems slide shows real system names from our DB"
+        "5 slides added to index.html in the solution section",
+        "Capability matrix slide shows a grid with functions as rows and 6 capability type columns",
+        "Matrix cells color-coded: green=LOW, yellow=MED, orange=HIGH, grey=empty",
+        "Matrix populated with real data from business_agents.db (at minimum CI and Supply Chain rows)",
+        "Authority level legend included on the matrix slide",
+        "Agent loop clearly differentiated from RPA"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "E2-S4",
@@ -52,56 +70,58 @@
       "title": "Build First Pilot slide — demand forecasting agent",
       "project": "office-skills",
       "priority": 4,
-      "description": "Create 1-2 slides showing the concrete demand forecasting pilot. Run `python3 business-agents/query.py opportunities CG` to pull process 4.1.1.1 data. Show: workflow (SAP + POS → forecast → S&OP), systems connected, business value (time saved, accuracy improvement).",
+      "description": "Add 1-2 slides to index.html showing the concrete demand forecasting pilot. Run `python3 business-agents/query.py opportunities CG` to pull process 4.1.1.1 data. Show: workflow (SAP + POS → agent → forecast → S&OP), systems connected, business value (time saved, accuracy improvement). Make data visual with a simple left-to-right flow diagram using HTML/CSS.",
       "acceptanceCriteria": [
-        "Slides reference real data from business_agents.db",
-        "Agent workflow clearly visualized",
-        "Quantified business value included"
+        "Slides reference real data from business_agents.db (process name, systems, action type)",
+        "Agent workflow clearly visualized as a horizontal flow",
+        "Quantified business value included (even if estimated ranges)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "E2-S5",
       "githubIssue": 11,
-      "title": "Build Business Model slide — consulting + implementation + expansion",
+      "title": "Build Business Model slide — three-phase engagement",
       "project": "office-skills",
       "priority": 5,
-      "description": "Create 1 slide showing the three-phase engagement model: Discovery (2-3 weeks, process mapping + opportunity scoring) → Pilot (4-8 weeks, one agent live) → Expand (ongoing, agent library + retainer). Visualize as timeline or phases.",
+      "description": "Add 1 slide to index.html showing the three-phase engagement model: Discovery (2-3 weeks, process mapping + opportunity scoring, deliverable: priority matrix) → Pilot (4-8 weeks, one agent live, deliverable: working agent) → Expand (ongoing, agent library + retainer, deliverable: automation roadmap). Visualize as a horizontal timeline with phase cards using HTML/CSS flexbox.",
       "acceptanceCriteria": [
-        "Three phases clearly shown with timeframes",
+        "Three phases clearly shown with timeframes and deliverables",
         "Revenue model implied per phase",
-        "Clean, professional design"
+        "Clean, professional timeline or card layout using CSS only"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "E2-S6",
       "githubIssue": 12,
-      "title": "Build Why Us / Differentiation slide",
+      "title": "Build Why Us and Next Steps slides",
       "project": "office-skills",
       "priority": 6,
-      "description": "Create 1 slide with 3-4 clear differentiators: (1) Process-first not tech-first, (2) Pre-built agent library from APQC taxonomy, (3) Faster pilot via pre-mapped opportunity matrices, (4) Works with existing systems — no rip and replace.",
+      "description": "Add 2 final slides to index.html. Slide 1 (Why Us): 4 differentiators as cards — (1) Process-first not tech-first, (2) Pre-built from APQC PCF taxonomy (500+ processes mapped), (3) Faster pilot via pre-scored opportunity matrices, (4) Works with existing systems — no rip and replace. Slide 2 (Next Steps): 3-step CTA (30-min intro call → Process walkthrough → Pilot scoping) plus contact info placeholder.",
       "acceptanceCriteria": [
-        "3-4 differentiators clearly stated",
+        "4 differentiators clearly stated as visual cards",
         "Implicitly positions against DIY AI, generic consulting, RPA",
-        "Confident, concise tone"
+        "Next steps slide has 3-step CTA and contact placeholder",
+        "Confident, concise tone throughout"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "E2-S7",
       "githubIssue": 13,
-      "title": "Assemble final PPTX and generate visual review",
+      "title": "Polish and finalize the HTML presentation",
       "project": "office-skills",
       "priority": 7,
-      "description": "Combine all slides into partner-pitch-v1.pptx. Apply consistent theme: professional color palette, clean fonts, logo placeholder. Generate thumbnail grid PNG for review. Follow office-skills/public/pptx/SKILL.md workflow.",
+      "description": "Review the complete reveal.js presentation in office-skills/outputs/partner-pitch/index.html. Apply final polish: (1) Consistent typography — use a single Google Font (e.g. Inter or DM Sans) via CDN. (2) Color palette: dark background (#0f1117 or similar), accent color (#6366f1 or brand color). (3) Check all slides for text overflow, alignment, readability. (4) Add a slide number counter. (5) Ensure keyboard navigation and fullscreen work. (6) Verify all slides are present and flow correctly: Title → Problem (2) → Vision → Approach → Agent → Systems → Pilot → Business Model → Why Us → Next Steps.",
       "acceptanceCriteria": [
-        "office-skills/outputs/partner-pitch/partner-pitch-v1.pptx exists",
-        "Thumbnail grid PNG generated",
-        "Consistent design across all slides",
-        "No text overflow or layout issues"
+        "office-skills/outputs/partner-pitch/index.html is a complete, polished presentation",
+        "Consistent font, color palette, and spacing across all slides",
+        "No text overflow or layout issues on any slide",
+        "Slide counter visible, keyboard navigation works",
+        "All 11 slides present in correct narrative order"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

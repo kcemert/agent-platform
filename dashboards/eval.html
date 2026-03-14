@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Evaluation Scorecard — Business Agents Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --card:      #161b2e;
+      --card-hover:#1a2035;
+      --border:    #1e293b;
+      --border-hi: #2d3a52;
+
+      --text:      #f1f5f9;
+      --text-sec:  #94a3b8;
+      --text-muted:#64748b;
+
+      --indigo:    #6366f1;
+      --indigo-dim:#6366f114;
+      --cyan:      #06b6d4;
+      --cyan-dim:  #06b6d414;
+      --orange:    #f97316;
+      --orange-dim:#f9731614;
+      --green:     #22c55e;
+      --green-dim: #22c55e14;
+      --violet:    #8b5cf6;
+      --violet-dim:#8b5cf614;
+      --red:       #ef4444;
+      --red-dim:   #ef444414;
+      --amber:     #f59e0b;
+      --amber-dim: #f59e0b14;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+
+    .nav-brand {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--indigo);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .nav-tab {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-sec);
+      text-decoration: none;
+      padding: 5px 11px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover {
+      background: var(--indigo-dim);
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: rgba(99,102,241,0.15);
+      color: var(--indigo);
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 36px 32px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--indigo);
+      margin-bottom: 8px;
+    }
+
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .page-header .subtitle {
+      font-size: 0.88rem;
+      color: var(--text-sec);
+    }
+
+    .overall-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--indigo-dim);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 12px;
+      padding: 16px 28px;
+      text-align: center;
+      min-width: 140px;
+      flex-shrink: 0;
+    }
+
+    .overall-badge .badge-score {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--indigo);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .overall-badge .badge-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ── Main Content ── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── KPI Bar ── */
+    .kpi-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--text-sec);
+      margin-top: 6px;
+    }
+
+    .kpi-card.accent-indigo .kpi-value { color: var(--indigo); }
+    .kpi-card.accent-green  .kpi-value { color: var(--green);  }
+    .kpi-card.accent-red    .kpi-value { color: var(--red);    }
+    .kpi-card.accent-amber  .kpi-value { color: var(--amber);  }
+
+    /* ── Score Matrix Table ── */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 36px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      background: rgba(30,41,59,0.6);
+    }
+
+    th {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th.center { text-align: center; }
+
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr {
+      cursor: pointer;
+      transition: background 120ms;
+    }
+
+    tbody tr:hover {
+      background: var(--card-hover);
+    }
+
+    tbody tr.expanded {
+      background: rgba(99,102,241,0.06);
+    }
+
+    .db-name {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.88rem;
+    }
+
+    .db-persona {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* score cell */
+    .score-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .score-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .score-num {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* total bar cell */
+    .total-cell {
+      min-width: 110px;
+    }
+
+    .total-bar-wrap {
+      position: relative;
+      height: 20px;
+      background: rgba(30,41,59,0.5);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .total-bar-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .total-bar-label {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    /* grade badge */
+    .grade-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .grade-A { background: rgba(34,197,94,0.15);  color: var(--green);  }
+    .grade-B { background: rgba(6,182,212,0.15);   color: var(--cyan);   }
+    .grade-C { background: rgba(245,158,11,0.15);  color: var(--amber);  }
+    .grade-D { background: rgba(239,68,68,0.15);   color: var(--red);    }
+
+    /* open button */
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--indigo);
+      background: var(--indigo-dim);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 6px;
+      padding: 4px 10px;
+      text-decoration: none;
+      transition: background 120ms, border-color 120ms;
+      white-space: nowrap;
+    }
+
+    .open-btn:hover {
+      background: rgba(99,102,241,0.2);
+      border-color: rgba(99,102,241,0.4);
+    }
+
+    /* ── Expanded Detail Panel ── */
+    .detail-row {
+      display: none;
+    }
+
+    .detail-row.open {
+      display: table-row;
+    }
+
+    .detail-row td {
+      padding: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-panel {
+      background: rgba(15,17,23,0.6);
+      border-top: 1px solid rgba(99,102,241,0.2);
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+    }
+
+    .detail-section-title {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .detail-section-title.green { color: var(--green); }
+    .detail-section-title.red   { color: var(--red);   }
+    .detail-section-title.amber { color: var(--amber);  }
+
+    .detail-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .detail-list li {
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.45;
+    }
+
+    .detail-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .detail-list.strengths li::before { background: var(--green); }
+    .detail-list.gaps li::before      { background: var(--red);   }
+
+    .fix-text {
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+
+    /* ── Dimension Breakdown ── */
+    .dim-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .dim-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .dim-card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .dim-card-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .dim-avg-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .dim-avg-score {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .dim-avg-denom {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .dim-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .dim-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dim-bar-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      width: 60px;
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dim-bar-track {
+      flex: 1;
+      height: 5px;
+      background: rgba(30,41,59,0.5);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .dim-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .dim-bar-val {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-sec);
+      width: 10px;
+      text-align: right;
+    }
+
+    .dim-lowest {
+      margin-top: 12px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .dim-lowest strong {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    /* ── Priority Fix List ── */
+    .priority-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .priority-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .priority-rank {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--orange);
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .priority-db {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .priority-fix {
+      font-size: 0.8rem;
+      color: var(--text-sec);
+      line-height: 1.45;
+    }
+
+    .priority-score-change {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+
+    .score-from { color: var(--red);   font-weight: 600; }
+    .score-to   { color: var(--green); font-weight: 600; }
+    .score-arrow { color: var(--text-muted); }
+
+    /* ── Rubric Reference ── */
+    .rubric-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 36px;
+    }
+
+    .rubric-toggle-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .rubric-toggle-btn:hover {
+      background: var(--indigo-dim);
+    }
+
+    .rubric-toggle-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .rubric-toggle-icon {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      transition: transform 200ms;
+    }
+
+    .rubric-toggle-icon.open {
+      transform: rotate(180deg);
+    }
+
+    .rubric-content {
+      display: none;
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .rubric-content.open {
+      display: block;
+    }
+
+    .rubric-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .rubric-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(15,17,23,0.4);
+    }
+
+    .rubric-card-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--indigo);
+      margin-bottom: 10px;
+    }
+
+    .rubric-levels {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rubric-level {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .rubric-level-num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      width: 14px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .rubric-level-num.l1 { color: var(--red);   }
+    .rubric-level-num.l2 { color: var(--amber);  }
+    .rubric-level-num.l3 { color: var(--green);  }
+    .rubric-level-num.l4 { color: var(--cyan);   }
+
+    .rubric-level-text {
+      font-size: 0.75rem;
+      color: var(--text-sec);
+      line-height: 1.4;
+    }
+
+    /* ── Utilities ── */
+    .color-green  { color: var(--green);  }
+    .color-amber  { color: var(--amber);  }
+    .color-red    { color: var(--red);    }
+    .color-cyan   { color: var(--cyan);   }
+    .color-indigo { color: var(--indigo); }
+
+    .bg-green  { background: var(--green);  }
+    .bg-amber  { background: var(--amber);  }
+    .bg-red    { background: var(--red);    }
+    .bg-cyan   { background: var(--cyan);   }
+
+    /* ── Responsive ── */
+    @media (max-width: 1100px) {
+      .dim-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .rubric-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .kpi-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .detail-panel {
+        grid-template-columns: 1fr;
+      }
+      .dim-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top Navigation ── -->
+<nav class="top-nav">
+  <a class="nav-brand" href="#">Business Agents Platform</a>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="operations.html">Operations</a>
+    <a class="nav-tab" href="finance.html">Finance</a>
+    <a class="nav-tab" href="compliance.html">Compliance</a>
+    <a class="nav-tab" href="it-health.html">IT Health</a>
+    <a class="nav-tab" href="pipeline.html">Pipeline</a>
+    <a class="nav-tab" href="action-queue.html">Action Queue</a>
+    <a class="nav-tab" href="enterprise.html">Enterprise</a>
+    <a class="nav-tab active" href="eval.html">Eval Scorecard</a>
+  </div>
+</nav>
+
+<!-- ── Page Header ── -->
+<header class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="header-eyebrow">Platform Assessment</div>
+      <h1>Dashboard Evaluation Scorecard</h1>
+      <p class="subtitle">5-dimension rubric &middot; 20 points max &middot; assessed March 2026</p>
+    </div>
+    <div class="overall-badge">
+      <span class="badge-score" id="overall-avg">—</span>
+      <span class="badge-label">Platform Avg</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── Main ── -->
+<main class="main">
+
+  <!-- KPI Bar -->
+  <div class="kpi-bar" id="kpi-bar">
+    <div class="kpi-card accent-indigo">
+      <div class="kpi-label">Avg Score</div>
+      <div class="kpi-value" id="kpi-avg">—</div>
+      <div class="kpi-sub">out of 20 pts</div>
+    </div>
+    <div class="kpi-card accent-green">
+      <div class="kpi-label">Top Performer</div>
+      <div class="kpi-value" id="kpi-top" style="font-size:1.1rem; padding-top:4px;">—</div>
+      <div class="kpi-sub" id="kpi-top-score"></div>
+    </div>
+    <div class="kpi-card accent-red">
+      <div class="kpi-label">Needs Work</div>
+      <div class="kpi-value" id="kpi-needs">—</div>
+      <div class="kpi-sub">dashboards scoring &lt; 10</div>
+    </div>
+    <div class="kpi-card accent-amber">
+      <div class="kpi-label">Total Gap Points</div>
+      <div class="kpi-value" id="kpi-gap">—</div>
+      <div class="kpi-sub">improvement remaining</div>
+    </div>
+  </div>
+
+  <!-- Score Matrix Table -->
+  <div class="section-title">Score Matrix</div>
+  <div class="table-wrap" style="margin-bottom:36px;">
+    <table id="score-table">
+      <thead>
+        <tr>
+          <th>Dashboard</th>
+          <th>Persona</th>
+          <th class="center">D1<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.65rem;color:var(--text-muted)">Narrative</span></th>
+          <th class="center">D2<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.65rem;color:var(--text-muted)">Interactivity</span></th>
+          <th class="center">D3<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.65rem;color:var(--text-muted)">HITL</span></th>
+          <th class="center">D4<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.65rem;color:var(--text-muted)">Data</span></th>
+          <th class="center">D5<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.65rem;color:var(--text-muted)">Persona</span></th>
+          <th>Total</th>
+          <th class="center">Grade</th>
+          <th class="center">Link</th>
+        </tr>
+      </thead>
+      <tbody id="score-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Dimension Breakdown -->
+  <div class="section-title">Dimension Breakdown</div>
+  <div class="dim-grid" id="dim-grid"></div>
+
+  <!-- Priority Fix List -->
+  <div class="section-title">Priority Fixes — Highest Impact Improvements</div>
+  <div class="priority-list" id="priority-list"></div>
+
+  <!-- Rubric Reference -->
+  <div class="section-title">Rubric Reference</div>
+  <div class="rubric-section">
+    <button class="rubric-toggle-btn" id="rubric-toggle" onclick="toggleRubric()">
+      <span class="rubric-toggle-label">5-Dimension Scoring Guide — click to expand</span>
+      <span class="rubric-toggle-icon" id="rubric-icon">&#x25BC;</span>
+    </button>
+    <div class="rubric-content" id="rubric-content">
+      <div class="rubric-grid" id="rubric-grid"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════ */
+const DASHBOARDS = [
+  {
+    id: 'operations',
+    name: 'Operations Manager',
+    file: 'operations.html',
+    persona: 'Sarah Chen — Ops Lead',
+    scores: { d1: 2, d2: 3, d3: 3, d4: 2, d5: 2 },
+    strengths: [
+      'Run theater drawer with animated step log (Epic 39)',
+      'Three agent tiles with lifecycle stage badges',
+      'Live API fetch for agent status'
+    ],
+    gaps: [
+      'No before/after narrative — unclear why agents matter',
+      'Recommendation approve/reject UX not prominent enough',
+      'Hardcoded fallback values dominate offline experience'
+    ],
+    fix: 'Add a "Today\'s Impact" header card: PRs created this week vs. manual baseline. Wire recommendation count badge to KPI bar.'
+  },
+  {
+    id: 'finance',
+    name: 'Finance Controller',
+    file: 'finance.html',
+    persona: 'Michael Torres — CFO',
+    scores: { d1: 2, d2: 1, d3: 1, d4: 1, d5: 2 },
+    strengths: [
+      'ROI forecast card showing $420K annual value',
+      'Persona name + role visible in header',
+      'Deployment progress bar'
+    ],
+    gaps: [
+      'HTML contains explicit "Demo items shown for layout illustration" disclaimer',
+      'No live agent runs or real data — entirely static',
+      'No approval/reject flow wired to API'
+    ],
+    fix: 'Wire Finance dashboard to same /api/run + /api/recommendations pattern as Operations. Replace demo disclaimer with live AP invoice agent run.'
+  },
+  {
+    id: 'compliance',
+    name: 'Compliance Officer',
+    file: 'compliance.html',
+    persona: 'Dr. Aisha Patel — Quality Lead',
+    scores: { d1: 3, d2: 2, d3: 4, d4: 2, d5: 3 },
+    strengths: [
+      'Full HITL decision flow: handleApproval() POSTs to /api/approvals/{id}/decide',
+      'Info-requested state + toast notification + audit trail update',
+      'RAI coverage badge with responsible-ai framework link'
+    ],
+    gaps: [
+      'No before/after agent value story (D1 could reach 4)',
+      'Approve/Review buttons have cursor:default — unclear they are clickable',
+      'Live data fetch present but audit trail rows are mostly hardcoded'
+    ],
+    fix: 'Fix button cursor to pointer. Add a "This week: 3 CAPAs auto-triaged, 0 missed" headline card above the approval queue.'
+  },
+  {
+    id: 'agent-view',
+    name: 'Agent View',
+    file: 'agent-view.html',
+    persona: 'Agent Operator — drill-down',
+    scores: { d1: 4, d2: 3, d3: 3, d4: 3, d5: 3 },
+    strengths: [
+      'Full run theater: openRunDrawer → animateSteps → showRecommendations → decideRec',
+      'Live run history from /api/runs/{slug} with timestamps + durations',
+      'Agent lifecycle gate status + success rate sparkline'
+    ],
+    gaps: [
+      'No comprehensive full-session audit trail (only recent runs shown)',
+      'No cross-agent comparison — single-agent drill-down only'
+    ],
+    fix: 'Add "Decision History" tab showing all recommendations ever made for this agent, filterable by status. This closes the audit trail gap for D3=4.'
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise Portfolio',
+    file: 'enterprise.html',
+    persona: 'C-suite — Executive rollup',
+    scores: { d1: 2, d2: 1, d3: 1, d4: 1, d5: 1 },
+    strengths: [
+      'Broad portfolio view with lifecycle funnel across 40 blueprints',
+      'Industry coverage table (13 industries)',
+      '$14.5K realized value card'
+    ],
+    gaps: [
+      'Entirely view-only — no Run buttons, no filters, no actions',
+      'Zero human-in-the-loop elements',
+      'Hardcoded KPI values ("0 agents deployed") not fetched from API'
+    ],
+    fix: 'Add a "Portfolio Actions" panel: pending approvals count, one-click to Action Queue, and a live total-recommendations-decided counter. Even one live fetch (portfolio API) would lift D4 to 3.'
+  },
+  {
+    id: 'it-health',
+    name: 'IT Health Monitor',
+    file: 'it-health.html',
+    persona: 'IT Technical Lead',
+    scores: { d1: 3, d2: 2, d3: 2, d4: 2, d5: 3 },
+    strengths: [
+      'System connections panel with live SAP/MES/DB health checks',
+      'Agent Activity Log table with latency and outcomes',
+      'API Metrics per agent: runs count, success %, avg duration'
+    ],
+    gaps: [
+      'Recommendation Decisions table is view-only — no action buttons',
+      'No error log drill-down or agent payload inspector',
+      'Refresh is manual — no auto-refresh on a timer'
+    ],
+    fix: 'Add auto-refresh every 30s (setInterval). Add "Inspect Payload" expandable row to Activity Log showing raw JSON output from last run.'
+  },
+  {
+    id: 'pipeline',
+    name: 'Lifecycle Pipeline',
+    file: 'pipeline.html',
+    persona: 'Lifecycle/Portfolio Manager',
+    scores: { d1: 3, d2: 2, d3: 1, d4: 2, d5: 3 },
+    strengths: [
+      'Kanban with 6 lifecycle stages (Blueprint → Production)',
+      'Advance button per agent calls POST /api/agents/{slug}/advance',
+      'Blueprint search/filter and stage count labels'
+    ],
+    gaps: [
+      'Stage advancement has no confirmation or sign-off flow — one click with no review',
+      'No business impact narrative for advancing agents',
+      'Sandbox column highlighted but no explanation of what that frontier means'
+    ],
+    fix: 'Add confirmation modal on Advance: "Advancing {name} to Sandbox requires: integration test + compliance clearance. Continue?" with Confirm/Cancel. This adds the HITL gate that enterprise buyers expect.'
+  },
+  {
+    id: 'action-queue',
+    name: 'Action Queue',
+    file: 'action-queue.html',
+    persona: 'Cross-functional reviewer',
+    scores: { d1: 4, d2: 4, d3: 3, d4: 2, d5: 2 },
+    strengths: [
+      'Filter bar: All/Approvals/Recommendations/Critical/High Priority',
+      'Full decision flow with toast + Recently Decided collapsible panel',
+      'Cards sorted by urgency with colored left-border'
+    ],
+    gaps: [
+      'Loses persona specificity — same inbox for all roles, no role-aware filtering',
+      'Missing audit trail linking decisions to specific agent run IDs',
+      'D4 limited by static fallback items when API unavailable'
+    ],
+    fix: 'Add role filter at top: "Viewing as: Operations | Compliance | Finance" — filters queue to show only items relevant to that persona\'s agents. This lifts D5 to 4.'
+  }
+];
+
+const DIMENSIONS = [
+  { id: 'd1', name: 'Narrative Clarity', short: 'Narrative', desc: 'Can someone new understand value in <60s?', levels: ['No context', 'Some labels', 'Clear KPI story', 'Before/after agent value'] },
+  { id: 'd2', name: 'Interactivity Depth', short: 'Interactivity', desc: 'How many distinct user actions exist?', levels: ['View only', 'One action (Run)', 'Run + approve/reject', 'Run + decide + filter + drill-down'] },
+  { id: 'd3', name: 'Human-in-the-Loop', short: 'HITL', desc: 'Can users review, decide, and track agent output?', levels: ['None', 'Buttons, no feedback', 'Full decision flow', 'Full flow + audit trail + toast'] },
+  { id: 'd4', name: 'Data Believability', short: 'Data', desc: 'Are numbers realistic, live, and consistent?', levels: ['Hardcoded', 'Plausible, not consistent', 'Live API, consistent', 'Live + cross-dashboard coherence'] },
+  { id: 'd5', name: 'Persona Fit', short: 'Persona', desc: 'Does content match what this role actually needs?', levels: ['Generic', 'Role-labeled, generic', 'Role-relevant KPIs + actions', 'Exactly what this buyer opens first'] }
+];
+
+/* ═══════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════ */
+function total(db) {
+  return Object.values(db.scores).reduce((a, b) => a + b, 0);
+}
+
+function grade(t) {
+  if (t >= 18) return 'A';
+  if (t >= 15) return 'B';
+  if (t >= 10) return 'C';
+  return 'D';
+}
+
+function scoreColor(s) {
+  if (s >= 3) return '#22c55e';
+  if (s === 2) return '#f59e0b';
+  return '#ef4444';
+}
+
+function totalColor(t) {
+  if (t >= 15) return '#22c55e';
+  if (t >= 10) return '#f59e0b';
+  return '#ef4444';
+}
+
+function avg(arr) {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+
+/* ═══════════════════════════════════════════════════
+   COMPUTED STATS
+═══════════════════════════════════════════════════ */
+const totals = DASHBOARDS.map(total);
+const allTotal = totals.reduce((a, b) => a + b, 0);
+const avgScore = allTotal / DASHBOARDS.length;
+const topIdx = totals.indexOf(Math.max(...totals));
+const needsWork = DASHBOARDS.filter((_, i) => totals[i] < 10).length;
+const gapPoints = 160 - allTotal;
+
+/* ═══════════════════════════════════════════════════
+   KPI BAR
+═══════════════════════════════════════════════════ */
+document.getElementById('overall-avg').textContent = avgScore.toFixed(1);
+document.getElementById('kpi-avg').textContent = avgScore.toFixed(1);
+document.getElementById('kpi-top').textContent = DASHBOARDS[topIdx].name;
+document.getElementById('kpi-top-score').textContent = totals[topIdx] + ' / 20 pts';
+document.getElementById('kpi-needs').textContent = needsWork;
+document.getElementById('kpi-gap').textContent = gapPoints;
+
+/* ═══════════════════════════════════════════════════
+   SCORE MATRIX TABLE
+═══════════════════════════════════════════════════ */
+let expandedId = null;
+
+function buildTable() {
+  const tbody = document.getElementById('score-tbody');
+  tbody.innerHTML = '';
+
+  DASHBOARDS.forEach((db, i) => {
+    const t = totals[i];
+    const g = grade(t);
+    const pct = (t / 20) * 100;
+    const tc = totalColor(t);
+
+    // Main data row
+    const tr = document.createElement('tr');
+    tr.id = 'row-' + db.id;
+    tr.setAttribute('role', 'button');
+    tr.setAttribute('aria-expanded', 'false');
+
+    // Build dimension score cells
+    const dimCells = ['d1','d2','d3','d4','d5'].map(d => {
+      const s = db.scores[d];
+      const c = scoreColor(s);
+      return `<td style="text-align:center;">
+        <div class="score-cell">
+          <span class="score-dot" style="background:${c};"></span>
+          <span class="score-num">${s}</span>
+        </div>
+      </td>`;
+    }).join('');
+
+    tr.innerHTML = `
+      <td>
+        <div class="db-name">${db.name}</div>
+      </td>
+      <td>
+        <div class="db-persona">${db.persona}</div>
+      </td>
+      ${dimCells}
+      <td class="total-cell">
+        <div class="total-bar-wrap">
+          <div class="total-bar-fill" style="width:${pct}%;background:${tc};opacity:0.85;"></div>
+          <span class="total-bar-label">${t}</span>
+        </div>
+      </td>
+      <td style="text-align:center;">
+        <span class="grade-badge grade-${g}">${g}</span>
+      </td>
+      <td style="text-align:center;">
+        <a class="open-btn" href="${db.file}" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
+      </td>
+    `;
+
+    tr.addEventListener('click', () => toggleRow(db.id));
+
+    tbody.appendChild(tr);
+
+    // Detail panel row (hidden by default)
+    const detailTr = document.createElement('tr');
+    detailTr.id = 'detail-' + db.id;
+    detailTr.className = 'detail-row';
+
+    const strengthsHtml = db.strengths.map(s => `<li>${s}</li>`).join('');
+    const gapsHtml = db.gaps.map(g => `<li>${g}</li>`).join('');
+
+    detailTr.innerHTML = `
+      <td colspan="10">
+        <div class="detail-panel">
+          <div>
+            <div class="detail-section-title green">Strengths</div>
+            <ul class="detail-list strengths">${strengthsHtml}</ul>
+          </div>
+          <div>
+            <div class="detail-section-title red">Gaps</div>
+            <ul class="detail-list gaps">${gapsHtml}</ul>
+          </div>
+          <div>
+            <div class="detail-section-title amber">Priority Fix</div>
+            <p class="fix-text">${db.fix}</p>
+            <a class="open-btn" href="${db.file}" target="_blank">Open ${db.name} &rarr;</a>
+          </div>
+        </div>
+      </td>
+    `;
+
+    tbody.appendChild(detailTr);
+  });
+}
+
+function toggleRow(id) {
+  if (expandedId === id) {
+    // Collapse current
+    document.getElementById('row-' + id).classList.remove('expanded');
+    document.getElementById('detail-' + id).classList.remove('open');
+    document.getElementById('row-' + id).setAttribute('aria-expanded', 'false');
+    expandedId = null;
+    return;
+  }
+  // Collapse previous
+  if (expandedId) {
+    document.getElementById('row-' + expandedId).classList.remove('expanded');
+    document.getElementById('detail-' + expandedId).classList.remove('open');
+    document.getElementById('row-' + expandedId).setAttribute('aria-expanded', 'false');
+  }
+  // Expand new
+  document.getElementById('row-' + id).classList.add('expanded');
+  document.getElementById('detail-' + id).classList.add('open');
+  document.getElementById('row-' + id).setAttribute('aria-expanded', 'true');
+  expandedId = id;
+}
+
+/* ═══════════════════════════════════════════════════
+   DIMENSION BREAKDOWN
+═══════════════════════════════════════════════════ */
+function buildDimBreakdown() {
+  const container = document.getElementById('dim-grid');
+
+  // Dim color sequence
+  const dimColors = ['#6366f1','#06b6d4','#22c55e','#f59e0b','#8b5cf6'];
+
+  DIMENSIONS.forEach((dim, di) => {
+    const color = dimColors[di];
+    const scores = DASHBOARDS.map(db => db.scores[dim.id]);
+    const dimAvg = avg(scores);
+    const minScore = Math.min(...scores);
+    const lowestIdx = scores.indexOf(minScore);
+    const lowestName = DASHBOARDS[lowestIdx].name;
+
+    // Build mini bars
+    const barsHtml = DASHBOARDS.map((db, i) => {
+      const s = db.scores[dim.id];
+      const pct = (s / 4) * 100;
+      const c = scoreColor(s);
+      const shortName = db.name.split(' ').slice(0,2).join(' ');
+      return `
+        <div class="dim-bar-row">
+          <div class="dim-bar-label" title="${db.name}">${shortName}</div>
+          <div class="dim-bar-track">
+            <div class="dim-bar-fill" style="width:${pct}%;background:${c};"></div>
+          </div>
+          <div class="dim-bar-val">${s}</div>
+        </div>
+      `;
+    }).join('');
+
+    const avgColor = dimAvg >= 3 ? '#22c55e' : dimAvg >= 2 ? '#f59e0b' : '#ef4444';
+
+    const card = document.createElement('div');
+    card.className = 'dim-card';
+    card.innerHTML = `
+      <div class="dim-card-title" style="color:${color};">${dim.name}</div>
+      <div class="dim-card-desc">${dim.desc}</div>
+      <div class="dim-avg-row">
+        <div class="dim-avg-score" style="color:${avgColor};">${dimAvg.toFixed(1)}</div>
+        <div class="dim-avg-denom">/ 4 avg</div>
+      </div>
+      <div class="dim-bars">${barsHtml}</div>
+      <div class="dim-lowest">Lowest: <strong>${lowestName}</strong> (${minScore})</div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   PRIORITY FIX LIST
+═══════════════════════════════════════════════════ */
+function buildPriorityList() {
+  // For each (dashboard, dimension) pair where score <= 1, compute impact
+  // Impact = (4 - score) * (count of dashboards scoring <= 1 in that dimension)
+  // Pick top 5 unique dashboard+dimension combos
+
+  const candidates = [];
+
+  DASHBOARDS.forEach(db => {
+    DIMENSIONS.forEach(dim => {
+      const s = db.scores[dim.id];
+      const countBelow2 = DASHBOARDS.filter(d => d.scores[dim.id] <= 1).length;
+      const impact = (4 - s) * countBelow2;
+      candidates.push({ db, dim, score: s, impact, target: Math.min(4, s + 2) });
+    });
+  });
+
+  candidates.sort((a, b) => b.impact - a.impact);
+
+  // Deduplicate: take top 5
+  const top5 = candidates.slice(0, 5);
+
+  const container = document.getElementById('priority-list');
+  container.innerHTML = '';
+
+  // Fix descriptions map (dashboard id + dim id → one-line fix)
+  const fixMap = {
+    'finance-d2': 'Wire Run button to /api/run endpoint to enable live agent execution',
+    'finance-d3': 'Implement handleApproval() with POST to /api/approvals/{id}/decide',
+    'finance-d4': 'Replace static values with live fetch from /api/agents/finance/status',
+    'enterprise-d2': 'Add Run buttons and a Portfolio Actions panel with approvals count',
+    'enterprise-d3': 'Implement at least one HITL decision flow (approval or recommendation)',
+    'enterprise-d4': 'Fetch live agent counts from /api/portfolio endpoint on page load',
+    'enterprise-d5': 'Scope view to C-suite KPIs: cost savings, risk reduction, agents live',
+    'pipeline-d3': 'Add confirmation modal before stage advancement with compliance gate',
+    'operations-d1': 'Add Today\'s Impact header card: PRs this week vs manual baseline',
+    'action-queue-d5': 'Add role-aware filter: "Viewing as Operations | Compliance | Finance"'
+  };
+
+  top5.forEach((item, rank) => {
+    const key = `${item.db.id}-${item.dim.id}`;
+    const fixDesc = fixMap[key] || item.db.fix.split('.')[0];
+
+    const el = document.createElement('div');
+    el.className = 'priority-item';
+    el.innerHTML = `
+      <div class="priority-rank">#${rank + 1}</div>
+      <div>
+        <div class="priority-db">${item.db.name} — ${item.dim.name}</div>
+        <div class="priority-score-change">
+          <span class="score-from">${item.score} pts</span>
+          <span class="score-arrow">&rarr;</span>
+          <span class="score-to">${item.target} pts target</span>
+        </div>
+        <div class="priority-fix" style="margin-top:6px;">${fixDesc}</div>
+      </div>
+      <a class="open-btn" href="${item.db.file}" target="_blank">Open &rarr;</a>
+    `;
+
+    container.appendChild(el);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   RUBRIC REFERENCE
+═══════════════════════════════════════════════════ */
+function buildRubric() {
+  const container = document.getElementById('rubric-grid');
+  const levelClasses = ['l1','l2','l3','l4'];
+
+  DIMENSIONS.forEach(dim => {
+    const levelsHtml = dim.levels.map((desc, i) => `
+      <div class="rubric-level">
+        <span class="rubric-level-num ${levelClasses[i]}">${i + 1}</span>
+        <span class="rubric-level-text">${desc}</span>
+      </div>
+    `).join('');
+
+    const card = document.createElement('div');
+    card.className = 'rubric-card';
+    card.innerHTML = `
+      <div class="rubric-card-title">${dim.name}</div>
+      <div class="rubric-card-desc" style="font-size:0.72rem;color:var(--text-muted);margin-bottom:10px;">${dim.desc}</div>
+      <div class="rubric-levels">${levelsHtml}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleRubric() {
+  const content = document.getElementById('rubric-content');
+  const icon = document.getElementById('rubric-icon');
+  content.classList.toggle('open');
+  icon.classList.toggle('open');
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+buildTable();
+buildDimBreakdown();
+buildPriorityList();
+buildRubric();
+</script>
+</body>
+</html>

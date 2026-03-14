@@ -37,6 +37,10 @@
       --green: #22c55e;
       --green-dim: #22c55e20;
 
+      --violet: #8b5cf6;
+      --violet-dim: #8b5cf620;
+      --violet-border: #8b5cf640;
+
       --grey-dim: #64748b20;
       --grey-border: #64748b40;
     }
@@ -136,6 +140,7 @@
     .category-header.sales { border-left-color: var(--indigo); }
     .category-header.platform { border-left-color: var(--cyan); }
     .category-header.agent-ops { border-left-color: var(--orange); }
+    .category-header.analytics { border-left-color: var(--violet); }
 
     .category-header h2 {
       font-size: 0.8rem;
@@ -147,6 +152,7 @@
     .category-header.sales h2 { color: var(--indigo); }
     .category-header.platform h2 { color: var(--cyan); }
     .category-header.agent-ops h2 { color: var(--orange); }
+    .category-header.analytics h2 { color: var(--violet); }
 
     .category-count {
       font-size: 0.75rem;
@@ -188,6 +194,7 @@
     .card.sales:hover { border-color: var(--indigo-border); }
     .card.platform:hover { border-color: var(--cyan-border); }
     .card.agent-ops:hover { border-color: var(--orange-border); }
+    .card.analytics:hover { border-color: var(--violet-border); }
 
     .card.coming-soon {
       opacity: 0.6;
@@ -315,6 +322,12 @@
       background: var(--orange-dim);
     }
 
+    .card.analytics:hover .open-btn {
+      color: var(--violet);
+      border-color: var(--violet-border);
+      background: var(--violet-dim);
+    }
+
     /* ── Footer ── */
     footer {
       padding: 24px 64px;
@@ -339,8 +352,8 @@
         <p>Internal tooling and client-facing materials</p>
       </div>
       <div class="header-right">
-        <div class="stat-badge">9 tools across 3 categories</div>
-        <div class="last-updated">Last updated: March 13, 2026</div>
+        <div class="stat-badge">38 tools across 7 categories</div>
+        <div class="last-updated">Last updated: March 14, 2026</div>
       </div>
     </div>
   </header>
@@ -353,10 +366,28 @@
       <section class="category-section">
         <div class="category-header sales">
           <h2>Sales &amp; Client-Facing</h2>
-          <span class="category-count">4 tools</span>
+          <span class="category-count">9 tools</span>
         </div>
 
         <div class="cards-grid">
+
+          <!-- Responsible AI Framework -->
+          <a class="card sales" href="office-skills/outputs/responsible-ai/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#9878;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Responsible AI Framework</div>
+            <div class="card-description">Six-pillar RAI framework — Transparency, Oversight, Fairness, Privacy, Accountability, Robustness — mapped to platform capabilities with implementation status.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
 
           <!-- Partner Pitch Deck -->
           <a class="card sales" href="office-skills/outputs/partner-pitch/index.html" target="_blank" rel="noopener">
@@ -422,6 +453,95 @@
             <div class="audience-pills">
               <span class="pill">Engineering</span>
               <span class="pill">Partner</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <a class="card sales" href="office-skills/outputs/engagement-model/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">💼</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Pricing &amp; Engagement Model</div>
+            <div class="card-description">Three-tier engagement model — Discovery Sprint, Pilot, Platform — with phases, time-to-value, and client FAQ.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Client Engagement Portal -->
+          <a class="card sales" href="client-portal/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🌐</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Client Engagement Portal</div>
+            <div class="card-description">Shareable prospect portal — Overview, Process Explorer, Opportunities, Blueprints, Value Calculator. Personalise with ?client= URL param.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Productivity Multiplier -->
+          <a class="card sales" href="office-skills/outputs/productivity-multiplier/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🚀</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Productivity Multiplier</div>
+            <div class="card-description">The value case for agents: one person with agents does the work of five — role breakdowns, time analysis, and the economics.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- KPIs & Benefits Realization -->
+          <a class="card sales" href="office-skills/outputs/benefits-realization/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">📈</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">KPIs &amp; Benefits Realization</div>
+            <div class="card-description">Before/after KPI framework by function, measurement timeline, and post-implementation tracking template — prove the value agents deliver.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Opportunity Prioritization Tool -->
+          <a class="card sales" href="prioritization/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🎯</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Opportunity Prioritization Tool</div>
+            <div class="card-description">Interactive 2×2 workshop tool — score up to 10 agentic opportunities across 8 sub-dimensions, plot live bubbles, export ranked shortlist. Add ?mode=internal for epic prioritization.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Client</span>
             </div>
             <div class="card-footer">
               <span class="open-btn">Open &rarr;</span>
@@ -519,7 +639,7 @@
       <section class="category-section">
         <div class="category-header agent-ops">
           <h2>Agent Operations</h2>
-          <span class="category-count">1 tool</span>
+          <span class="category-count">3 tools</span>
         </div>
 
         <div class="cards-grid">
@@ -536,6 +656,424 @@
               <span class="pill">Ops</span>
               <span class="pill">Engineering</span>
               <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Client Onboarding Framework -->
+          <a class="card agent-ops" href="client-onboarding/questionnaire.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">📋</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Client Onboarding Framework</div>
+            <div class="card-description">Structured intake process — discovery questionnaire with JSON export, process relevance scorer, and interactive engagement checklist.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Value Realized Dashboard -->
+          <a class="card agent-ops" href="business-agents/value-dashboard/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#128200;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Value Realized Dashboard</div>
+            <div class="card-description">ROI tracking for pilot agents: hours saved, PRs created, exceptions caught, and $ value realized — with weekly trends and at-scale projections.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Executive</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- ── Persona Dashboards ── -->
+      <section class="category-section">
+        <div class="category-header agent-ops">
+          <h2>Persona Dashboards</h2>
+          <span class="category-count">8 tools</span>
+        </div>
+
+        <div class="cards-grid">
+
+          <!-- Operations Manager Dashboard -->
+          <a class="card agent-ops" href="dashboards/operations.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#9881;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Operations Manager Dashboard</div>
+            <div class="card-description">Sarah Chen persona: replenishment and demand forecast agents live, KPI bar (PRs created, hours saved, forecast accuracy), activity feed, and approval queue.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Finance Controller Dashboard -->
+          <a class="card agent-ops" href="dashboards/finance.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#128181;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Finance Controller Dashboard</div>
+            <div class="card-description">Michael Torres persona: AP invoice, forecast accuracy, and cost variance agent pipeline — ROI forecast, blueprint deployment progress, and demo approval queue.</div>
+            <div class="audience-pills">
+              <span class="pill">Finance</span>
+              <span class="pill">Executive</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Compliance Officer Dashboard -->
+          <a class="card agent-ops" href="dashboards/compliance.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#9878;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Compliance Officer Dashboard</div>
+            <div class="card-description">Dr. Aisha Patel persona: Quality CAPA agent live KPIs, CAPA sign-off approval queue, quality audit trail, RAI coverage badge, and blueprint pipeline.</div>
+            <div class="audience-pills">
+              <span class="pill">Compliance</span>
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Agent View (per-agent drill-down) -->
+          <a class="card agent-ops" href="dashboards/agent-view.html?agent=cg-replenishment-pr-agent" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#128269;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Agent View</div>
+            <div class="card-description">Per-agent drill-down page: run history, KPI sparkline trends, last output viewer, approval queue, and lifecycle gate status. URL-parameterized: ?agent=slug.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Enterprise Portfolio Dashboard -->
+          <a class="card agent-ops" href="dashboards/enterprise.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#9889;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Enterprise Portfolio Dashboard</div>
+            <div class="card-description">C-suite rollup: lifecycle funnel across 40 blueprints, industry coverage table (13 industries), value realized ($14K pilot ROI), function heatmap, and RAI pillar coverage.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- IT Health Monitor -->
+          <a class="card agent-ops" href="dashboards/it-health.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#128312;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">IT Health Monitor</div>
+            <div class="card-description">IT Technical Lead persona: SAP ERP + MES system connection status, agent activity log (all pilot runs), API metrics per agent, and recommendation decision audit table.</div>
+            <div class="audience-pills">
+              <span class="pill">IT</span>
+              <span class="pill">Engineering</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Lifecycle Pipeline -->
+          <a class="card agent-ops" href="dashboards/pipeline.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#128640;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Lifecycle Pipeline</div>
+            <div class="card-description">Agent lifecycle kanban: 6 columns (Blueprint → Production), advance buttons per agent, sandbox frontier highlighted, counts per stage, and search/filter by name.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Engineering</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Action Queue -->
+          <a class="card agent-ops" href="dashboards/action-queue.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#9989;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Action Queue</div>
+            <div class="card-description">Unified inbox for all pending decisions: approvals + agent recommendations merged, sorted by urgency. Filter bar, one-click accept/reject per item, recently decided panel.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Executive</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- ── Analytics & Visualizations ── -->
+      <section class="category-section">
+        <div class="category-header analytics">
+          <h2>Analytics &amp; Visualizations</h2>
+          <span class="category-count">7 tools</span>
+        </div>
+
+        <div class="cards-grid">
+
+          <!-- Grand Matrix -->
+          <a class="card analytics" href="business-agents/matrix/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">📐</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">DB Grand Matrix</div>
+            <div class="card-description">Full 12×16 expandable grid of all database dimensions — functions, capability types, industries, opportunity scoring, and coverage at a glance.</div>
+            <div class="audience-pills">
+              <span class="pill">Engineering</span>
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Opportunity Quadrant -->
+          <a class="card analytics" href="business-agents/visualizations/quadrant/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🎯</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Opportunity Quadrant</div>
+            <div class="card-description">Feasibility vs. value scatter plot of agent opportunities — bubble size = process count, quadrant = priority for deployment sequencing.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Process Treemap -->
+          <a class="card analytics" href="business-agents/visualizations/treemap/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🗺️</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Process Treemap</div>
+            <div class="card-description">Squarified treemap of all 127 processes — area represents descendants, color encodes agent opportunity score. Zoom and drill-down supported.</div>
+            <div class="audience-pills">
+              <span class="pill">Ops</span>
+              <span class="pill">Engineering</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Feature Reuse Network -->
+          <a class="card analytics" href="business-agents/visualizations/feature-network/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🕸️</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Feature Reuse Network</div>
+            <div class="card-description">SVG node-link diagram showing which platform features are shared across agent blueprints — reveals the reusable building blocks of agent composition.</div>
+            <div class="audience-pills">
+              <span class="pill">Engineering</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Authority Distribution -->
+          <a class="card analytics" href="business-agents/visualizations/authority/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">⚖️</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Authority Distribution</div>
+            <div class="card-description">Stacked horizontal bars showing how agent capabilities distribute across LOW, MEDIUM, and HIGH authority levels — by function and capability type.</div>
+            <div class="audience-pills">
+              <span class="pill">Executive</span>
+              <span class="pill">Ops</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Blueprint Architecture Flow -->
+          <a class="card analytics" href="business-agents/visualizations/blueprint-flow/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🔀</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Blueprint Architecture Flow</div>
+            <div class="card-description">6-stage swimlane diagram for each agent blueprint — data inputs, processing, decision gates, outputs, and escalation paths. Tabs for all 3 blueprints.</div>
+            <div class="audience-pills">
+              <span class="pill">Engineering</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- System Integration Map -->
+          <a class="card analytics" href="business-agents/visualizations/systems-map/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">🔌</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">System Integration Map</div>
+            <div class="card-description">Bipartite graph of 21 enterprise systems (SAP, Salesforce, MES, WMS, etc.) connected to 12 APQC functions — filter by READ, WRITE, or READ_WRITE.</div>
+            <div class="audience-pills">
+              <span class="pill">Engineering</span>
+              <span class="pill">Partner</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- ── Client Portals ── -->
+      <section class="category-section">
+        <div class="category-header sales">
+          <h2>Client Portals</h2>
+          <span class="category-count">4 tools</span>
+        </div>
+
+        <div class="cards-grid">
+
+          <!-- Portfolio Index -->
+          <a class="card sales" href="clients/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#128193;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Client Portfolio — All Portals</div>
+            <div class="card-description">Portfolio listing page — all 3 active client portals. 80 hrs/week recoverable, £391K combined annual value. Kimre, Precision Parts, Meridian Bank.</div>
+            <div class="audience-pills">
+              <span class="pill">Sales</span>
+              <span class="pill">Executive</span>
+              <span class="pill">Internal</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Kimre Inc. -->
+          <a class="card sales" href="clients/kimre/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#127981;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Kimre Inc. — Agent Engagement Portal</div>
+            <div class="card-description">ETO manufacturer (Homestead FL) — 5 agent opportunities ranked by ROI. Recommended pilot: Material Requisition Agent. 34 hrs/week saved, £190K/yr value.</div>
+            <div class="audience-pills">
+              <span class="pill">Sales</span>
+              <span class="pill">Executive</span>
+              <span class="pill">Client</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+              <a href="clients/kimre/sales.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--text-muted);background:var(--border);border-radius:4px;padding:2px 8px;text-decoration:none;">Sales</a>
+              <a href="clients/kimre/engineering.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--text-muted);background:var(--border);border-radius:4px;padding:2px 8px;text-decoration:none;">Engineering</a>
+              <a href="clients/kimre/customer-service.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--text-muted);background:var(--border);border-radius:4px;padding:2px 8px;text-decoration:none;">Customer Service</a>
+              <a href="clients/kimre/executive.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--text-muted);background:var(--border);border-radius:4px;padding:2px 8px;text-decoration:none;">Executive</a>
+              <a href="clients/kimre/quality.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--text-muted);background:var(--border);border-radius:4px;padding:2px 8px;text-decoration:none;">Quality</a>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Precision Parts Co. -->
+          <a class="card sales" href="clients/precisionparts/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#9881;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Precision Parts Co. — Agent Engagement Portal</div>
+            <div class="card-description">CNC manufacturer (Tulsa OK) — ISO 9001 + AS9100D certified. 3 agents: Inventory Replenishment, Production Scheduling, Quality Inspector. £74K/yr value. Pilot: April 2026.</div>
+            <div class="audience-pills">
+              <span class="pill">Sales</span>
+              <span class="pill">Executive</span>
+              <span class="pill">Client</span>
+            </div>
+            <div class="card-footer">
+              <span class="open-btn">Open &rarr;</span>
+            </div>
+          </a>
+
+          <!-- Meridian Community Bank -->
+          <a class="card sales" href="clients/meridianbank/index.html" target="_blank" rel="noopener">
+            <div class="card-top">
+              <span class="card-icon">&#127968;</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="card-title">Meridian Community Bank — Agent Engagement Portal</div>
+            <div class="card-description">Community bank (Charlotte NC) — 12 branches, regulatory score 5/5, HITL required. 4 agents: AML Triage, Credit Review, Reg Reports, Loan Docs. £127K/yr value. Pilot: April 2026.</div>
+            <div class="audience-pills">
+              <span class="pill">Sales</span>
+              <span class="pill">Compliance</span>
+              <span class="pill">Client</span>
             </div>
             <div class="card-footer">
               <span class="open-btn">Open &rarr;</span>

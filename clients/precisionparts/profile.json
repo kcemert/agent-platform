@@ -1,0 +1,42 @@
+{
+  "slug": "precisionparts",
+  "name": "Precision Parts Co.",
+  "tagline": "CNC Machining & Precision Manufacturing",
+  "location": "Tulsa, Oklahoma, USA",
+  "employees": 75,
+  "revenue_usd_m": 28,
+  "size_tier": "MID",
+  "industry_code": "MFG",
+  "business_model": "MTS",
+  "regulatory_score": 3,
+  "integration_tier": "T2",
+  "data_readiness_score": 17,
+  "engagement_tier": "Pilot",
+  "certifications": ["ISO 9001:2015", "AS9100D"],
+  "primary_systems": {
+    "erp": "Epicor Kinetic",
+    "crm": "Salesforce Essentials",
+    "quality": "InspectionXpert"
+  },
+  "pilot_agent": {
+    "name": "Inventory Replenishment Agent",
+    "slug": "mfg-inventory-replenishment-agent",
+    "timeline_weeks": 4,
+    "year1_value_gbp": 18000,
+    "authority_level": "MEDIUM"
+  },
+  "agents": [
+    {"rank": 1, "name": "Inventory Replenishment Agent", "slug": "mfg-inventory-replenishment-agent", "value_gbp_annual": 18000, "status": "pilot_ready"},
+    {"rank": 2, "name": "Production Scheduling Agent", "slug": "mfg-production-scheduling-agent", "value_gbp_annual": 32000, "status": "blueprint"},
+    {"rank": 3, "name": "Quality Inspector Agent", "slug": "mfg-quality-inspector-agent", "value_gbp_annual": 24000, "status": "blueprint"}
+  ],
+  "hours_recoverable_per_week": 18,
+  "annual_value_gbp": 74000,
+  "contact": {
+    "name": "Sarah Mitchell",
+    "title": "VP Operations",
+    "email": "s.mitchell@precisionparts.com"
+  },
+  "engagement_start": "2026-04-01",
+  "notes": "ISO 9001 + AS9100 certified — quality agents are high priority. Epicor T2 integration. Strong data readiness. Fast decision-maker."
+}

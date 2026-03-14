@@ -1,0 +1,85 @@
+{
+  "slug": "kimre",
+  "name": "Kimre Inc.",
+  "website": "https://www.kimre.com",
+  "hq": "Homestead, FL",
+  "founded": 1973,
+  "employees": "21–50",
+  "size_tier": "MID",
+  "industry_code": "MFG",
+  "industry_name": "Industrial Manufacturing",
+  "business_model": "ETO",
+  "business_model_name": "Engineer-to-Order",
+  "regulatory_score": 4,
+  "integration_tier": "T2",
+  "data_readiness_score": 14,
+  "engagement_tier": "Pilot",
+  "primary_contact": "Mary Gaston",
+  "primary_contact_title": "President",
+  "key_products": ["B-GON® Mist Eliminators", "DRIFTOR® Drift Eliminators", "LIQUI-NOMIX® Coalescers", "KON-TANE® Scrubber Packing", "Fiber Bed Filters"],
+  "key_markets": ["Fertilizer Manufacturing", "Petrochemicals", "Power Generation", "Steel Pickling", "Sulfuric Acid Processing"],
+  "agent_opportunities": [
+    {
+      "rank": 1,
+      "name": "Material Requisition Agent",
+      "closest_blueprint": "cg-replenishment-pr-agent",
+      "process": "Specialty Material Procurement",
+      "value_hrs_week": 8,
+      "authority": "MEDIUM",
+      "integration_tier": "T2",
+      "priority": "pilot"
+    },
+    {
+      "rank": 2,
+      "name": "RFQ-to-Quote Agent",
+      "closest_blueprint": "new",
+      "process": "Customer Quote Generation",
+      "value_hrs_week": 12,
+      "authority": "LOW",
+      "integration_tier": "T2",
+      "priority": "next"
+    },
+    {
+      "rank": 3,
+      "name": "Quality Compliance Checker",
+      "closest_blueprint": "cg-quality-capa-agent",
+      "process": "Pre-Fabrication EPA Spec Validation",
+      "value_hrs_week": 5,
+      "authority": "MEDIUM",
+      "integration_tier": "T1",
+      "priority": "next"
+    },
+    {
+      "rank": 4,
+      "name": "Order Milestone Notifier",
+      "closest_blueprint": "new",
+      "process": "Customer Order Status Communication",
+      "value_hrs_week": 3,
+      "authority": "LOW",
+      "integration_tier": "T1",
+      "priority": "platform"
+    },
+    {
+      "rank": 5,
+      "name": "Retrofit Reorder Agent",
+      "closest_blueprint": "retail-customer-churn-agent",
+      "process": "Proactive Customer Reorder Outreach",
+      "value_hrs_week": 6,
+      "authority": "LOW",
+      "integration_tier": "T1",
+      "priority": "platform"
+    }
+  ],
+  "pilot_recommendation": {
+    "agent": "Material Requisition Agent",
+    "rationale": "Closest to existing replenishment blueprint, T2 integration, MEDIUM authority, clear measurable output",
+    "timeline_weeks": 6,
+    "expected_value_year1_usd": 24000
+  },
+  "personas": [
+    {"role": "President", "name": "Mary Gaston", "focus": "Portfolio value, risk oversight, ROI"},
+    {"role": "Operations Manager", "name": "TBD", "focus": "Order pipeline, material availability, fabrication queue"},
+    {"role": "Sales / Engineering Lead", "name": "TBD", "focus": "RFQ queue, quote turnaround, customer interactions"},
+    {"role": "Finance / Admin", "name": "TBD", "focus": "PO approvals, project cost tracking, invoicing"}
+  ]
+}

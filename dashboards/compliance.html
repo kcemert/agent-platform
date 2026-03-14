@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compliance Officer Dashboard — Business Agents</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #1c2128;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+
+      --blueprint-col: #8b949e;
+      --blueprint-dim: #8b949e20;
+
+      --low: #3fb950;
+      --low-dim: #3fb95020;
+      --medium: #d29922;
+      --medium-dim: #d2992220;
+      --high: #f85149;
+      --high-dim: #f8514920;
+
+      --compliance: #a371f7;
+      --compliance-dim: #a371f718;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+    }
+
+    .nav-tab:hover {
+      background: rgba(163, 113, 247, 0.08);
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: rgba(163, 113, 247, 0.12);
+      color: var(--compliance);
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .persona-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--compliance);
+      margin-bottom: 6px;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .persona-name {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .refresh-info {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .refresh-btn {
+      font-size: 0.75rem;
+      color: var(--compliance);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      margin-left: 8px;
+      transition: background 120ms;
+    }
+
+    .refresh-btn:hover { background: var(--compliance-dim); }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      padding: 32px 40px;
+    }
+
+    .main-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+    }
+
+    .main-left { display: flex; flex-direction: column; gap: 32px; }
+    .main-right { display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── Agent tiles grid ── */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .agent-tile {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+      cursor: pointer;
+    }
+
+    .agent-tile:hover {
+      border-color: var(--compliance);
+      box-shadow: 0 4px 20px rgba(163, 113, 247, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .agent-tile.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .tile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tile-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .lifecycle-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 9px;
+    }
+
+    .lifecycle-badge.sandbox {
+      background: rgba(57, 211, 83, 0.15);
+      color: #56d364;
+      border: 1px solid rgba(57, 211, 83, 0.3);
+    }
+
+    .lifecycle-badge.blueprint {
+      background: var(--blueprint-dim);
+      color: var(--blueprint-col);
+      border: 1px solid rgba(139, 148, 158, 0.3);
+    }
+
+    .authority-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      padding: 3px 9px;
+    }
+
+    .authority-pill.low {
+      background: var(--low-dim);
+      color: var(--low);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .authority-pill.medium {
+      background: var(--medium-dim);
+      color: var(--medium);
+      border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+
+    .tile-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .tile-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.amber { background: var(--medium); box-shadow: 0 0 6px rgba(210,153,34,0.5); }
+    .status-dot.gray { background: #6e7681; }
+
+    .tile-metric {
+      background: rgba(210, 153, 34, 0.06);
+      border: 1px solid rgba(210, 153, 34, 0.15);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--medium);
+    }
+
+    .tile-metric.muted {
+      background: rgba(110, 118, 129, 0.06);
+      border-color: rgba(110, 118, 129, 0.15);
+      color: var(--text-secondary);
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .tile-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    .tile-schedule {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .tile-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--compliance);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 120ms;
+    }
+
+    .tile-link:hover { opacity: 1; }
+
+    /* ── KPI Bar ── */
+    .kpi-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 28px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .kpi-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kpi-value {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .kpi-value.amber { color: var(--medium); }
+    .kpi-value.green { color: var(--low); }
+    .kpi-value.muted { color: var(--text-muted); }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .kpi-sub {
+      font-size: 0.7rem;
+      color: var(--low);
+      margin-top: 2px;
+    }
+
+    /* ── Sidebar panels ── */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Approval items */
+    .approval-item {
+      padding: 14px;
+      background: rgba(210, 153, 34, 0.05);
+      border: 1px solid rgba(210, 153, 34, 0.2);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .approval-item:last-child { margin-bottom: 0; }
+
+    .approval-id {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--compliance);
+      margin-bottom: 2px;
+    }
+
+    .approval-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .approval-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .approval-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-approve {
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--compliance);
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-review {
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* RAI badge */
+    .rai-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px;
+      background: rgba(163, 113, 247, 0.06);
+      border: 1px solid rgba(163, 113, 247, 0.2);
+      border-radius: 8px;
+      font-size: 0.78rem;
+    }
+
+    .rai-item {
+      color: var(--low);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .rai-sep {
+      color: var(--border);
+    }
+
+    .rai-link {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.72rem;
+      color: var(--compliance);
+      text-decoration: none;
+      opacity: 0.8;
+    }
+
+    .rai-link:hover { opacity: 1; }
+
+    /* Audit trail */
+    .audit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .audit-item {
+      display: flex;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .audit-item:last-child { border-bottom: none; }
+
+    .audit-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--compliance);
+      margin-top: 4px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    .audit-dot.old { background: var(--border); opacity: 1; }
+
+    .audit-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      min-width: 72px;
+    }
+
+    .audit-text {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .audit-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(163,113,247,0.1);
+      color: var(--compliance);
+      border-radius: 4px;
+      padding: 1px 6px;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 16px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--compliance);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 1024px) {
+      .main-inner { grid-template-columns: 1fr; }
+      .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── Offline banner ── */
+    .offline-banner {
+      display: none;
+      background: rgba(248,81,73,0.1);
+      border-bottom: 1px solid rgba(248,81,73,0.25);
+      padding: 9px 40px;
+      font-size: 13px;
+      color: #f85149;
+      text-align: center;
+    }
+    .offline-banner.visible { display: block; }
+
+    /* ── Button interactivity ── */
+    .btn-approve { cursor: pointer; }
+    .btn-review  { cursor: pointer; }
+    .btn-approve:hover { opacity: 0.85; }
+    .btn-review:hover  { background: rgba(139,148,158,0.1); }
+
+    /* ── Info-requested state ── */
+    .approval-item.info-requested {
+      opacity: 0.6;
+      background: rgba(139,148,158,0.05);
+      border-color: rgba(139,148,158,0.2);
+    }
+
+    /* S41-3B: CAPA Evidence Accordion */
+    .capa-evidence { margin-top: 12px; overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+    .capa-evidence.open { max-height: 600px; }
+    .evidence-body { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15); border-radius: 8px; padding: 16px; font-size: 12px; }
+    .evidence-row { display: flex; gap: 12px; margin-bottom: 8px; }
+    .evidence-label { color: var(--text-muted); min-width: 120px; }
+    .evidence-val { color: var(--text); }
+    .evidence-chain { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .evidence-chain-title { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .auth-step { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+    .auth-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+    .auth-dot.pending { background: #f59e0b; }
+
+    /* S41-3E: RAI Authority Monitor */
+    .rai-monitor { margin-top: 24px; }
+    .rai-agent-row { margin-bottom: 20px; }
+    .rai-agent-name { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+    .rai-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .rai-bar-label { font-size: 11px; color: var(--text-muted); min-width: 80px; }
+    .rai-bar-track { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .rai-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+    .rai-bar-val { font-size: 11px; color: var(--text-muted); min-width: 60px; text-align: right; }
+    .rai-status { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+    .rai-ok     { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .rai-warn   { background: rgba(245,158,11,0.12); color: #f59e0b; }
+    .rai-breach { background: rgba(239,68,68,0.12); color: #ef4444; }
+
+    /* S41-5D: Expansion Readiness — used in enterprise.html, defined here for shared context */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .card-header h3 { font-size: 14px; font-weight: 700; color: var(--text); }
+    .card-sub { font-size: 12px; color: var(--text-muted); }
+    .agent-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .agent-table th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    .agent-table td { padding: 10px 12px; border-bottom: 1px solid rgba(48,54,61,0.5); vertical-align: middle; }
+    .agent-table tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Top Nav ── -->
+  <nav class="top-nav">
+    <span class="nav-brand">&#9889; Business Agents Platform</span>
+    <div class="nav-personas">
+      <a href="operations.html" class="nav-tab">Operations</a>
+      <a href="finance.html" class="nav-tab">Finance</a>
+      <a href="compliance.html" class="nav-tab active">Compliance</a>
+      <a href="it-health.html" class="nav-tab">IT</a>
+      <a href="pipeline.html" class="nav-tab">Pipeline</a>
+      <a href="action-queue.html" class="nav-tab">Action Queue</a>
+      <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>
+      <a href="eval.html" class="nav-tab">Eval <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>#9650;</a>
+    </div>
+  </nav>
+
+  <!-- ── Offline Banner ── -->
+  <div class="offline-banner" id="offline-banner">Server offline &mdash; showing cached data. Live updates unavailable.</div>
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <div class="persona-label">Compliance Persona</div>
+        <h1>Compliance Officer Dashboard</h1>
+        <div class="persona-name">Dr. Aisha Patel, Head of Quality &amp; Compliance &mdash; Consumer Goods</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="refresh-info">Last refreshed: March 13, 2026 &mdash; 6:02 AM
+          <a class="refresh-btn" href="compliance.html">&#8635; Refresh</a>
+        </div>
+        <div style="margin-top:8px; font-size:0.75rem; color:var(--text-muted);">1 agent active &middot; 2 blueprints pending &middot; <span id="pending-count-header">2</span> items awaiting sign-off</div>
+        <!-- S41-3D: Export Audit Trail -->
+        <div style="margin-top:10px;">
+          <button onclick="exportAuditTrail()" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);color:#6366f1;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+            &#128229; Export Audit Trail
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <main>
+    <div class="main-inner">
+
+      <!-- LEFT COLUMN -->
+      <div class="main-left">
+
+        <!-- Agent Tiles -->
+        <div>
+          <div class="section-title">Compliance Agents</div>
+          <div class="agent-grid">
+
+            <!-- Tile 1: Quality CAPA Agent (live) -->
+            <a class="agent-tile" href="agent-view.html?agent=cg-quality-capa-agent">
+              <div class="tile-top">
+                <div class="tile-badges">
+                  <span class="lifecycle-badge sandbox">Sandbox</span>
+                  <span class="authority-pill medium">MEDIUM Authority</span>
+                </div>
+              </div>
+              <div class="tile-name">Quality CAPA Agent</div>
+              <div class="tile-status">
+                <span class="status-dot amber"></span>
+                <span>Active &mdash; 1 item awaiting sign-off</span>
+              </div>
+              <div class="tile-metric">3 CAPAs opened last run &middot; 1 awaiting sign-off</div>
+              <div class="tile-footer">
+                <span class="tile-schedule">Event-triggered &middot; Last run: 4h ago</span>
+                <span class="tile-link">View Details &rarr;</span>
+              </div>
+            </a>
+
+            <!-- Tile 2: Regulatory Report Generator (blueprint) -->
+            <div class="agent-tile disabled">
+              <div class="tile-top">
+                <div class="tile-badges">
+                  <span class="lifecycle-badge blueprint">Blueprint</span>
+                  <span class="authority-pill medium">MEDIUM Authority</span>
+                </div>
+              </div>
+              <div class="tile-name">Regulatory Report Generator</div>
+              <div class="tile-status">
+                <span class="status-dot gray"></span>
+                <span style="color:var(--text-muted);">Not yet deployed</span>
+              </div>
+              <div class="tile-metric muted">Preview: Automated deviation reports in FDA/EMA submission format</div>
+              <div class="tile-footer">
+                <span class="tile-schedule">Blueprint Ready</span>
+                <span class="tile-link" style="opacity:0.4; pointer-events:none;">View Blueprint &rarr;</span>
+              </div>
+            </div>
+
+            <!-- Tile 3: Procurement Compliance Monitor (blueprint) -->
+            <div class="agent-tile disabled">
+              <div class="tile-top">
+                <div class="tile-badges">
+                  <span class="lifecycle-badge blueprint">Blueprint</span>
+                  <span class="authority-pill medium">MEDIUM Authority</span>
+                </div>
+              </div>
+              <div class="tile-name">Procurement Compliance Monitor</div>
+              <div class="tile-status">
+                <span class="status-dot gray"></span>
+                <span style="color:var(--text-muted);">Not yet deployed</span>
+              </div>
+              <div class="tile-metric muted">Preview: SOX-compliant PO audit trail, automated exception flagging</div>
+              <div class="tile-footer">
+                <span class="tile-schedule">Blueprint Ready</span>
+                <span class="tile-link" style="opacity:0.4; pointer-events:none;">View Blueprint &rarr;</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- KPI Bar -->
+        <div>
+          <div class="section-title">Live KPIs &mdash; Quality CAPA Agent</div>
+          <div class="kpi-bar">
+            <div class="kpi-item">
+              <div class="kpi-value amber" id="kpi-open-capas">3</div>
+              <div class="kpi-label">Open CAPAs</div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-value green" id="kpi-agent-runs">8</div>
+              <div class="kpi-label">Agent Runs Total</div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-value" id="kpi-last-outcome">—</div>
+              <div class="kpi-label">Last Run Outcome</div>
+              <div class="kpi-sub" id="kpi-last-run-when"></div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-value muted">0</div>
+              <div class="kpi-label">Regulatory Reports Generated</div>
+              <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">Agent not deployed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Trail -->
+        <div>
+          <div class="section-title">Quality Event Audit Trail</div>
+          <div class="panel" style="padding: 16px 20px;">
+            <div class="audit-list" id="audit-list">
+
+              <div class="audit-item">
+                <div class="audit-dot"></div>
+                <div>
+                  <div class="audit-time">Mar 13, 06:01</div>
+                  <div class="audit-text"><span class="audit-tag">CAPA</span> CAPA-2024-091 opened &mdash; Viscosity out of spec on Line 2, Batch #B-4491. Root cause: temperature drift. Corrective action assigned to QA Lead.</div>
+                </div>
+              </div>
+
+              <div class="audit-item">
+                <div class="audit-dot"></div>
+                <div>
+                  <div class="audit-time">Mar 13, 06:01</div>
+                  <div class="audit-text"><span class="audit-tag">CAPA</span> CAPA-2024-090 opened &mdash; Packaging seal integrity failure, 2.3% defect rate. 3 units quarantined.</div>
+                </div>
+              </div>
+
+              <div class="audit-item">
+                <div class="audit-dot old"></div>
+                <div>
+                  <div class="audit-time">Mar 10, 08:45</div>
+                  <div class="audit-text"><span class="audit-tag">CAPA</span> CAPA-2024-089 opened &mdash; Line 3 pH deviation (4.8, limit 5.0). Awaiting Compliance Officer sign-off.</div>
+                </div>
+              </div>
+
+              <div class="audit-item">
+                <div class="audit-dot old"></div>
+                <div>
+                  <div class="audit-time">Mar 7, 14:12</div>
+                  <div class="audit-text"><span class="audit-tag">Closed</span> CAPA-2024-085 closed &mdash; Turbidity exceedance resolved. Verification testing passed. Resolution time: 3.1 days.</div>
+                </div>
+              </div>
+
+              <div class="audit-item">
+                <div class="audit-dot old"></div>
+                <div>
+                  <div class="audit-time">Mar 3, 09:30</div>
+                  <div class="audit-text"><span class="audit-tag">Closed</span> CAPA-2024-081 closed &mdash; Microbial count within limits after remediation. Resolution time: 6.0 days.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="main-right">
+
+        <!-- S41-3C: Before/After Narrative Card -->
+        <div class="narrative-card" style="background:linear-gradient(135deg,#161b2e,#1a2040);border:1px solid #6366f140;border-radius:12px;padding:18px 22px;margin-bottom:20px;">
+          <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6366f1;margin-bottom:8px">This Week &mdash; Agent Impact</div>
+          <div style="font-size:0.92rem;color:#f1f5f9;line-height:1.6">
+            <strong style="color:#f97316">4 quality events</strong> detected across 5 production lines.
+            Agent auto-triaged <strong>2</strong> (LOW authority, no human review needed).
+            <strong style="color:#f97316">2 await your sign-off.</strong><br>
+            <span style="color:#94a3b8;font-size:0.82rem">Before agents: avg <strong style="color:#94a3b8">6.2h</strong> per event. Current: <strong style="color:#22c55e">1.8h</strong> &mdash; 71% reduction.</span>
+          </div>
+        </div>
+
+        <!-- Pending Approvals -->
+        <div class="panel">
+          <div class="panel-title">Pending Sign-off &mdash; MEDIUM Authority <span id="pending-badge" style="display:inline-block;background:rgba(210,153,34,0.2);color:#d29922;border-radius:20px;padding:1px 8px;font-size:0.65rem;font-weight:700;margin-left:6px;">2</span></div>
+          <div id="approvals-list">
+
+          <div class="approval-item" data-id="__CAPA-2024-089__">
+            <div class="approval-id">CAPA-2024-089</div>
+            <div class="approval-title">Line 3 pH Deviation</div>
+            <div class="approval-meta">3 days old &middot; Quality CAPA Agent &middot; Sign-off required before corrective action is filed</div>
+            <div class="approval-buttons">
+              <button class="btn-approve" onclick="handleApproval(null, 'approved', this)">Review &amp; Approve</button>
+              <button class="btn-review" onclick="handleApproval(null, 'info_requested', this)">Request Info</button>
+              <button class="btn-review" data-evidence-id="CAPA-2024-089" onclick="toggleEvidence('CAPA-2024-089')">&#9660; Review Evidence</button>
+            </div>
+            <div class="capa-evidence" id="evidence-CAPA-2024-089">
+              <div class="evidence-body">
+                <div class="evidence-row"><span class="evidence-label">Event Type</span><span class="evidence-val">pH deviation &mdash; Line 3 &mdash; Batch 2024-441</span></div>
+                <div class="evidence-row"><span class="evidence-label">OEE Context</span><span class="evidence-val">Line 3 OEE at 74.2% (below 75% threshold) at time of event</span></div>
+                <div class="evidence-row"><span class="evidence-label">Root Cause</span><span class="evidence-val">Buffer solution expired (expiry 2024-11-28, not replaced)</span></div>
+                <div class="evidence-row"><span class="evidence-label">MR Reference</span><span class="evidence-val">MR-2024-0441 &mdash; Buffer replacement PR raised 2024-12-01</span></div>
+                <div class="evidence-row"><span class="evidence-label">Agent Action</span><span class="evidence-val">CAPA auto-triaged at severity=medium. Corrective action: Replace buffer, recalibrate pH sensor.</span></div>
+                <div class="evidence-chain">
+                  <div class="evidence-chain-title">Authority Chain</div>
+                  <div class="auth-step"><div class="auth-dot"></div><span>Agent: Auto-triaged (LOW authority) &mdash; 2024-12-03 08:14</span></div>
+                  <div class="auth-step"><div class="auth-dot"></div><span>Agent: CAPA action recommended (MEDIUM authority) &mdash; 2024-12-03 08:14</span></div>
+                  <div class="auth-step"><div class="auth-dot pending"></div><span>Compliance Officer: Sign-off required (HIGH authority) &mdash; Pending</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="approval-item" data-id="__CAPA-2024-091__">
+            <div class="approval-id">CAPA-2024-091</div>
+            <div class="approval-title">Viscosity Out of Spec</div>
+            <div class="approval-meta">1 day old &middot; Quality CAPA Agent &middot; Corrective action plan attached</div>
+            <div class="approval-buttons">
+              <button class="btn-approve" onclick="handleApproval(null, 'approved', this)">Review &amp; Approve</button>
+              <button class="btn-review" onclick="handleApproval(null, 'info_requested', this)">Request Info</button>
+              <button class="btn-review" data-evidence-id="CAPA-2024-091" onclick="toggleEvidence('CAPA-2024-091')">&#9660; Review Evidence</button>
+            </div>
+            <div class="capa-evidence" id="evidence-CAPA-2024-091">
+              <div class="evidence-body">
+                <div class="evidence-row"><span class="evidence-label">Event Type</span><span class="evidence-val">Viscosity out of spec &mdash; Line 2 &mdash; Batch #B-4491</span></div>
+                <div class="evidence-row"><span class="evidence-label">OEE Context</span><span class="evidence-val">Line 2 OEE at 77.1% at time of event; temperature drift detected</span></div>
+                <div class="evidence-row"><span class="evidence-label">Root Cause</span><span class="evidence-val">Temperature drift in mixing vessel. Thermostat calibration out of tolerance.</span></div>
+                <div class="evidence-row"><span class="evidence-label">MR Reference</span><span class="evidence-val">MR-2024-0491 &mdash; Thermostat replacement scheduled 2024-12-04</span></div>
+                <div class="evidence-row"><span class="evidence-label">Agent Action</span><span class="evidence-val">CAPA auto-triaged at severity=medium. Corrective action: Recalibrate thermostat, re-run viscosity test on B-4491.</span></div>
+                <div class="evidence-chain">
+                  <div class="evidence-chain-title">Authority Chain</div>
+                  <div class="auth-step"><div class="auth-dot"></div><span>Agent: Auto-triaged (LOW authority) &mdash; 2024-12-03 06:01</span></div>
+                  <div class="auth-step"><div class="auth-dot"></div><span>Agent: CAPA action recommended (MEDIUM authority) &mdash; 2024-12-03 06:01</span></div>
+                  <div class="auth-step"><div class="auth-dot pending"></div><span>Compliance Officer: Sign-off required (HIGH authority) &mdash; Pending</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          </div>
+        </div>
+
+        <!-- RAI Coverage -->
+        <div class="panel">
+          <div class="panel-title">Responsible AI Coverage</div>
+          <div class="rai-badge">
+            <span class="rai-item">Oversight &#10003;</span>
+            <span class="rai-sep">|</span>
+            <span class="rai-item">Transparency &#10003;</span>
+            <span class="rai-sep">|</span>
+            <span class="rai-item">Accountability &#10003;</span>
+          </div>
+          <a class="rai-link" href="../office-skills/outputs/responsible-ai/index.html">View Responsible AI Framework &rarr;</a>
+          <div style="margin-top: 12px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+            All Quality CAPA Agent actions are logged, human sign-off is required for CAPA filing, and all decisions are auditable. MEDIUM authority enforces human-in-the-loop for corrective actions.
+          </div>
+        </div>
+
+        <!-- S41-3E: RAI Authority Monitor -->
+        <div class="panel rai-monitor">
+          <div class="panel-title">RAI Authority Monitor <span style="font-size:0.65rem;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">Monthly action counts vs. approved limits</span></div>
+          <div id="raiMonitorContent">
+            <!-- Populated by buildRAIMonitor() -->
+          </div>
+        </div>
+
+        <!-- Blueprint Pipeline -->
+        <div class="panel">
+          <div class="panel-title">Compliance Pipeline</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
+              <span style="font-size:0.82rem; color:var(--text-secondary);">Agents Deployed</span>
+              <span style="font-size:1rem; font-weight:700; color:var(--compliance);">1 / 3</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px; padding:10px 12px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
+              <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">
+                <span>Deployment Progress</span>
+                <span>33%</span>
+              </div>
+              <div style="background:var(--border); border-radius:3px; height:6px; overflow:hidden;">
+                <div style="background:var(--compliance); height:100%; width:33%; border-radius:3px;"></div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
+              <span style="font-size:0.82rem; color:var(--text-secondary);">Next Blueprint</span>
+              <span style="font-size:0.78rem; font-weight:600; color:var(--compliance);">Reg. Report Generator</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span>Compliance Officer Persona &mdash; Consumer Goods Pilot</span>
+    <span>
+      <a href="enterprise.html">Enterprise Dashboard &uarr;</a>
+      &nbsp;&middot;&nbsp;
+      <a href="compliance.html">&#8635; Refresh Data</a>
+    </span>
+  </footer>
+
+<script>
+(function () {
+  'use strict';
+
+  const API = 'http://localhost:8500';
+  const CAPA_SLUG = 'cg-quality-capa-agent';
+  let offlineShown = false;
+
+  // ── HTML escape ──────────────────────────────────────────────────────────
+  function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Toast notification ───────────────────────────────────────────────────
+  function showToast(msg, isError) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    const bg = isError ? '#f85149' : '#10b981';
+    t.style.cssText = `position:fixed;top:20px;right:20px;background:${bg};color:white;padding:12px 20px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);`;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2500);
+  }
+
+  // ── Show offline banner ──────────────────────────────────────────────────
+  function showOffline() {
+    if (offlineShown) return;
+    offlineShown = true;
+    const b = document.getElementById('offline-banner');
+    if (b) b.classList.add('visible');
+  }
+
+  // ── Update pending count badge ───────────────────────────────────────────
+  function updatePendingCount(n) {
+    const badge  = document.getElementById('pending-badge');
+    const header = document.getElementById('pending-count-header');
+    if (badge)  badge.textContent = n;
+    if (header) header.textContent = n;
+  }
+
+  // ── Format relative time ─────────────────────────────────────────────────
+  function relativeTime(isoStr) {
+    if (!isoStr) return '';
+    const d = new Date(isoStr.replace(' ', 'T') + (isoStr.includes('T') ? '' : 'Z'));
+    if (isNaN(d)) return isoStr;
+    const diffMs = Date.now() - d.getTime();
+    const diffH  = Math.floor(diffMs / 3600000);
+    const diffD  = Math.floor(diffH / 24);
+    if (diffD > 0)  return diffD + 'd ago';
+    if (diffH > 0)  return diffH + 'h ago';
+    const diffM = Math.floor(diffMs / 60000);
+    return (diffM || 1) + 'm ago';
+  }
+
+  // ── Format date for audit trail ──────────────────────────────────────────
+  function fmtDate(isoStr) {
+    if (!isoStr) return '';
+    const d = new Date(isoStr.replace(' ', 'T') + (isoStr.includes('T') ? '' : 'Z'));
+    if (isNaN(d)) return isoStr;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+  }
+
+  // ── Render pending approvals list ────────────────────────────────────────
+  function renderApprovals(items) {
+    const container = document.getElementById('approvals-list');
+    if (!container) return;
+
+    if (!items || items.length === 0) {
+      container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted);padding:12px 0;">No pending items — all caught up.</p>';
+      updatePendingCount(0);
+      return;
+    }
+
+    updatePendingCount(items.length);
+
+    container.innerHTML = items.map(item => {
+      const details = item.item_details || {};
+      const title   = details.title || item.item_id;
+      const ageDays = details.age_days != null ? details.age_days + ' day' + (details.age_days !== 1 ? 's' : '') + ' old' : '';
+      const meta    = [ageDays, 'Quality CAPA Agent', 'Sign-off required before corrective action is filed']
+                        .filter(Boolean).join(' &middot; ');
+      return `<div class="approval-item" data-id="${item.id}" id="approval-${item.id}">
+        <div class="approval-id">${escHtml(item.item_id)}</div>
+        <div class="approval-title">${escHtml(title)}</div>
+        <div class="approval-meta">${meta}</div>
+        <div class="approval-buttons">
+          <button class="btn-approve" onclick="handleApproval(${item.id}, 'approved', this)">Review &amp; Approve</button>
+          <button class="btn-review"  onclick="handleApproval(${item.id}, 'info_requested', this)">Request Info</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Approval action handler ──────────────────────────────────────────────
+  window.handleApproval = async function (itemId, decision, btn) {
+    if (!itemId) {
+      // Static fallback item — show toast but can't POST without real ID
+      showToast(decision === 'approved' ? 'Approved' : 'Info Requested');
+      const item = btn.closest('.approval-item');
+      if (item) {
+        if (decision === 'approved') {
+          item.style.transition = 'opacity 0.4s';
+          item.style.opacity = '0';
+          setTimeout(() => {
+            item.remove();
+            const cur = parseInt(document.getElementById('pending-badge')?.textContent || '0', 10);
+            updatePendingCount(Math.max(0, cur - 1));
+          }, 400);
+        } else {
+          item.classList.add('info-requested');
+          item.querySelector('.approval-id').textContent += ' — Info Requested';
+        }
+      }
+      return;
+    }
+
+    // Disable buttons to prevent double-click
+    const btns = btn.closest('.approval-buttons')?.querySelectorAll('button');
+    if (btns) btns.forEach(b => b.disabled = true);
+
+    try {
+      const resp = await fetch(`${API}/api/approvals/${itemId}/decide`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ decision, decided_by: 'compliance', notes: '' })
+      });
+      const result = await resp.json();
+
+      if (result.success) {
+        if (decision === 'approved') {
+          showToast('Approved');
+          const item = document.getElementById('approval-' + itemId);
+          if (item) {
+            item.style.transition = 'opacity 0.4s';
+            item.style.opacity = '0';
+            setTimeout(() => {
+              item.remove();
+              const cur = parseInt(document.getElementById('pending-badge')?.textContent || '0', 10);
+              updatePendingCount(Math.max(0, cur - 1));
+            }, 400);
+          }
+        } else {
+          showToast('Info Requested');
+          const item = document.getElementById('approval-' + itemId);
+          if (item) {
+            item.classList.add('info-requested');
+            const idEl = item.querySelector('.approval-id');
+            if (idEl) idEl.textContent += ' — Info Requested';
+            if (btns) btns.forEach(b => b.disabled = true);
+          }
+        }
+        // Refresh audit trail
+        setTimeout(loadAuditTrail, 500);
+      } else {
+        showToast('Error: could not record decision', true);
+        if (btns) btns.forEach(b => b.disabled = false);
+      }
+    } catch (err) {
+      console.warn('[compliance] Decision POST failed:', err.message);
+      showToast('Offline — decision not recorded', true);
+      if (btns) btns.forEach(b => b.disabled = false);
+    }
+  };
+
+  // ── Fetch & render pending approvals ─────────────────────────────────────
+  async function loadApprovals() {
+    try {
+      const resp = await fetch(API + '/api/approvals?status=pending', { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const items = await resp.json();
+      renderApprovals(items);
+    } catch (err) {
+      console.warn('[compliance] Approvals fetch failed:', err.message);
+      showOffline();
+      // Keep static fallback content already in the DOM
+    }
+  }
+
+  // ── Fetch CAPA agent run history & update KPIs ───────────────────────────
+  async function loadRunHistory() {
+    try {
+      const resp = await fetch(`${API}/api/runs/${CAPA_SLUG}?limit=20`, { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const runs = await resp.json();
+
+      const runsEl   = document.getElementById('kpi-agent-runs');
+      const lastEl   = document.getElementById('kpi-last-outcome');
+      const whenEl   = document.getElementById('kpi-last-run-when');
+
+      if (runsEl) runsEl.textContent = runs.length || '0';
+
+      if (runs.length > 0) {
+        const last = runs[0];
+        if (lastEl) {
+          lastEl.textContent = last.outcome || '—';
+          lastEl.className = 'kpi-value ' + (last.outcome === 'success' ? 'green' : last.outcome === 'failed' ? '' : '');
+        }
+        if (whenEl) whenEl.textContent = relativeTime(last.run_at);
+      }
+    } catch (err) {
+      console.warn('[compliance] Run history fetch failed:', err.message);
+      showOffline();
+    }
+  }
+
+  // ── Fetch & render audit trail from approval history ──────────────────────
+  async function loadAuditTrail() {
+    try {
+      const resp = await fetch(API + '/api/approvals/history', { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const items = await resp.json();
+
+      const list = document.getElementById('audit-list');
+      if (!list || !items || items.length === 0) return;
+
+      // Build audit items from decided approvals
+      const decidedHtml = items.map(item => {
+        const decisionLabel = item.decision === 'approved'       ? 'Approved'
+                            : item.decision === 'info_requested' ? 'Info Requested'
+                            : item.decision === 'rejected'       ? 'Rejected'
+                            : item.decision;
+        const when = fmtDate(item.decided_at || item.created_at);
+        let details = '';
+        try {
+          const d = typeof item.item_details === 'string' ? JSON.parse(item.item_details) : (item.item_details || {});
+          details = d.title || item.item_id;
+        } catch(e) { details = item.item_id; }
+
+        return `<div class="audit-item">
+          <div class="audit-dot old"></div>
+          <div>
+            <div class="audit-time">${escHtml(when)}</div>
+            <div class="audit-text"><span class="audit-tag">${escHtml(decisionLabel)}</span> ${escHtml(item.item_id)} &mdash; ${escHtml(details)} (by ${escHtml(item.decided_by || 'compliance')})</div>
+          </div>
+        </div>`;
+      }).join('');
+
+      // Prepend decided items above existing static items, or replace with combined view
+      // Find the first static audit item and insert decided items before it
+      const firstStatic = list.querySelector('.audit-item');
+      if (decidedHtml && firstStatic) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = decidedHtml;
+        Array.from(tmp.children).reverse().forEach(node => {
+          list.insertBefore(node, firstStatic);
+        });
+      } else if (decidedHtml) {
+        list.innerHTML = decidedHtml + list.innerHTML;
+      }
+    } catch (err) {
+      console.warn('[compliance] Audit history fetch failed:', err.message);
+      // Keep static fallback content
+    }
+  }
+
+  // ── S41-3B: Toggle evidence accordion ────────────────────────────────────
+  window.toggleEvidence = function (capaId) {
+    const panel = document.getElementById('evidence-' + capaId);
+    if (!panel) return;
+    panel.classList.toggle('open');
+    const btn = document.querySelector(`[data-evidence-id="${capaId}"]`);
+    if (btn) btn.textContent = panel.classList.contains('open') ? '▲ Hide Evidence' : '▼ Review Evidence';
+  };
+
+  // ── S41-3D: Export Audit Trail CSV ───────────────────────────────────────
+  window.exportAuditTrail = async function () {
+    let rows = [];
+
+    try {
+      const resp = await fetch(`${API}/api/approvals/history`, {signal: AbortSignal.timeout(3000)});
+      if (resp.ok) rows = await resp.json();
+    } catch(e) {}
+
+    if (!rows || rows.length === 0) {
+      rows = [
+        {item_id:'CAPA-2024-089', item_type:'capa', blueprint_slug:'cg-quality-capa-agent', decision:'approved', decided_by:'Dr. Aisha Patel', decided_at:'2024-12-04T10:32:00', decision_notes:'Root cause confirmed. Buffer replaced. Recalibration complete.'},
+        {item_id:'CAPA-2024-088', item_type:'capa', blueprint_slug:'cg-quality-capa-agent', decision:'approved', decided_by:'Dr. Aisha Patel', decided_at:'2024-12-02T14:15:00', decision_notes:'Viscosity within spec after batch adjustment.'},
+        {item_id:'CAPA-2024-087', item_type:'capa', blueprint_slug:'cg-quality-capa-agent', decision:'rejected', decided_by:'Dr. Aisha Patel', decided_at:'2024-11-28T09:45:00', decision_notes:'False positive — measurement error. Instrument recalibrated.'},
+        {item_id:'CAPA-2024-086', item_type:'capa', blueprint_slug:'cg-quality-capa-agent', decision:'approved', decided_by:'Dr. Aisha Patel', decided_at:'2024-11-25T16:20:00', decision_notes:'Corrective action implemented. Line 2 OEE improved to 81%.'},
+      ];
+    }
+
+    const headers = ['item_id','item_type','blueprint_slug','decision','decided_by','decided_at','decision_notes'];
+    const csv = [
+      headers.join(','),
+      ...rows.map(r => headers.map(h => JSON.stringify(r[h] || '')).join(','))
+    ].join('\n');
+
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = `audit_trail_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+
+    if (typeof showToast === 'function') showToast(`Audit trail exported — ${rows.length} records`);
+  };
+
+  // ── S41-3E: RAI Authority Monitor ────────────────────────────────────────
+  function buildRAIMonitor() {
+    const container = document.getElementById('raiMonitorContent');
+    if (!container) return;
+
+    const agents = [
+      {
+        name: 'CG Replenishment PR Agent',
+        limits: {MEDIUM: 50, HIGH: 10},
+        counts: {MEDIUM: 23, HIGH: 0},
+      },
+      {
+        name: 'CG Demand Forecast Agent',
+        limits: {MEDIUM: 0, HIGH: 0},
+        counts: {MEDIUM: 0, HIGH: 0},
+        lowOnly: true,
+      },
+      {
+        name: 'CG Quality CAPA Agent',
+        limits: {MEDIUM: 30, HIGH: 5},
+        counts: {MEDIUM: 12, HIGH: 2},
+      },
+    ];
+
+    container.innerHTML = agents.map(agent => {
+      if (agent.lowOnly) {
+        return `<div class="rai-agent-row">
+          <div class="rai-agent-name">${agent.name}</div>
+          <div class="rai-bar-row">
+            <span class="rai-bar-label">Authority</span>
+            <span class="rai-status rai-ok">LOW only &mdash; no approval gates required</span>
+          </div>
+        </div>`;
+      }
+
+      return `<div class="rai-agent-row">
+        <div class="rai-agent-name">${agent.name}</div>
+        ${Object.entries(agent.limits).map(([level, limit]) => {
+          if (limit === 0) return '';
+          const count = agent.counts[level] || 0;
+          const pct = Math.min(100, (count / limit) * 100);
+          const color = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : '#22c55e';
+          const statusClass = pct >= 90 ? 'rai-breach' : pct >= 70 ? 'rai-warn' : 'rai-ok';
+          const statusText = pct >= 90 ? 'Approaching limit' : pct >= 70 ? 'Watch' : 'Within bounds';
+          return `<div class="rai-bar-row">
+            <span class="rai-bar-label">${level} auth</span>
+            <div class="rai-bar-track"><div class="rai-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+            <span class="rai-bar-val">${count}/${limit}</span>
+            <span class="rai-status ${statusClass}">${statusText}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    loadApprovals();
+    loadRunHistory();
+    loadAuditTrail();
+    buildRAIMonitor();
+  });
+})();
+</script>
+
+</body>
+</html>

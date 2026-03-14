@@ -4,7 +4,7 @@
     {
       "id": "partner-pitch",
       "title": "Partner Pitch Deck",
-      "description": "13-slide reveal.js presentation covering the full platform story — capabilities, blueprints, and deployment model",
+      "description": "15-slide reveal.js presentation covering the full platform story — capabilities, blueprints, value chain heatmap, feature library, and deployment model",
       "path": "office-skills/outputs/partner-pitch/index.html",
       "category": "sales",
       "audience": ["executive", "partner"],
@@ -74,7 +74,7 @@
     {
       "id": "value-chain-heatmap",
       "title": "Industry Value Chain Heatmap",
-      "description": "Visual heatmap of agent automation opportunities mapped across industry value chains",
+      "description": "Visual heatmap of agent automation opportunities mapped across industry value chains — 5 industries, L2/L3 drill-down",
       "path": "business-agents/value-chain/index.html",
       "category": "platform",
       "audience": ["executive", "partner", "client"],
@@ -90,6 +90,186 @@
       "audience": ["ops", "engineering", "internal"],
       "status": "active",
       "tags": ["pilot", "agents", "live", "results", "metrics", "operations"]
+    },
+    {
+      "id": "grand-matrix",
+      "title": "DB Grand Matrix",
+      "description": "Full 12×16 expandable grid of all database dimensions — functions, capability types, industries, opportunity scoring, and coverage",
+      "path": "business-agents/matrix/index.html",
+      "category": "analytics",
+      "audience": ["engineering", "ops", "internal"],
+      "status": "active",
+      "tags": ["matrix", "database", "grid", "functions", "capabilities", "industries"]
+    },
+    {
+      "id": "opportunity-quadrant",
+      "title": "Opportunity Quadrant",
+      "description": "Feasibility vs. value scatter plot of agent opportunities — bubble size = process count, quadrant = deployment priority",
+      "path": "business-agents/visualizations/quadrant/index.html",
+      "category": "analytics",
+      "audience": ["executive", "ops", "internal"],
+      "status": "active",
+      "tags": ["quadrant", "scatter", "feasibility", "value", "priority", "opportunities"]
+    },
+    {
+      "id": "process-treemap",
+      "title": "Process Treemap",
+      "description": "Squarified treemap of all 127 processes — area = descendants, color = agent opportunity score, zoom and drill-down supported",
+      "path": "business-agents/visualizations/treemap/index.html",
+      "category": "analytics",
+      "audience": ["ops", "engineering", "internal"],
+      "status": "active",
+      "tags": ["treemap", "processes", "taxonomy", "opportunity", "visualization"]
+    },
+    {
+      "id": "feature-reuse-network",
+      "title": "Feature Reuse Network",
+      "description": "SVG node-link diagram showing which platform features are shared across agent blueprints — reveals reusable building blocks",
+      "path": "business-agents/visualizations/feature-network/index.html",
+      "category": "analytics",
+      "audience": ["engineering", "internal"],
+      "status": "active",
+      "tags": ["features", "network", "reuse", "blueprints", "graph", "composition"]
+    },
+    {
+      "id": "authority-distribution",
+      "title": "Authority Distribution",
+      "description": "Stacked horizontal bars showing agent capability distribution across LOW, MEDIUM, and HIGH authority levels by function and type",
+      "path": "business-agents/visualizations/authority/index.html",
+      "category": "analytics",
+      "audience": ["executive", "ops", "internal"],
+      "status": "active",
+      "tags": ["authority", "distribution", "low", "medium", "high", "risk", "governance"]
+    },
+    {
+      "id": "blueprint-flow",
+      "title": "Blueprint Architecture Flow",
+      "description": "6-stage swimlane diagram for each agent blueprint — data inputs, processing, decision gates, outputs, escalation paths",
+      "path": "business-agents/visualizations/blueprint-flow/index.html",
+      "category": "analytics",
+      "audience": ["engineering", "partner", "internal"],
+      "status": "active",
+      "tags": ["blueprint", "swimlane", "flow", "architecture", "stages", "decision"]
+    },
+    {
+      "id": "systems-integration-map",
+      "title": "System Integration Map",
+      "description": "Bipartite graph of 21 enterprise systems connected to 12 APQC functions — filter by READ, WRITE, or READ_WRITE integration type",
+      "path": "business-agents/visualizations/systems-map/index.html",
+      "category": "analytics",
+      "audience": ["engineering", "partner", "internal"],
+      "status": "active",
+      "tags": ["systems", "integration", "bipartite", "sap", "erp", "crm", "mes", "connections"]
+    },
+    {
+      "id": "engagement-model",
+      "title": "Pricing & Engagement Model",
+      "description": "Client-facing engagement model: three tiers (Discovery Sprint, Pilot, Platform), four phases, time-to-value chart, and FAQ",
+      "path": "office-skills/outputs/engagement-model/index.html",
+      "category": "sales",
+      "audience": ["executive", "partner", "client"],
+      "status": "active",
+      "tags": ["pricing", "engagement", "tiers", "phases", "sales"]
+    },
+    {
+      "id": "client-portal",
+      "title": "Client Engagement Portal",
+      "description": "Shareable single-page prospect portal — tabbed: Overview, Process Explorer, Opportunities, Blueprints, Value Calculator. Personalised via ?client= URL param.",
+      "path": "client-portal/index.html",
+      "category": "sales",
+      "audience": ["executive", "partner", "client"],
+      "status": "active",
+      "tags": ["portal", "client", "prospect", "blueprints", "opportunities", "github-pages"]
+    },
+    {
+      "id": "client-onboarding",
+      "title": "Client Onboarding Framework",
+      "description": "Structured intake process: discovery questionnaire with JSON export, process relevance scorer, and interactive engagement checklist",
+      "path": "client-onboarding/questionnaire.html",
+      "category": "agent-ops",
+      "audience": ["ops", "partner", "internal"],
+      "status": "active",
+      "tags": ["onboarding", "questionnaire", "scoring", "checklist", "intake"]
+    },
+    {
+      "id": "productivity-multiplier",
+      "title": "Productivity Multiplier",
+      "description": "Client-facing page making the value case: one person with agents does the work of five — role-by-role breakdowns, time analysis, and the economics",
+      "path": "office-skills/outputs/productivity-multiplier/index.html",
+      "category": "sales",
+      "audience": ["executive", "partner", "client"],
+      "status": "active",
+      "tags": ["productivity", "multiplier", "value-case", "roi", "sales"]
+    },
+    {
+      "id": "benefits-realization",
+      "title": "KPIs & Benefits Realization",
+      "description": "Before/after KPI framework by function plus a post-implementation tracking framework — baselines, measurement timeline, and 90-day success criteria",
+      "path": "office-skills/outputs/benefits-realization/index.html",
+      "category": "sales",
+      "audience": ["executive", "partner", "client"],
+      "status": "active",
+      "tags": ["kpis", "benefits", "realization", "tracking", "measurement", "success"]
+    },
+    {
+      "id": "prioritization",
+      "title": "Opportunity Prioritization Tool",
+      "description": "Interactive 2×2 workshop tool — score up to 10 agentic opportunities across 8 sub-dimensions (Value Potential × Execution Effort), plot live bubbles, export ranked shortlist. Add ?mode=internal for epic prioritization view.",
+      "path": "prioritization/index.html",
+      "category": "sales",
+      "audience": ["executive", "partner", "client"],
+      "status": "active",
+      "tags": ["prioritization", "2x2", "workshop", "value", "effort", "quadrant", "scoring", "interactive"]
+    },
+    {
+      "id": "responsible-ai",
+      "title": "Responsible AI Framework",
+      "description": "Six-pillar responsible AI framework — Transparency, Oversight, Fairness, Privacy, Accountability, Robustness — mapped to platform capabilities",
+      "path": "office-skills/outputs/responsible-ai/index.html",
+      "category": "sales",
+      "audience": ["executive", "partner", "client"],
+      "status": "active",
+      "tags": ["responsible-ai", "governance", "compliance", "ethics", "regulated"]
+    },
+    {
+      "id": "value-realized-dashboard",
+      "title": "Value Realized Dashboard",
+      "description": "ROI tracking for pilot agents: hours saved, PRs created, exceptions caught, and $ value realized.",
+      "path": "business-agents/value-dashboard/index.html",
+      "category": "Operations",
+      "audience": ["ops", "executive", "internal"],
+      "status": "active",
+      "tags": ["roi", "value", "tracking", "kpi", "pilot", "hours-saved", "dashboard"]
+    },
+    {
+      "name": "Operations Dashboard",
+      "path": "dashboards/operations.html",
+      "description": "Operations Manager persona dashboard: replenishment and demand forecast agents, KPI bar, activity feed.",
+      "category": "Operations"
+    },
+    {
+      "name": "Finance Dashboard",
+      "path": "dashboards/finance.html",
+      "description": "Finance Controller persona dashboard: AP invoice and cost variance agent pipeline, approval queue.",
+      "category": "Operations"
+    },
+    {
+      "name": "Compliance Dashboard",
+      "path": "dashboards/compliance.html",
+      "description": "Compliance Officer persona dashboard: Quality CAPA agent live KPIs, CAPA approval queue, audit trail.",
+      "category": "Operations"
+    },
+    {
+      "name": "Agent View",
+      "path": "dashboards/agent-view.html",
+      "description": "Per-agent drill-down: run history, KPI trends, last output viewer, approval queue, and lifecycle gate status.",
+      "category": "Persona Dashboards"
+    },
+    {
+      "name": "Enterprise Portfolio Dashboard",
+      "path": "dashboards/enterprise.html",
+      "description": "C-suite rollup: lifecycle funnel, industry coverage table, value realized, function heatmap, RAI coverage across all 40 blueprints.",
+      "category": "Persona Dashboards"
     }
   ]
 }

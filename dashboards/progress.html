@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Platform Development Progress — Business Agents Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #1c2128;
+      --card-hover: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+      --orange: #f97316;
+      --orange-dim: #f9731620;
+      --green: #3fb950;
+      --green-dim: #3fb95020;
+      --amber: #d29922;
+      --amber-dim: #d2992220;
+      --blue: #58a6ff;
+      --blue-dim: #58a6ff20;
+      --gray: #6e7681;
+      --gray-dim: #6e768120;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    .nav-personas {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .nav-tab {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 120ms, color 120ms;
+    }
+
+    .nav-tab:hover {
+      background: rgba(88, 166, 255, 0.08);
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: rgba(249, 115, 22, 0.12);
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 36px 40px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .page-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 8px;
+    }
+
+    .page-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .page-sub {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .db-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-top: 14px;
+    }
+
+    .db-badge.connected {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid #3fb95040;
+    }
+
+    .db-badge.offline {
+      background: var(--amber-dim);
+      color: var(--amber);
+      border: 1px solid #d2992240;
+    }
+
+    .db-badge .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Main Content ── */
+    .main {
+      flex: 1;
+      padding: 32px 40px;
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Stage Legend ── */
+    .stage-legend {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 28px;
+      margin-bottom: 32px;
+    }
+
+    .stage-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .stage-pill .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .stage-pill.built { color: var(--gray); }
+    .stage-pill.built .dot { background: var(--gray); }
+    .stage-pill.validated { color: var(--blue); }
+    .stage-pill.validated .dot { background: var(--blue); }
+    .stage-pill.piloted { color: var(--amber); }
+    .stage-pill.piloted .dot { background: var(--amber); }
+    .stage-pill.scaled { color: var(--green); }
+    .stage-pill.scaled .dot { background: var(--green); }
+
+    .stage-arrow {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      padding: 0 4px;
+    }
+
+    .stage-definitions {
+      margin-left: auto;
+      display: flex;
+      gap: 20px;
+    }
+
+    .stage-def {
+      font-size: 0.77rem;
+      color: var(--text-secondary);
+      max-width: 160px;
+      line-height: 1.4;
+    }
+
+    .stage-def strong {
+      display: block;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    /* ── Overall Score ── */
+    .score-block {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .score-numbers {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .score-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .score-pct {
+      font-size: 5rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--orange);
+      line-height: 1;
+    }
+
+    .score-context {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .score-divider {
+      width: 1px;
+      height: 80px;
+      background: var(--border);
+    }
+
+    .score-alt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .score-pct-alt {
+      font-size: 3.2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text-secondary);
+      line-height: 1;
+    }
+
+    .score-context-alt {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      max-width: 200px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .score-footnote {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── Section Headers ── */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Bucket Grid ── */
+    .bucket-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    @media (max-width: 1100px) {
+      .bucket-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 700px) {
+      .bucket-grid { grid-template-columns: 1fr; }
+    }
+
+    .bucket-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 150ms;
+    }
+
+    .bucket-card:hover {
+      border-color: #444c56;
+    }
+
+    .bucket-header {
+      padding: 18px 20px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .bucket-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .bucket-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bucket-icon {
+      font-size: 1.1rem;
+    }
+
+    .bucket-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bucket-pct {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    .stage-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 100px;
+    }
+
+    .stage-tag.built { background: var(--gray-dim); color: var(--gray); border: 1px solid #6e768130; }
+    .stage-tag.validated { background: var(--blue-dim); color: var(--blue); border: 1px solid #58a6ff30; }
+    .stage-tag.piloted { background: var(--amber-dim); color: var(--amber); border: 1px solid #d2992230; }
+    .stage-tag.scaled { background: var(--green-dim); color: var(--green); border: 1px solid #3fb95030; }
+
+    .bucket-bar-wrap {
+      height: 6px;
+      background: #21262d;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .bucket-bar-fill {
+      height: 100%;
+      background: var(--orange);
+      border-radius: 3px;
+      transition: width 600ms ease;
+    }
+
+    .bucket-toggle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .bucket-toggle .caret {
+      transition: transform 200ms;
+    }
+
+    .bucket-card.open .caret {
+      transform: rotate(180deg);
+    }
+
+    /* ── Sub-buckets ── */
+    .sub-buckets {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 12px 20px 16px;
+    }
+
+    .bucket-card.open .sub-buckets {
+      display: block;
+    }
+
+    .sub-row {
+      padding: 10px 0;
+      border-bottom: 1px solid #21262d;
+    }
+
+    .sub-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .sub-row-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .sub-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .sub-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sub-pct-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .sub-done {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .sub-live-stat {
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .sub-bar-wrap {
+      height: 4px;
+      background: #21262d;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .sub-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 600ms ease;
+    }
+
+    .sub-bar-fill.built { background: var(--orange); }
+    .sub-bar-fill.validated { background: var(--blue); }
+    .sub-bar-fill.piloted { background: var(--amber); }
+    .sub-bar-fill.scaled { background: var(--green); }
+
+    /* ── Client Section ── */
+    .client-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .client-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .client-card-header {
+      padding: 18px 24px;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .client-card-header:hover {
+      background: var(--card-hover);
+    }
+
+    .client-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .client-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .client-meta {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .client-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .client-overall {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    .client-overall-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .client-body {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+    }
+
+    .client-card.open .client-body {
+      display: block;
+    }
+
+    .client-buckets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .client-buckets { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .client-bucket {
+      background: #161b22;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .cb-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .cb-note {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .cb-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cb-bar-wrap {
+      flex: 1;
+      height: 5px;
+      background: #21262d;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .cb-bar-fill {
+      height: 100%;
+      background: var(--orange);
+      border-radius: 3px;
+      transition: width 600ms ease;
+    }
+
+    .cb-pct {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      min-width: 34px;
+      text-align: right;
+    }
+
+    .gold-badge {
+      background: #d2992220;
+      color: var(--amber);
+      border: 1px solid #d2992240;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+
+    /* ── Utility ── */
+    .mb-8 { margin-bottom: 8px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mb-32 { margin-bottom: 32px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="top-nav">
+  <a href="operations.html" class="nav-brand">&#9889; Business Agents Platform</a>
+  <div class="nav-personas">
+    <a href="operations.html" class="nav-tab">Operations</a>
+    <a href="finance.html" class="nav-tab">Finance</a>
+    <a href="compliance.html" class="nav-tab">Compliance</a>
+    <a href="it-health.html" class="nav-tab">IT</a>
+    <a href="pipeline.html" class="nav-tab">Pipeline</a>
+    <a href="action-queue.html" class="nav-tab">Action Queue</a>
+    <a href="enterprise.html" class="nav-tab">Enterprise &#8599;</a>
+    <a href="eval.html" class="nav-tab">Eval</a>
+    <a href="progress.html" class="nav-tab active">Progress</a>
+  </div>
+</nav>
+
+<!-- ── Page Header ── -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-label">Internal Tracker</div>
+    <h1 class="page-title">Platform Development Progress</h1>
+    <div class="page-sub">What done looks like at full commercial scale</div>
+    <div id="db-badge" class="db-badge offline">
+      <span class="dot"></span>
+      <span id="db-badge-text">Connecting...</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<div class="main">
+
+  <!-- Stage Legend -->
+  <div class="stage-legend">
+    <div class="stage-pill built"><span class="dot"></span>Built</div>
+    <span class="stage-arrow">&#8594;</span>
+    <div class="stage-pill validated"><span class="dot"></span>Validated</div>
+    <span class="stage-arrow">&#8594;</span>
+    <div class="stage-pill piloted"><span class="dot"></span>Piloted</div>
+    <span class="stage-arrow">&#8594;</span>
+    <div class="stage-pill scaled"><span class="dot"></span>Scaled</div>
+    <div class="stage-definitions">
+      <div class="stage-def"><strong>Built</strong>Feature exists, demo-quality</div>
+      <div class="stage-def"><strong>Validated</strong>Tested against real scenario, correct output</div>
+      <div class="stage-def"><strong>Piloted</strong>Running in production for &ge;1 client</div>
+      <div class="stage-def"><strong>Scaled</strong>Multiple clients, self-improving, ROI measured</div>
+    </div>
+  </div>
+
+  <!-- Overall Score -->
+  <div class="score-block mb-32">
+    <div class="score-label">Overall Platform Completeness</div>
+    <div class="score-numbers">
+      <div class="score-main">
+        <div class="score-pct">~1-2%</div>
+        <div class="score-context">at full commercial scale definition</div>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-alt">
+        <div class="score-pct-alt">~30%</div>
+        <div class="score-context-alt">at build-complete definition (features exist, demo-quality)</div>
+      </div>
+    </div>
+    <div class="score-footnote">
+      Full commercial scale = Piloted or Scaled stage across all buckets &middot; Build-complete = Built stage, all sub-buckets &ge;50%
+    </div>
+  </div>
+
+  <!-- Section 1: Platform Buckets -->
+  <div class="section-header mb-16">
+    <div class="section-title">Platform Buckets</div>
+    <div class="section-meta">9 capability areas &middot; Click any card to expand sub-buckets</div>
+  </div>
+
+  <div class="bucket-grid" id="bucket-grid">
+
+    <!-- 1. Foundations -->
+    <div class="bucket-card" data-bucket="foundations">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#128736;</span>Foundations</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">35%</span>
+            <span class="stage-tag built">Built</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:35%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (5) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">DB &amp; Schema</span>
+            <div class="sub-right"><span class="sub-pct-label">70%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = all tables, views, seeders stable, schema formally documented</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:70%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Framework Registry</span>
+            <div class="sub-right"><span class="sub-pct-label">60%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = F1&ndash;F24 documented with purpose, dimensions, worked examples, linked artifacts</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:60%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Sandbox APIs</span>
+            <div class="sub-right"><span class="sub-pct-label">40%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = SAP+MES covering all endpoints agents call, Kimre/MFG agents use live sandbox not dry-run</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:40%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Agent Runtime</span>
+            <div class="sub-right"><span class="sub-pct-label">30%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = scheduler+retry+circuit-breaker+health check in production, monitored</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:30%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Server &amp; Deployment</span>
+            <div class="sub-right"><span class="sub-pct-label">25%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = production-grade: auth, multi-tenancy, CI/CD, monitoring, all routes stable</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:25%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Intelligence -->
+    <div class="bucket-card" data-bucket="intelligence">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#129504;</span>Intelligence</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">55%</span>
+            <span class="stage-tag built">Built</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:55%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (4) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Industry Coverage</span>
+            <div class="sub-right"><span class="sub-pct-label">85%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 13 industries &times; 50+ processes &times; 3 blueprints &times; 10 systems, all validated</div>
+          <div class="sub-live-stat" id="stat-industry-coverage">Loading live data...</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:85%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Blueprint Library</span>
+            <div class="sub-right"><span class="sub-pct-label">60%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 40 blueprints, lifecycle+size_fit classified, feature-linked, specs validated against real implementations</div>
+          <div class="sub-live-stat" id="stat-blueprints">Loading live data...</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:60%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Agent Actions</span>
+            <div class="sub-right"><span class="sub-pct-label">70%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 1755+ actions, 100% APQC coverage, all action types, quality validated</div>
+          <div class="sub-live-stat" id="stat-agent-actions">Loading live data...</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:70%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Opportunity Scoring</span>
+            <div class="sub-right"><span class="sub-pct-label">50%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = all processes scored, scores calibrated against real client outcomes, queryable</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:50%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Agents -->
+    <div class="bucket-card" data-bucket="agents">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#129302;</span>Agents</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">20%</span>
+            <span class="stage-tag built">Built</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:20%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (4) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Generic Platform Agents</span>
+            <div class="sub-right"><span class="sub-pct-label">55%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 10+ agents, --client-profile flag, dry-run, server-wired, documented</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:55%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Client-Specific (Kimre)</span>
+            <div class="sub-right"><span class="sub-pct-label">70%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = all 7 Kimre agents, realistic data, slugs registered, HITL wired</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:70%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Lifecycle Progression</span>
+            <div class="sub-right"><span class="sub-pct-label">10%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 3+ agents at pilot_ready or production, measurable outcomes</div>
+          <div class="sub-live-stat" id="stat-lifecycle">Loading live data...</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:10%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">HITL Coverage</span>
+            <div class="sub-right"><span class="sub-pct-label">40%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = every agent output has approve/reject path, decisions logged, outcomes tracked</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:40%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Interfaces -->
+    <div class="bucket-card" data-bucket="interfaces">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#128187;</span>Interfaces</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">35%</span>
+            <span class="stage-tag built">Built</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:35%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (4) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Platform Dashboards</span>
+            <div class="sub-right"><span class="sub-pct-label">55%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 8 dashboards, each &ge;16/20 F19 rubric, used daily by internal team</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:55%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Kimre Persona Dashboards</span>
+            <div class="sub-right"><span class="sub-pct-label">50%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 7/7 personas, all scoring &ge;16/20, clients using independently</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:50%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Component Library</span>
+            <div class="sub-right"><span class="sub-pct-label">45%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = all components documented with recipes, covering all patterns used across platform</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:45%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Navigation Consistency</span>
+            <div class="sub-right"><span class="sub-pct-label">60%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = all pages within any context share current, accurate nav</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:60%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Tools -->
+    <div class="bucket-card" data-bucket="tools">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#128295;</span>Tools</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">45%</span>
+            <span class="stage-tag built">Built</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:45%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (3) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Client-Facing Calculators</span>
+            <div class="sub-right"><span class="sub-pct-label">55%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = spec-gen, RFQ intake, business-case with live data, export, client-branded</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:55%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Presentation Assets</span>
+            <div class="sub-right"><span class="sub-pct-label">50%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = intro deck, demo, engagement deck &mdash; working, accurate, used in real meetings</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:50%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Scoring &amp; Assessment</span>
+            <div class="sub-right"><span class="sub-pct-label">60%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = prioritization tool, client scorer, profile schema &mdash; used in real engagements</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:60%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Data Hydration -->
+    <div class="bucket-card" data-bucket="data">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#128201;</span>Data Hydration</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">15%</span>
+            <span class="stage-tag built">Built</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:15%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (5) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Blueprint Enrichment</span>
+            <div class="sub-right"><span class="sub-pct-label">10%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = every blueprint has real financial parameters, case evidence, validated ROI</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:10%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Agent Run History</span>
+            <div class="sub-right"><span class="sub-pct-label">5%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = months of logged production runs, decisions tracked, drift patterns visible</div>
+          <div class="sub-live-stat" id="stat-pilot-runs">Loading live data...</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:5%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Value Realization</span>
+            <div class="sub-right"><span class="sub-pct-label">10%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = value_tracking table with real before/after metrics per client per agent</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:10%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Client Records</span>
+            <div class="sub-right"><span class="sub-pct-label">15%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = all client contacts, products, orders, installed base fully in DB</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:15%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Market Intelligence</span>
+            <div class="sub-right"><span class="sub-pct-label">10%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = competitor data, market sizing, industry benchmarks current and queryable</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:10%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Clients -->
+    <div class="bucket-card" data-bucket="clients">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#127968;</span>Clients</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">20%</span>
+            <span class="stage-tag validated">Validated</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:20%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (5) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Portal Infrastructure</span>
+            <div class="sub-right"><span class="sub-pct-label">60%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = generate.py battle-tested, clients/index.html, seed_clients.py, 3 clients in DB</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:60%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Kimre (Gold Standard)</span>
+            <div class="sub-right"><span class="sub-pct-label">55%</span><span class="stage-tag validated">Validated</span></div>
+          </div>
+          <div class="sub-done">Done = 9 tabs, 7 dashboards, all tools, all agents, nav consistent, client using daily</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill validated" style="width:55%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">PrecisionParts</span>
+            <div class="sub-right"><span class="sub-pct-label">15%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = full portal matching Kimre depth (persona dashboards, tools, agents)</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:15%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">MeridianBank</span>
+            <div class="sub-right"><span class="sub-pct-label">15%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = full portal matching Kimre depth</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:15%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Replication Playbook</span>
+            <div class="sub-right"><span class="sub-pct-label">25%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = new client onboardable in &lt;4h, tested against &ge;2 new clients</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:25%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Go-to-Market -->
+    <div class="bucket-card" data-bucket="gtm">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#127919;</span>Go-to-Market</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">40%</span>
+            <span class="stage-tag built">Built</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:40%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (4) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Pitch Materials</span>
+            <div class="sub-right"><span class="sub-pct-label">50%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = platform deck, per-client intro deck template, demo &mdash; used in real meetings</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:50%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Commercial Framework</span>
+            <div class="sub-right"><span class="sub-pct-label">45%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 3-tier pricing tested in market, ROI calculator used in proposals</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:45%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Responsible AI Package</span>
+            <div class="sub-right"><span class="sub-pct-label">40%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = 6-pillar one-pager, governance audit checklist, used in client conversations</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:40%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Sales Enablement</span>
+            <div class="sub-right"><span class="sub-pct-label">30%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = questionnaire&rarr;scoring&rarr;checklist&rarr;engagement model as seamless flow, used in discovery calls</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:30%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Documentation -->
+    <div class="bucket-card" data-bucket="docs">
+      <div class="bucket-header" onclick="toggleBucket(this.parentElement)">
+        <div class="bucket-title-row">
+          <div class="bucket-name"><span class="bucket-icon">&#128196;</span>Documentation</div>
+          <div class="bucket-meta">
+            <span class="bucket-pct">3%</span>
+            <span class="stage-tag built">Built</span>
+          </div>
+        </div>
+        <div class="bucket-bar-wrap"><div class="bucket-bar-fill" style="width:3%"></div></div>
+        <div class="bucket-toggle">Sub-buckets (5) <span class="caret">&#9660;</span></div>
+      </div>
+      <div class="sub-buckets">
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Architecture</span>
+            <div class="sub-right"><span class="sub-pct-label">5%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = system diagram + data flow + infrastructure overview, new developer understands in 30min</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:5%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Agent Specifications</span>
+            <div class="sub-right"><span class="sub-pct-label">5%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = per-agent: purpose, inputs, outputs, config, example run, limitations &mdash; one page each</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:5%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">API Reference</span>
+            <div class="sub-right"><span class="sub-pct-label">0%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = all server.py endpoints documented (OpenAPI or equivalent), IT team can integrate</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:0%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Developer Guide</span>
+            <div class="sub-right"><span class="sub-pct-label">10%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = how to add industry/agent/dashboard/client &mdash; new dev contributes in first week</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:10%"></div></div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-row-header">
+            <span class="sub-name">Client-Facing Guides</span>
+            <div class="sub-right"><span class="sub-pct-label">2%</span><span class="stage-tag built">Built</span></div>
+          </div>
+          <div class="sub-done">Done = dashboard + tool user guides, client persona can use independently</div>
+          <div class="sub-bar-wrap"><div class="sub-bar-fill built" style="width:2%"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /bucket-grid -->
+
+  <!-- Section 2: Client Engagements -->
+  <div class="section-header mb-16">
+    <div class="section-title">Client Engagement Depth</div>
+    <div class="section-meta">Per-client progress toward fully-served status</div>
+  </div>
+
+  <div class="client-grid">
+
+    <!-- Kimre -->
+    <div class="client-card" id="client-kimre">
+      <div class="client-card-header" onclick="toggleClient(this.parentElement)">
+        <div class="client-left">
+          <div class="client-name">Kimre Inc. <span class="gold-badge">Gold Standard</span></div>
+          <div class="client-meta">MFG / ETO &middot; Pilot Tier &middot; ~60 employees</div>
+        </div>
+        <div class="client-right">
+          <div>
+            <div class="client-overall">63%</div>
+            <div class="client-overall-label">avg engagement</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.1rem">&#9660;</span>
+        </div>
+      </div>
+      <div class="client-body">
+        <div class="client-buckets">
+          <div class="client-bucket">
+            <div class="cb-name">Discovery &amp; Profile</div>
+            <div class="cb-note">Stakeholders mapped, profile.json complete, use cases prioritized, enrichment partial</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:85%"></div></div>
+              <div class="cb-pct">85%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Value Chain Coverage</div>
+            <div class="cb-note">All 9 value-chain stages tabbed, agents mapped to each stage</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:90%"></div></div>
+              <div class="cb-pct">90%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Persona Coverage</div>
+            <div class="cb-note">7/7 dashboards built, nav needs strategy/marketing update</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:85%"></div></div>
+              <div class="cb-pct">85%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Agent Deployment</div>
+            <div class="cb-note">7 agents built, all dry-run only &mdash; none in production</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:60%"></div></div>
+              <div class="cb-pct">60%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Tools Deployed</div>
+            <div class="cb-note">Spec-gen, RFQ intake, business-case, intro-deck, demo all live</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:80%"></div></div>
+              <div class="cb-pct">80%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Engagement Tier</div>
+            <div class="cb-note">Discovery complete, Pilot contracted but agents not yet in live production</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:40%"></div></div>
+              <div class="cb-pct">40%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PrecisionParts -->
+    <div class="client-card" id="client-precisionparts">
+      <div class="client-card-header" onclick="toggleClient(this.parentElement)">
+        <div class="client-left">
+          <div class="client-name">PrecisionParts Co.</div>
+          <div class="client-meta">MFG / MTS &middot; Pilot Tier &middot; ~75 employees &middot; Tulsa, OK</div>
+        </div>
+        <div class="client-right">
+          <div>
+            <div class="client-overall">15%</div>
+            <div class="client-overall-label">avg engagement</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.1rem">&#9660;</span>
+        </div>
+      </div>
+      <div class="client-body">
+        <div class="client-buckets">
+          <div class="client-bucket">
+            <div class="cb-name">Discovery &amp; Profile</div>
+            <div class="cb-note">profile.json complete, stakeholders not mapped</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:50%"></div></div>
+              <div class="cb-pct">50%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Value Chain Coverage</div>
+            <div class="cb-note">No value-chain tabs built</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:10%"></div></div>
+              <div class="cb-pct">10%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Persona Coverage</div>
+            <div class="cb-note">Portal shell only, no persona dashboards</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:5%"></div></div>
+              <div class="cb-pct">5%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Agent Deployment</div>
+            <div class="cb-note">No client-specific agents built</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:5%"></div></div>
+              <div class="cb-pct">5%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Tools Deployed</div>
+            <div class="cb-note">No client-specific tools</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:5%"></div></div>
+              <div class="cb-pct">5%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Engagement Tier</div>
+            <div class="cb-note">Profile complete, engagement not started</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:15%"></div></div>
+              <div class="cb-pct">15%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MeridianBank -->
+    <div class="client-card" id="client-meridian">
+      <div class="client-card-header" onclick="toggleClient(this.parentElement)">
+        <div class="client-left">
+          <div class="client-name">Meridian Community Bank</div>
+          <div class="client-meta">Financial Services &middot; Pilot Tier &middot; ~200 employees &middot; Charlotte, NC</div>
+        </div>
+        <div class="client-right">
+          <div>
+            <div class="client-overall">15%</div>
+            <div class="client-overall-label">avg engagement</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.1rem">&#9660;</span>
+        </div>
+      </div>
+      <div class="client-body">
+        <div class="client-buckets">
+          <div class="client-bucket">
+            <div class="cb-name">Discovery &amp; Profile</div>
+            <div class="cb-note">profile.json complete, stakeholders not mapped</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:50%"></div></div>
+              <div class="cb-pct">50%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Value Chain Coverage</div>
+            <div class="cb-note">No value-chain tabs built</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:10%"></div></div>
+              <div class="cb-pct">10%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Persona Coverage</div>
+            <div class="cb-note">Portal shell only</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:5%"></div></div>
+              <div class="cb-pct">5%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Agent Deployment</div>
+            <div class="cb-note">No client-specific agents</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:5%"></div></div>
+              <div class="cb-pct">5%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Tools Deployed</div>
+            <div class="cb-note">No client-specific tools</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:5%"></div></div>
+              <div class="cb-pct">5%</div>
+            </div>
+          </div>
+          <div class="client-bucket">
+            <div class="cb-name">Engagement Tier</div>
+            <div class="cb-note">Profile complete, engagement not started</div>
+            <div class="cb-bar-row">
+              <div class="cb-bar-wrap"><div class="cb-bar-fill" style="width:15%"></div></div>
+              <div class="cb-pct">15%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /client-grid -->
+
+</div><!-- /main -->
+
+<script>
+  const API = 'http://localhost:8500';
+
+  // ── Toggle bucket cards ──
+  function toggleBucket(card) {
+    card.classList.toggle('open');
+  }
+
+  function toggleClient(card) {
+    card.classList.toggle('open');
+  }
+
+  // ── DB Stats Fetch ──
+  async function loadDbStats() {
+    const badge = document.getElementById('db-badge');
+    const badgeText = document.getElementById('db-badge-text');
+
+    try {
+      const res = await fetch(API + '/api/db-stats', { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+
+      if (data.db_connected && data.stats) {
+        const s = data.stats;
+
+        // Badge
+        badge.classList.remove('offline');
+        badge.classList.add('connected');
+        badgeText.textContent = 'DB Connected';
+
+        // Industry coverage stat
+        const indEl = document.getElementById('stat-industry-coverage');
+        if (indEl) {
+          indEl.textContent = s.industries + '/13 industries · ' + s.processes + ' processes · ' + s.blueprints + ' blueprints';
+        }
+
+        // Blueprints stat
+        const bpEl = document.getElementById('stat-blueprints');
+        if (bpEl) {
+          const lc = s.blueprint_lifecycle || {};
+          const lcParts = Object.entries(lc).map(([k, v]) => v + ' ' + k).join(' · ');
+          bpEl.textContent = s.blueprints + ' blueprints total' + (lcParts ? ' · ' + lcParts : '');
+        }
+
+        // Agent actions stat
+        const aaEl = document.getElementById('stat-agent-actions');
+        if (aaEl) {
+          aaEl.textContent = s.agent_actions.toLocaleString() + ' actions across all 12 APQC functions';
+        }
+
+        // Lifecycle progression
+        const lcEl = document.getElementById('stat-lifecycle');
+        if (lcEl) {
+          const lc = s.blueprint_lifecycle || {};
+          const stages = ['production', 'pilot_ready', 'validated', 'sandbox', 'scaffolded', 'blueprint'];
+          const lcParts = stages
+            .filter(st => lc[st])
+            .map(st => lc[st] + ' ' + st)
+            .join(' · ');
+          lcEl.textContent = lcParts || 'Lifecycle data loaded';
+        }
+
+        // Pilot runs
+        const prEl = document.getElementById('stat-pilot-runs');
+        if (prEl) {
+          prEl.textContent = s.pilot_runs.toLocaleString() + ' runs logged in pilot_runs table';
+        }
+
+      } else {
+        throw new Error('DB not connected');
+      }
+
+    } catch (err) {
+      // Offline fallback
+      badge.classList.remove('connected');
+      badge.classList.add('offline');
+      badgeText.textContent = 'Offline \u2014 showing estimates';
+
+      // Populate with hardcoded fallback values
+      const indEl = document.getElementById('stat-industry-coverage');
+      if (indEl) indEl.textContent = '13/13 industries · 760 processes · 40 blueprints (hardcoded fallback)';
+
+      const bpEl = document.getElementById('stat-blueprints');
+      if (bpEl) bpEl.textContent = '40 blueprints total · 37 blueprint · 3 sandbox (hardcoded fallback)';
+
+      const aaEl = document.getElementById('stat-agent-actions');
+      if (aaEl) aaEl.textContent = '1,755 actions across all 12 APQC functions (hardcoded fallback)';
+
+      const lcEl = document.getElementById('stat-lifecycle');
+      if (lcEl) lcEl.textContent = '3 sandbox · 37 blueprint (hardcoded fallback)';
+
+      const prEl = document.getElementById('stat-pilot-runs');
+      if (prEl) prEl.textContent = 'Pilot run count unavailable (hardcoded fallback)';
+    }
+  }
+
+  // ── Init ──
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDbStats();
+    // Auto-expand Kimre client card
+    document.getElementById('client-kimre').classList.add('open');
+  });
+</script>
+
+</body>
+</html>
