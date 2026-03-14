@@ -29,7 +29,7 @@
 ### Task 1.2 – Framework Registry Completion
 **Objective:** All 24 frameworks (F1–F24) fully documented with purpose, key dimensions, worked examples, and linked artifacts
 **Output:** `ralph/frameworks.md` complete — every framework has ≥1 worked example from a real client scenario
-**Status:** 🟡 In Progress (24 frameworks exist, examples sparse)
+**Status:** 🟡 In Progress (26 frameworks exist (F25/F26 added 2026-03-14), examples sparse)
 **Guidance:** Current file at `ralph/frameworks.md`. F22/F23/F24 added most recently. Kimre is the primary worked example source.
 
 ### Task 1.3 – Sandbox API Coverage Expansion

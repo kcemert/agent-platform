@@ -1071,3 +1071,173 @@ F23 (Business Model) → provides the move taxonomy this framework assesses
 F16 (Opportunity Prioritization) → same 2×2 logic applied at strategic model level vs. agent level
 F21 (Dashboard Spec) → Strategy tab of client portal surfaces F24 agent output
 ```
+
+---
+
+## F25 — Regulatory Operations Framework
+
+**What it is:** A classification system for domain-specific operational rule sets that agents must encode, respect, or defer to. Distinguishes between rules that are fully codeable into agent logic (deterministic), rules that require human judgment to apply (interpretive), and rules that require external validation before action (mandatory human checkpoint).
+
+**Why it matters:** As agents operate in regulated industries, the hardest design question isn't "can the agent do this?" but "is the agent legally/contractually allowed to do this autonomously?" F25 gives a consistent vocabulary for that question across every industry we serve.
+
+**How we use it:** Every agent spec (docs/agents/*.md) should classify each of its decision points against this framework. The authority level (F4) governs *how much* autonomy an agent has; F25 governs *what kind* of rules constrain it. Together they define the HITL requirement.
+
+### Rule Type Classification
+
+| Type | Definition | Agent handling | Examples |
+|---|---|---|---|
+| **Deterministic** | Rule is fully specified, testable, and unambiguous | Agent executes autonomously | FAR Part 117 rest calculation (math), reorder point threshold (≤ stock), AP auto-approve limit (<£50K) |
+| **Interpretive** | Rule requires judgment about intent, context, or edge cases | Agent recommends, human decides | FAR Part 117 "unforeseen circumstances" exception, CAPA root cause assignment, MEL category determination |
+| **Mandatory Checkpoint** | Regulation or contract explicitly requires human sign-off regardless of clarity | Hard HITL gate — agent cannot proceed | FAA airworthiness directive compliance sign-off, controlled substance dispensing (pharma), AML Suspicious Activity Report filing, union contract overtime assignment |
+| **Policy Rule** | Organizational policy (not external regulation) — enforceable by company | Agent executes within policy, flags exceptions | Spend approval thresholds, customer compensation limits (AAdvantage miles), quote discount authority |
+
+### Regulatory Domains (by industry)
+
+| Industry | Regulator(s) | Key rule sets | Rule type mix |
+|---|---|---|---|
+| Aviation | FAA, DOT, TSA, IATA | FAR Part 117 (duty/rest), Part 121 (operations), Part 135 (training currency), DOT consumer protection, AD compliance | Heavy deterministic (Part 117 math) + Mandatory checkpoints (AD sign-off) |
+| Consumer Goods / MFG | EPA, OSHA | Chemical resistance compatibility, material certification, safety data sheet requirements | Mostly deterministic (lookup tables) |
+| Pharmaceuticals | FDA | 21 CFR Part 11 (electronic records), GMP, controlled substance scheduling | Mandatory checkpoints dominate |
+| Financial Services | FDIC, OCC, FinCEN, SEC | BSA/AML (SAR filing), credit decisioning, reg capital | Mandatory checkpoints (SAR) + interpretive (credit) |
+| Healthcare | CMS, HIPAA, DEA | HIPAA PHI handling, prior authorization, controlled substance | All three types depending on context |
+
+### Agent Design Rules
+
+When designing an agent that touches regulated processes:
+
+1. **Classify every decision point** against the four rule types above
+2. **Deterministic rules** → encode in agent logic, unit-test, document the rule source (e.g., "FAR 117.23(b)")
+3. **Interpretive rules** → agent presents evidence and recommended interpretation; human confirms
+4. **Mandatory checkpoints** → hard HITL gate; agent pauses and cannot self-advance; logged with timestamp + decision-maker
+5. **Policy rules** → configurable thresholds in agent constants (not hardcoded); client can tune without code change
+
+### F25 in Practice — AA Crew IROPS Recovery Agent
+
+The `aa-crew-irops-recovery-agent` touches all four rule types:
+
+| Decision | Rule type | Agent handling |
+|---|---|---|
+| Calculate remaining duty hours for a reserve crew member | Deterministic | Agent computes: `max_duty - hours_since_rest_start` against FAR 117.23 table |
+| Determine if augmented crew rules apply (long-haul) | Interpretive | Agent flags as "augmented crew candidate — confirm rest facility availability" |
+| Apply "unforeseen circumstances" exception to extend duty period | Mandatory checkpoint | Hard HITL gate — Operations Manager must explicitly authorize and log justification |
+| Override seniority order for assignment (union contract) | Policy rule | Agent flags as exception; Crew Scheduling Supervisor confirms |
+
+### Relationship to Other Frameworks
+
+```
+F4 (Authority Levels) → governs how much autonomy; F25 governs what kind of constraints apply
+F7 (Agent Blueprint) → HITL section should map each decision point to its F25 rule type
+F17 (Responsible AI) → F25's Mandatory Checkpoint maps directly to RAI pillar: Human Oversight
+F18 (Pilot Lifecycle) → validated → pilot_ready gate requires F25 classification for all decision points
+F19 (Dashboard Quality) → HITL Design dimension (D3) scores are informed by F25 compliance
+```
+
+---
+
+## F26 — Multi-Agent Coordination Framework
+
+**What it is:** A design framework for scenarios where multiple agents share a triggering event, exchange state, or must coordinate on a shared workflow. Defines handoff patterns, shared state models, conflict resolution rules, and orchestration topologies.
+
+**Why it matters:** Single-agent design is straightforward. Multi-agent design introduces new failure modes: race conditions, conflicting recommendations, duplicated actions, and broken handoffs. Without a consistent coordination pattern, multi-agent systems become unpredictable.
+
+**How we use it:** Applied when designing systems where ≥2 agents are triggered by the same event, produce outputs the other consumes, or share authority over the same resource (flight, order, crew member, patient, invoice).
+
+### Coordination Topologies
+
+| Topology | Pattern | When to use | Example |
+|---|---|---|---|
+| **Independent parallel** | Same trigger, separate outputs, no shared state | Agents serve different personas with no interdependency | Monica's IROPS reaccommodation (passengers) + Carlos's crew IROPS recovery (crew) triggered by same flight cancellation — outputs are separate |
+| **Sequential pipeline** | Agent A output is Agent B input | One agent must complete before next is meaningful | Research Agent identifies prospect → Marketing Agent drafts outreach using prospect intel |
+| **Supervisory** | Orchestrator agent delegates to specialist agents, aggregates results | Complex tasks with multiple specialist domains | Orchestrator runs replenishment + demand forecast + quality CAPA; combines into portfolio summary |
+| **Competitive** | Multiple agents propose solutions to same problem; human picks | When different approaches have different tradeoffs worth comparing | Two pricing agents (conservative vs. aggressive) both produce fare class recommendations; RM analyst chooses |
+| **Collaborative** | Agents share a mutable state object; each updates their slice | When a single "case" evolves through multiple specialist reviews | IROPS event record: OCC agent updates passenger status, crew agent updates crew status, CX agent updates notification status — all on one IROPS case object |
+
+### Shared State Design
+
+When agents share state (Collaborative topology), define the canonical state object:
+
+```json
+{
+  "event_id": "IROPS-20260315-AA100",
+  "event_type": "cancellation",
+  "flight": "AA100 JFK-LAX 2026-03-15",
+  "declared_at": "2026-03-15T14:30:00Z",
+  "agents_involved": ["aa-irops-reaccommodation-agent", "aa-crew-irops-recovery-agent"],
+  "passenger_state": {
+    "affected": 247,
+    "reaccommodated": 189,
+    "pending": 58,
+    "last_updated_by": "aa-irops-reaccommodation-agent",
+    "last_updated_at": "2026-03-15T14:45:00Z"
+  },
+  "crew_state": {
+    "open_trips_created": 3,
+    "covered": 2,
+    "escalation_required": 1,
+    "last_updated_by": "aa-crew-irops-recovery-agent",
+    "last_updated_at": "2026-03-15T14:47:00Z"
+  },
+  "resolution_status": "in_progress"
+}
+```
+
+This object lives in the DB (or a shared event table) and each agent reads/writes only its own slice.
+
+### Conflict Resolution Rules
+
+When agents could conflict (e.g., two agents both recommend reassigning the same crew member to different trips):
+
+| Rule | Implementation |
+|---|---|
+| **Lock before write** | Agent claims a resource (crew ID, seat, PO slot) before recommending; lock expires after HITL timeout |
+| **Priority by authority** | Higher F4 authority level wins if agents conflict on the same resource |
+| **Human arbitration gate** | If conflict detected, pause both and surface to human with both options |
+| **First-write wins** | Simpler: first agent to recommend gets priority; second agent is informed and re-plans |
+
+### Orchestrator Pattern (current implementation)
+
+The existing `pilot-agents/orchestrator.py` uses the **Supervisory topology** with independent parallel sub-agents. Current limitations:
+- No shared state — agents cannot read each other's outputs
+- No conflict detection — if two agents affect the same DB resource, last write wins
+- No inter-agent messaging — agents are black boxes to each other
+
+**Upgrade path to F26-compliant orchestrator:**
+1. Introduce an `events` table in the DB (shared state store)
+2. Agents write their outputs to the event record (not just their own run table)
+3. Orchestrator detects conflicts before surfacing recommendations
+4. HITL dashboard shows the combined event view (not per-agent views)
+
+### F26 in Practice — AA IROPS Event
+
+AA's IROPS scenario is the platform's first F26 use case:
+
+```
+Trigger: Flight AA100 cancelled
+  ↓
+Independent parallel (Phase 1 — current design):
+  ├── aa-irops-reaccommodation-agent → passenger rebooking recommendations
+  └── aa-crew-irops-recovery-agent → crew coverage recommendations
+
+  Monica's OCC dashboard shows passenger queue
+  Carlos's crew scheduling dashboard shows coverage queue
+  No shared state — they're independent
+
+Collaborative (Phase 2 — F26 upgrade):
+  ├── Shared IROPS event object in events table
+  ├── Both agents write to their slice of the event
+  ├── OCC dashboard shows combined event view
+  ├── Conflict detection: if same crew member appears in both passenger
+  │   (deadhead to cover another flight) AND crew (cover open trip),
+  │   flag for human arbitration
+  └── Resolution status tracks closure across both passenger + crew dimensions
+```
+
+### Relationship to Other Frameworks
+
+```
+F4 (Authority Levels) → determines which agent wins conflicts; HIGH authority can override MEDIUM
+F17 (Responsible AI) → Accountability pillar requires audit trail of all agent-to-agent handoffs
+F18 (Pilot Lifecycle) → multi-agent systems require additional validated → pilot_ready criteria
+F25 (Regulatory Operations) → Mandatory checkpoints must be enforced even in multi-agent pipelines
+F7 (Agent Blueprint) → add "Coordination" section to blueprint spec for multi-agent agents
+```
