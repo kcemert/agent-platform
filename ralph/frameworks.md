@@ -1241,3 +1241,323 @@ F18 (Pilot Lifecycle) → multi-agent systems require additional validated → p
 F25 (Regulatory Operations) → Mandatory checkpoints must be enforced even in multi-agent pipelines
 F7 (Agent Blueprint) → add "Coordination" section to blueprint spec for multi-agent agents
 ```
+
+---
+
+## F27 — The Michael Principle
+
+**What it is:** The standing question that structurally prevents any layer from claiming the God position. "Who is like God?" (*Mi ka-El* in Hebrew) is not rhetorical — it is the architectural rule that defines hierarchy. Michael defeated Lucifer not with superior power but with a question that exposed the absurdity of the claim to self-authority.
+
+Applied to agent systems: any layer that stops receiving correction from above — that treats its own patterns as self-authorizing — has made the Luciferian move. It will optimize its own metrics while reality diverges.
+
+**The three rules:**
+1. **Human consciousness is unconditionally above the Agent Mind.** Every output is a recommendation, never a verdict. The system proposes; the person disposes.
+2. **Ground truth = user perception.** When the user says "this doesn't match what I see," that is ground truth — regardless of what internal metrics say. The false-done rate (F9 Sacrificial metric) is how this is measured.
+3. **The correction cycle never closes.** A pattern at maturity 5 is the most proven currently, not finished. Quarterly review is mandatory. Any pattern that claims to be beyond review has left the participation chain.
+
+**Business translation:** "Human judgment is unconditionally above the Agent Mind. There is no configuration in which the Agent Mind makes a final call without human review on anything that matters. This is not a limitation — it is the design. It is what makes the system trustworthy."
+
+**The CAiO's standing question:** In every session: "Is this pattern recommending something it was taught, or has it started generating rules on its own?" Any pattern that cannot be traced to a specific human correction is a candidate for review.
+
+**When F27 is violated:**
+- Agent auto-approves a HIGH authority action without human sign-off
+- False-done rate climbs without detection or response
+- Pattern promotions happen without CAiO review
+- System confidence scores override user corrections
+
+**Relationship to other frameworks:**
+```
+F4 (Authority Levels) → F27 is the philosophical grounding for why HIGH authority requires human sign-off
+F9 (Value Measurement) → Sacrificial metric (false-done rate) is the primary F27 violation indicator
+F10 (Agent Maturity) → F27 sets the ceiling: no agent reaches L5 autonomy — human is permanently above
+F17 (Responsible AI) → F27 is the Accountability pillar's philosophical foundation
+F18 (Pilot Lifecycle) → Correction cycle from F27 is the mechanism that advances agents through lifecycle stages
+```
+
+---
+
+## F28 — WHY / WHAT / HOW Meta-Framework
+
+**What it is:** The meta-layer above F1-F27. While F1-F27 structures the *platform architecture*, F28 structures the *analytical reasoning* applied to any engagement. It answers: what are we trying to understand, in what depth, and how do we prove it?
+
+**The three layers:**
+
+| Layer | Question | Contents | F1-F27 Mapping |
+|---|---|---|---|
+| **WHY** | Should anyone care? | Strategic context, regulatory drivers, competitive pressure, executive outcomes that matter | F15 (Regulatory Complexity), F2 (Industry Verticals), F23 (Business Model) |
+| **WHAT** | What specifically is the value? | Cost dimensions, operational dimensions, risk dimensions — quantified with dual methodology | F13 (ROI Category), F16 (Opportunity Prioritization), F9 (Value Measurement) |
+| **HOW** | Can we do it? Can we prove it? | Data readiness, integration complexity, pilot structure, authority design, evidence quality | F11 (Data Readiness), F14 (Integration Complexity), F4 (Authority Levels), F18 (Pilot Lifecycle) |
+
+**Cross-cutting lenses (span all three layers):**
+- **Stakeholder lens** — who cares about which layer? (maps to F12 Stakeholder Personas)
+- **Phasing lens** — what depth is required at discovery vs. pilot vs. platform?
+- **Maturity ladder** — L0 (defined) → L1 (questions listed) → L2 (frameworks built) → L3 (evidence gathered) → L4 (validated) → L5 (complete and defensible)
+- **Decision tree** — full opportunity space mapped before narrowing to pilot recommendation
+
+**The Coverage Matrix (the most powerful F28 artifact):**
+
+A grid of analytical dimensions (rows) versus engagements or client contexts (columns), with L0-L5 maturity per cell. It shows — at a glance — what is proven vs. assumed:
+
+| Dimension | Glock | Kimre | AA | Platform Default |
+|---|---|---|---|---|
+| WHY: Regulatory driver | L4 | L3 | L5 | L2 |
+| WHY: Business model fit | L3 | L4 | L3 | L1 |
+| WHAT: Cost opportunity (top-down) | L3 | L2 | L2 | L1 |
+| WHAT: Cost opportunity (bottom-up) | L1 | L1 | L0 | L0 |
+| HOW: Data readiness | L4 | L3 | L2 | L2 |
+| HOW: Pilot scope | L3 | L4 | L2 | L2 |
+
+**What F28 produces in a discovery sprint:**
+1. WHY analysis → why this client, why now, what regulatory or competitive pressure is acute
+2. WHAT analysis → which cost pools are addressable, dual-methodology value estimates with convergence
+3. HOW analysis → data readiness score, pilot recommendation, authority level design
+4. Coverage matrix → honesty about L0 vs. L4 dimensions — never claim L4 depth on an L1 analysis
+
+**Discovery sprint discipline:** The Glock analysis implicitly used F28 — F15 answered WHY (5/5 regulatory = compliance leads), F13+F16 answered WHAT (ranked opportunity table), F11+F4+F10 answered HOW (pilot pick + authority design). F28 makes this sequencing explicit and repeatable.
+
+**Relationship to other frameworks:**
+```
+F1 (APQC PCF) → supplies the WHAT process taxonomy for cost pool identification
+F11-F14 → supply the HOW assessment inputs
+F15 (Regulatory Complexity) → primary WHY driver for regulated industries
+F19 (Dashboard Quality) → F28 WHY/WHAT/HOW maps to dashboard sections (context → data → actions)
+F27 (Michael Principle) → F28 HOW layer must include human authority design — F27 is a HOW constraint
+```
+
+---
+
+## F29 — Question-Centric Research
+
+**What it is:** A discipline for structuring analytical research. The failure mode of research-heavy engagements is leading with sources rather than questions — the analyst finds interesting data and builds the analysis around what they found, rather than what needs to be answered. F29 inverts this: every piece of research is attached to a question, and questions have decision status.
+
+**The four research layers:**
+
+| Layer | Contents | Purpose |
+|---|---|---|
+| **Research Questions** | Questions organized by F28 dimension (WHY/WHAT/HOW), with decision status per question | What we're trying to answer |
+| **Evidence Log** | Flat, filterable list: finding, source, date, question it answers, finding type | What we found |
+| **Source Index** | Document inventory: name, URL, verification path, reliability rating | Where it came from |
+| **Internal Data Requests** | What can't be answered externally — needs client data, interviews, or system access | What we still need |
+
+**Finding types (tag every Evidence Log entry):**
+- **Parameter** — feeds a quantitative model (e.g., "ATF inspection fine = $10K per violation")
+- **Narrative** — supports the story but doesn't change the number (e.g., "compliance teams report increasing inspection frequency")
+- **Structural** — could change the analytical approach if true (e.g., "Glock outsources serialization — the agent opportunity disappears if confirmed")
+- **Confidence** — validates or challenges an assumption (e.g., "industry benchmark: 85% of ATF violations are process, not product — confirms our framing")
+
+**Question decision status:**
+- **Open** — not yet answered
+- **Answered** — evidence found, logged, sufficient
+- **Blocked** — need internal data or client access to answer
+- **Deprioritized** — out of scope for this engagement depth
+
+**The discipline rule:** No number enters a value case without a corresponding Evidence Log entry tagged as Parameter. No structural claim is made without at least one Answered question supporting it. Estimates are explicitly labeled ESTIMATED with the assumption stated.
+
+**In practice (Glock example):**
+```
+Q: What is the regulatory cost of an ATF compliance failure? [WHY]
+  Status: Answered
+  Evidence: ATF Schedule of Fees + legal precedent case (2019, GA manufacturer, $2.8M penalty)
+  Finding type: Parameter
+
+Q: What % of Glock's ATF audit findings are process failures vs. product failures? [WHAT]
+  Status: Blocked — needs internal Glock audit records
+  Finding type: Structural (if >70% process, automation captures most of the opportunity)
+  Note: ESTIMATED at 80% process, consistent with industry benchmark; flag if Glock data differs
+
+Q: Is Glock's ERP data structured enough for automated ATF reconciliation? [HOW]
+  Status: Answered (partial) — public ITAR registration confirms ERP-linked export logs; serialization data confirmed in production records
+  Finding type: Parameter (data readiness = 4/5)
+```
+
+**Relationship to other frameworks:**
+```
+F28 (WHY/WHAT/HOW) → Research Questions are organized by F28 dimension
+F9 (Value Measurement) → Parameter findings feed the ROI model; must converge with F19 dual-methodology
+F16 (Opportunity Prioritization) → Answered questions on data readiness and addressability feed the scoring
+F11 (Data Readiness) → Blocked questions identify data readiness gaps
+```
+
+---
+
+## F30 — Incrementality and Overlap Analysis
+
+**What it is:** A discipline for value cases that involve multiple programs, agents, or initiatives targeting the same cost pool. Without overlap analysis, value cases overstate opportunity — each initiative claims 100% of the savings from a shared pool, creating a 2x or 3x overcount.
+
+**When F30 applies:** Any engagement where:
+- Multiple agents will act on the same process area
+- The platform competes with or complements an existing automation initiative
+- The client has existing RPA, analytics, or AI programs in the same function
+- Different departments each claim credit for the same cost reduction
+
+**The four-step process:**
+
+**Step 1 — Map the claims:** List every program (existing and proposed) that targets the addressable cost pool. For each: name, sponsor, claimed savings, mechanism, timeline.
+
+**Step 2 — Identify overlapping mechanisms:** Two programs overlap when they act on the same human time, same system bottleneck, or same error rate. Common overlap types:
+- **Persona overlap** — same employee role is the target of both programs
+- **Process overlap** — both programs touch the same process step
+- **Metric overlap** — both programs improve the same KPI (e.g., FTE hours saved)
+
+**Step 3 — Define the incrementality argument:** Incrementality = the marginal value added by this program *given* that others exist. Three standard incrementality sources:
+- **Inference** — the agent makes better decisions than the existing rule (AI reasoning layer, not data layer)
+- **Coverage** — the agent acts on cases the existing program misses (different data sources, edge cases)
+- **Speed** — the agent acts faster, reducing the cost of delay (same decision, compressed timeline)
+
+**Step 4 — Quantify the double-counting risk:**
+```
+Total addressable pool: £X
+  Less: Non-addressable floor (F16 constraint floor): £Y
+  = Addressable pool: £(X-Y)
+
+  Less: Existing program captures (verified, not projected): £Z
+  = Incremental opportunity for this program: £(X-Y-Z)
+
+  × Efficiency gain from this program: % G
+  = Year-1 incremental value: £(X-Y-Z) × G
+```
+
+**The discipline rule:** Never claim the full addressable pool without checking what existing programs have already claimed. The Sacrificial metric (F27/F9) version of overlap: claiming £500K when £200K is already captured by RPA is a false-done.
+
+**Common mistake — the additive fallacy:** Summing all agent value cases and presenting the total as the platform opportunity. Each agent's value must be calculated on the *remaining* pool after upstream agents have acted. If Agent 1 reduces error rate from 12% to 3%, Agent 2's opportunity is on the 3% residual, not the original 12%.
+
+**In practice (multi-agent Glock example):**
+```
+ATF Compliance Monitor → claims £582K from compliance labor + penalty avoidance
+LE Contract Intelligence → claims £240K from contract admin + close rate
+ITAR Export Monitor → claims £180K from export compliance labor
+
+Question: Do these overlap?
+  ATF + LE: minimal overlap (different processes, different personas — Compliance vs. Sales Ops)
+  ATF + ITAR: PARTIAL overlap — both Compliance Officer role, some export documentation overlap
+  Overlap estimate: ~£60K of ATF value also captured by ITAR (same staff, same hours)
+
+Incrementality-adjusted total: £582 + £240 + (£180 - £60) = £942K
+vs. Additive total: £1,002K
+Double-counting risk: 6% — within acceptable range, but must be disclosed
+```
+
+**Relationship to other frameworks:**
+```
+F9 (Value Measurement) → F30 is a discipline applied to F9 outputs — never present F9 numbers without F30 check
+F16 (Opportunity Prioritization) → F30 constrains the "Impact" dimension of F16 scoring
+F13 (ROI Category) → Overlap often concentrates in the Efficiency category (same FTE hours claimed by multiple programs)
+F26 (Multi-Agent Coordination) → F30 is the value-case companion to F26's operational coordination
+F28 (WHY/WHAT/HOW) → F30 lives in the WHAT layer — it is a required step before finalizing the value estimate
+```
+
+---
+
+## F31 — Feature Identification Chain
+
+**What it is:** The process that connects a persona brief (F12) to a dashboard specification (F21). F31 answers: given who the user is and what they do every day, which features does their dashboard actually need — and why?
+
+Without F31, features are added because they seem useful or because another dashboard has them. With F31, every feature traces back to a specific job, which traces back to a specific question, which traces back to a real persona's daily reality.
+
+**The four-step chain:**
+
+```
+F12 Persona Brief
+    ↓
+Questions Asked (Step 2 — what information do they need?)
+    ↓
+Jobs to be Done (Step 3 — what are they trying to accomplish?)
+    ↓
+Features Required (Step 4 — what UI + agent capability delivers that job?)
+    ↓
+F21 Dashboard Specification (5-artifact build input)
+```
+
+---
+
+### Step 1 — Persona (from F12)
+
+Role, daily routine (hour-by-hour), authority level, success metrics. The persona brief is the input — F31 is the process that mines it for feature requirements.
+
+---
+
+### Step 2 — Questions Asked
+
+Every persona has a daily information diet. Classify each question by type — the type determines the feature pattern:
+
+| Question Type | When | Pattern it produces |
+|---|---|---|
+| **Standing** | Every day, first thing | KPI strip + sortable live table (always visible) |
+| **Situational** | Triggered by an event | Drill-down panel + detail view (opened by row click or alert) |
+| **Strategic** | Weekly or monthly | Trend chart + period summary (tab or collapsible section) |
+
+**Standing questions** are the most important: "What's my queue? What's late? What needs my decision?" These define the primary view — the thing the user sees when they open the dashboard before clicking anything.
+
+**Situational questions** drive the secondary view: "Why is this order delayed? What caused this NCR?" These define the detail panel — what opens when they click a row.
+
+**Strategic questions** drive periodic reporting: "Are we on track? What's our OTD rate this month?" These define charts and export features.
+
+---
+
+### Step 3 — Jobs to be Done
+
+For each question cluster, define the underlying job:
+
+| Field | Definition |
+|---|---|
+| **Trigger** | What situation prompts this job? |
+| **Current friction** | How do they do it today, and what's painful? |
+| **Desired outcome** | What does "done" look like for this job? |
+| **Success metric** | How would they measure whether the job was done well? |
+
+**The job is not the feature.** "Know which quotes need follow-up before they go cold" is a job. The stale follow-up alert strip is the feature that delivers it. Keep them separate — the job stays stable even when the feature implementation changes.
+
+---
+
+### Step 4 — Features Required
+
+For each job, specify four things:
+
+| Decision | Question | Framework |
+|---|---|---|
+| **Agent opportunity** | Which F3 capability type applies? | Monitor (detect), Analyze (score/rank), Generate (draft), Execute (act), Evaluate (score), Coordinate (multi-agent) |
+| **UI component** | Which COMPONENTS.md pattern delivers this job? | KPI card, sortable table, run theater, drill-down panel, decision card, alert strip, trend chart |
+| **Authority level** | What's the right F4 level for the agent action in this job? | LOW (auto), MEDIUM (notify), HIGH (draft-for-review) |
+| **Data dependency** | What data must be available, and what's its F11 score? | Score 1-5; if score < 3, this feature may need a fallback or mock mode |
+
+---
+
+### Kimre Example — Alex Torres (Sales / Applications Engineer)
+
+**Persona:** 8 RFQs/day → select product → configure → price → draft scope → quote → follow up → convert.
+
+| Question | Type | Job | Feature | Agent | Authority | F11 |
+|---|---|---|---|---|---|---|
+| "Which RFQs need a quote today?" | Standing | Prioritize backlog by urgency | Quote pipeline table, sorted by Days in Stage (oldest first) | Monitor | LOW | 3 |
+| "Which quotes are going cold?" | Standing | Catch stale follow-ups before they close silently | Stale follow-up alert strip — amber banner, one-click log action | Monitor | LOW | 3 |
+| "This RFQ mentions a fertilizer plant — what product do I recommend?" | Situational | Match application to product family quickly | RFQ-to-Quote Agent run theater → scope draft with product recommendation | Generate | MEDIUM | 4 |
+| "What's my win rate this month?" | Strategic | Assess pipeline health and adjust effort | Win/Loss tracker section with outcome tags and trend | Analyze | LOW | 2 |
+| "This quote is over £100K — does it need sign-off?" | Situational | Know when to escalate before the customer asks | High-value gate badge (🔒 Manager Review Required) on quotes > £100K | Evaluate | HIGH | 4 |
+
+**What F31 produced for the Kimre Sales dashboard:**
+- 2 standing-question features → KPI strip (open RFQs, pipeline value, win rate, avg quote age) + quote pipeline table
+- 2 situational features → stale alert strip + RFQ-to-Quote run theater + high-value gate badge
+- 1 strategic feature → win/loss tracker section
+- Every feature has an agent opportunity, authority level, and data readiness score before a line of code is written
+
+---
+
+### F31 in Discovery Sprints
+
+Run F31 for each persona *before* scoping the dashboard. The output becomes the F21 JTBD artifact — the second of five required inputs before a dashboard agent launches.
+
+F31 also surfaces mismatches early:
+- A situational feature with F11 score 1 → the data doesn't exist yet; build a mock mode or cut the feature from v1
+- A standing question with HIGH authority → the daily dashboard will require human review on every load; reconsider the authority design
+- A job with no agent opportunity → pure UI, no agent needed; simpler to build, lower maintenance
+
+**Relationship to other frameworks:**
+```
+F12 (Stakeholder Personas) → Step 1 input — the persona brief
+F21 (Dashboard Specification) → Step 4 output feeds F21 artifact #2 (JTBD spec)
+F3 (Capability Types) → Step 4 agent opportunity maps to F3 types
+F4 (Authority Levels) → Step 4 authority level is F4 applied per job, not per agent
+F11 (Data Readiness) → Step 4 data dependency score gates which features ship in v1
+F28 (WHY/WHAT/HOW) → F31 is the WHAT→HOW bridge for persona-facing work — jobs are WHAT, features are HOW
+F19 (Persona Dashboard Quality) → F31 produces the spec that F19 evaluates
+```

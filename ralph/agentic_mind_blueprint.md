@@ -20,6 +20,17 @@ This blueprint does three things:
 
 ---
 
+## Related
+- `ralph/frameworks.md` — F1-F27 definitions (source material for the mappings below)
+- `PATTERN_BASED_AGENTIC_MIND.html` — founding paper (Chapter 24 maps these frameworks)
+- `whitepaper/practical/formalization-cycle.md` — operational spec for the formalization cycle
+- `whitepaper/practical/caio-spec.md` — CAiO role specification
+- `whitepaper/practical/seven-layer-stack.md` — seven-layer stack + pricing
+- `whitepaper/BLUEPRINT_LEVERAGE.md` — implementation plan for the Agent Mind
+- `memory/agentic-mind.md` — reference notes
+
+---
+
 ## Part I: The Seven-Layer Taxonomy
 
 ```

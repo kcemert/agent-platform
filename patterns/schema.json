@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentPattern",
+  "description": "A formalized behavior pattern in the Agent Mind registry",
+  "type": "object",
+  "required": ["pattern_id", "name", "capability_type", "authority_level", "maturity", "trigger", "logic", "escalation"],
+  "properties": {
+    "pattern_id": {
+      "type": "string",
+      "description": "Unique slug, kebab-case. e.g. high-value-decision-escalation"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable pattern name"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this pattern does and why it exists"
+    },
+    "capability_type": {
+      "type": "string",
+      "enum": ["Monitor & Detect", "Root Cause Analysis", "Idea & Option Generation", "Evaluate & Score", "Execute & Act", "Manage & Track"],
+      "description": "Which F3 capability type this pattern governs"
+    },
+    "authority_level": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH"],
+      "description": "F4 authority level. LOW=automated, MEDIUM=act+notify, HIGH=draft for approval"
+    },
+    "maturity": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Cook-to-Chef maturity: 1=written law, 2=mechanical, 3=contextual, 4=embedded, 5=internalized"
+    },
+    "industry_scope": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Which industries this applies to. ['ALL'] means universal.",
+      "default": ["ALL"]
+    },
+    "size_fit": {
+      "type": "array",
+      "items": {"type": "string", "enum": ["SMB", "MID", "ENT", "ALL"]},
+      "description": "Which company size tiers this applies to",
+      "default": ["ALL"]
+    },
+    "trigger": {
+      "type": "string",
+      "description": "Condition that activates this pattern. Plain English or pseudocode."
+    },
+    "logic": {
+      "type": "string",
+      "description": "What the agent does when triggered. Steps or decision rules."
+    },
+    "escalation": {
+      "type": "string",
+      "description": "Who receives escalation and under what conditions"
+    },
+    "output_format": {
+      "type": "string",
+      "description": "What the pattern produces: recommendation, draft, notification, action, report"
+    },
+    "ground_truth_check": {
+      "type": "string",
+      "description": "How to validate output matches user perception. The F19 quality gate."
+    },
+    "source_frameworks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Which F1-F27 frameworks this pattern instantiates. e.g. ['F4', 'F17', 'F27']"
+    },
+    "source_session": {
+      "type": "string",
+      "description": "Date (YYYY-MM-DD) when this pattern was first formalized"
+    },
+    "correction_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {"type": "string"},
+          "correction": {"type": "string"},
+          "promoted_from": {"type": "integer"},
+          "promoted_to": {"type": "integer"}
+        }
+      },
+      "description": "Log of human corrections that refined this pattern",
+      "default": []
+    },
+    "promotion_criteria": {
+      "type": "string",
+      "description": "What must be true before promoting to the next maturity level"
+    },
+    "last_validated": {
+      "type": "string",
+      "description": "Date (YYYY-MM-DD) this pattern was last validated against real output"
+    },
+    "false_done_incidents": {
+      "type": "integer",
+      "description": "Count of times this pattern declared success while user perceived failure",
+      "default": 0
+    }
+  }
+}
